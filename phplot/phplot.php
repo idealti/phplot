@@ -3583,7 +3583,7 @@ class PHPlot {
      */
     function DrawGraph() 
     {
-        if ($this->img == '') {
+        if (! $this->img) {
             $this->DrawError('DrawGraph(): No image resource allocated');
             return FALSE;
         }
@@ -3631,32 +3631,24 @@ class PHPlot {
         $this->DrawYTitle();
 
         switch ($this->plot_type) {
-        case 'bars':
-            $this->DrawYAxis();     // We don't want the grid to overwrite bar charts
-            $this->DrawXAxis();     // so we draw it first. Also, Y must be drawn before X (see DrawYAxis())
-            $this->DrawBars();
-            $this->DrawPlotBorder();
-            break;
         case 'thinbarline':
             $this->DrawThinBarLines();
             break;
+        case 'area':
+            $this->DrawArea();
+            break;
+        case 'squared':
+            $this->DrawSquared();
+            break;
         case 'lines':
-            if ( $this->data_type == 'text-data') {
-                $this->DrawLines();
-            } elseif ( $this->data_type == 'data-data-error') {
+            if ( $this->data_type == 'data-data-error') {
                 $this->DrawLinesError();
             } else {
                 $this->DrawLines();
             }
             break;
-        case 'area':
-            $this->DrawArea();
-            break;
         case 'linepoints':          // FIXME !!! DrawXDataLabel gets called in DrawLines() and DrawDots()
-            if ( $this->data_type == 'text-data') {
-                $this->DrawLines();
-                $this->DrawDots();
-            } elseif ( $this->data_type == 'data-data-error') {
+            if ( $this->data_type == 'data-data-error') {
                 $this->DrawLinesError();
                 $this->DrawDotsError();
             } else {
@@ -3665,9 +3657,7 @@ class PHPlot {
             }
             break;
         case 'points';
-            if ( $this->data_type == 'text-data') {
-                $this->DrawDots();
-            } elseif ( $this->data_type == 'data-data-error') {
+            if ( $this->data_type == 'data-data-error') {
                 $this->DrawDotsError();
             } else {
                 $this->DrawDots();
@@ -3680,11 +3670,13 @@ class PHPlot {
                                      $this->image_height - $this->safe_margin);
             $this->DrawPieChart();
             break;
-        case 'squared':
-            $this->DrawSquared();
-            break;
+        case 'bars':
         default:
+            $this->plot_type = 'bars';  // Set it if it wasn't already set.
+            $this->DrawYAxis();     // We don't want the grid to overwrite bar charts
+            $this->DrawXAxis();     // so we draw it first. Also, Y must be drawn before X (see DrawYAxis())
             $this->DrawBars();
+            $this->DrawPlotBorder();
             break;
         }   // end switch
 
