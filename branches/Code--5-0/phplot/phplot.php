@@ -98,7 +98,6 @@ class PHPlot {
     var $x_tick_label_pos = 'plotdown';     // plotdown, plotup, both, xaxis, none
     var $y_tick_label_pos = 'plotleft';     // plotleft, plotright, both, yaxis, none
 
-
     // Data Labels:
     var $x_data_label_pos = 'plotdown';     // plotdown, plotup, both, plot, all, none
     var $y_data_label_pos = 'plotleft';     // plotleft, plotright, both, plot, all, none
@@ -111,6 +110,10 @@ class PHPlot {
     var $y_label_type = '';                 // data, time. Leave blank for no formatting.
     var $x_time_format = '%H:%m:%s';        // See http://www.php.net/manual/html/function.strftime.html
     var $y_time_format = '%H:%m:%s';        // SetYTimeFormat() too... 
+
+    // Skipping labels
+    var $x_label_inc = 1;                   // Draw a label every this many (1 = all) (TODO)
+    var $y_label_inc = 1;
 
     // Legend
     var $legend = '';                       // An array with legend titles
@@ -1866,6 +1869,9 @@ class PHPlot {
      *
      * FIXME: fix x_data_label_pos behaviour. Now we are leaving room for it AND x_tick_label_pos
      *        maybe it shouldn't be so...
+     *
+     * TODO: add x_tick_label_width and y_tick_label_height and use them to calculate
+     *       max_x_labels and max_y_labels, to be used by drawing functions t avoid overlapping.
      */
     function CalcMargins() 
     {
@@ -2997,6 +3003,7 @@ class PHPlot {
             $diam2 = $diameter;
         }
         $max_data_colors = count ($this->data_colors);
+
         for ($h = $this->shading; $h >= 0; $h--) {
             $color_index = 0;
             $start_angle = 0;
@@ -3041,7 +3048,7 @@ class PHPlot {
                                     $label_txt, 'center', 'center');           
                 }                                
                 $color_index++;
-                $color_index = $color_index % $this->max_data_colors;
+                $color_index = $color_index % $max_data_colors;
             }   // end for
         }   // end for
     }
@@ -3959,7 +3966,7 @@ class PHPlot {
 
 
     /*!
-     * \deprecated Calculates Maximum Y-Axis tick label width. Now inside _CalcMargins()
+     * \deprecated Calculates Maximum Y-Axis tick label width. Now inside CalcMargins()
      */
     function CalcYWidths() 
     {
