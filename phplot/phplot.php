@@ -358,7 +358,7 @@ class PHPlot {
    /*
     *
     */
-   function SetTitleColor($which_color) 
+    function SetTitleColor($which_color) 
     {
         $this->title_color= $which_color;
         $this->ndx_title_color= $this->SetIndexColor($this->title_color);
@@ -1503,7 +1503,7 @@ class PHPlot {
         if ($which_xtitle == '')
             $which_xpos = 'none';
 
-        $this->x_title_pos = $this->CheckOption($which_xpos, 'plotdown, plotup, both', __FUNCTION__);
+        $this->x_title_pos = $this->CheckOption($which_xpos, 'plotdown, plotup, both, none', __FUNCTION__);
 
         $this->x_title_txt = $which_xtitle;
 
@@ -1530,7 +1530,7 @@ class PHPlot {
         if ($which_ytitle == '')
             $which_ypos = 'none';
 
-        $this->y_title_pos = $this->CheckOption($which_ypos, 'plotleft, plotright, both', __FUNCTION__);
+        $this->y_title_pos = $this->CheckOption($which_ypos, 'plotleft, plotright, both, none', __FUNCTION__);
 
         $this->y_title_txt = $which_ytitle;
 
@@ -1651,7 +1651,7 @@ class PHPlot {
     function SetPointShape($which_pt) 
     {
         $this->point_shape = $this->CheckOption($which_pt, 
-                                'halfline, line, plus, cross, rect, circle, dot, diamond, triangle, trianglemid',
+                              'halfline, line, plus, cross, rect, circle, dot, diamond, triangle, trianglemid',
                               __FUNCTION__);
     }
 
@@ -2239,7 +2239,7 @@ class PHPlot {
             }
             break;
         default:
-            $this->PrintError("_FormatLabel(): Unknown label type $which_type");
+            $this->PrintError("FormatLabel(): Unknown label type $which_type");
             return NULL;
         } 
 
@@ -2306,23 +2306,38 @@ class PHPlot {
         return TRUE;
     }
 
+    /*!
+     *
+     */
     function SetYTickPos($which_tp) 
     { 
-        $this->y_tick_pos = $which_tp;  //plotleft, plotright, both, yaxis, none
+        $this->y_tick_pos = $this->CheckOption($which_tp, 'plotleft, plotright, both, yaxis, none', __FUNCTION__);
         return TRUE;
     }
     /*!
-     * plotdown, plotup, both, xaxis, none
+     *
      */
     function SetXTickPos($which_tp) 
     { 
-        $this->x_tick_pos = $which_tp; 
+        $this->x_tick_pos = $this->CheckOption($which_tp, 'plotdown, plotup, both, xaxis, none', __FUNCTION__); 
         return TRUE;
     }
 
-    function SetSkipBottomTick($which_sbt) 
+    /*!
+     * \param skip bool
+     */ 
+    function SetSkipTopTick($skip)
     {
-        $this->skip_bottom_tick = $which_sbt;
+        $this->skip_top_tick = (bool)$skip;
+        return TRUE;
+    }
+
+    /*!
+     * \param skip bool
+     */
+    function SetSkipBottomTick($skip) 
+    {
+        $this->skip_bottom_tick = (bool)$skip;
         return TRUE;
     }
 
@@ -2399,6 +2414,7 @@ class PHPlot {
         case 'none':
             break;
         default:
+            $this->DrawError("DrawImageBorder(): unknown image_border_type: '$this->image_border_type'");
             return FALSE;
         }
         return TRUE;
@@ -2435,6 +2451,7 @@ class PHPlot {
         if ($this->x_title_pos == 'none')
             return;
 
+        // Center of the plot
         $xpos = ($this->plot_area[2] + $this->plot_area[0]) / 2;
 
         // Upper title
@@ -2486,6 +2503,7 @@ class PHPlot {
         ImageFilledRectangle($this->img, $this->plot_area[0], $this->plot_area[1], 
                              $this->plot_area[2], $this->plot_area[3],
                              $this->ndx_plot_bg_color);
+        return TRUE;
     }
 
     /*
@@ -2497,8 +2515,8 @@ class PHPlot {
         $this->DrawYTicks();
 
         // Draw Y axis at X = y_axis_x_pixels
-      ImageLine($this->img, $this->y_axis_x_pixels, $this->plot_area[1], 
-                $this->y_axis_x_pixels, $this->plot_area[3], $this->ndx_grid_color);
+        ImageLine($this->img, $this->y_axis_x_pixels, $this->plot_area[1], 
+                  $this->y_axis_x_pixels, $this->plot_area[3], $this->ndx_grid_color);
                   
         return TRUE;
     }
@@ -3569,7 +3587,7 @@ class PHPlot {
         }
 
         if (! isset($this->data_limits_done)) 
-            $this->FindDataLimits();                    // Get maxima and minima for scaling
+            $this->FindDataLimits();                // Get maxima and minima for scaling
 
         if ($this->total_records == 0) {            // Check for empty data sets
             $this->DrawError('Empty data set');
