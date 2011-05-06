@@ -2,6 +2,14 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2011-05-06
+    * For bug 3296884 "Undefined variable with stackedbars":
+      A temporary fix was made against phplot-5.3.1 to avoid an undefined
+      variable error when the first stack in a stackedbars plot has all zero
+      values. The fix avoids the error message, and the plots are OK in most
+      cases. There are still issues with label position, and if the axis
+      is moved. These will be addressed in a future fix.
+
 2011-01-15 (lbayuk)     ===== Released as 5.3.1 =====
     * phplot.php: Updated version
     * README.txt: Updated for new release
