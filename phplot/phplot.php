@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
- * PHPLOT Version 5.3.1
+ * PHPLOT Version 5.3.2
  *
  * A PHP class for creating scientific and business charts
  * Visit http://sourceforge.net/projects/phplot/
