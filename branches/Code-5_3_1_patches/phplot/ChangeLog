@@ -2,6 +2,13 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2011-05-06 (lbayuk)     ===== Released as 5.3.2 =====
+    * phplot.php: Updated version
+    * README.txt: Updated for new release
+    * NEWS.txt: Add text for new release
+   Note: This release was built off of the CVS branch tagged
+   rel5_3_1_patches, not HEAD.
+
 2011-05-06
     * For bug 3296884 "Undefined variable with stackedbars":
       A temporary fix was made against phplot-5.3.1 to avoid an undefined
