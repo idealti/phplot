@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
- * PHPLOT Version 5.3.1 + CVS (This is an unreleased CVS version!)
+ * PHPLOT Version 5.3.2
  *
  * A PHP class for creating scientific and business charts
  * Visit http://sourceforge.net/projects/phplot/
@@ -121,7 +121,12 @@ class PHPlot
 
 // Legend
     public $legend = '';                       // An array with legend titles
-    // Other legend_* variables are set as needed, unset for default values.
+    // These variables are unset to take default values:
+    // public $legend_x_pos;                   // User-specified upper left coordinates of legend box
+    // public $legend_y_pos;
+    // public $legend_xy_world;                // If set, legend_x/y_pos are world coords, else pixel coords
+    // public $legend_text_align;              // left or right, Unset means right
+    // public $legend_colorbox_align;          // left, right, or none; Unset means same as text_align
 
 //Ticks
     public $x_tick_length = 5;                 // tick length in pixels for upper/lower axis
@@ -656,7 +661,7 @@ class PHPlot
     }
 
     /*
-     * Sets the colors for the data, with optional default alpha value
+     * Sets the colors for the data, with optional default alpha value (for PHPlot_truecolor only)
      * Cases are:
      *    SetDataColors(array(...))  : Use the supplied array as the color map.
      *    SetDataColors(colorname)   : Use an array of just colorname as the color map.
@@ -2065,6 +2070,72 @@ class PHPlot
     {
         $this->print_image = $which_pi;
         return TRUE;
+    }
+
+    /*
+     * Set text to display in the graph's legend.
+     *   $which_leg : Array of strings for the complete legend, or a single string
+     *                to be appended to the legend.
+     *                Or NULL (or an empty array) to cancel the legend.
+     */
+    function SetLegend($which_leg)
+    {
+        if (is_array($which_leg)) {           // use array (or cancel, if empty array)
+            $this->legend = $which_leg;
+        } elseif (!is_null($which_leg)) {     // append string
+            $this->legend[] = $which_leg;
+        } else {
+            $this->legend = '';  // Reinitialize to empty, meaning no legend.
+        }
+        return TRUE;
+    }
+
+    /*
+     * Specifies the position of the legend's upper/leftmost corner,
+     * in pixel (device) coordinates.
+     * Both X and Y must be provided, or both omitted (or use NULL) to restore auto-positioning.
+     */
+    function SetLegendPixels($which_x=NULL, $which_y=NULL)
+    {
+        $this->legend_x_pos = $which_x;
+        $this->legend_y_pos = $which_y;
+        // Make sure this is unset, meaning we have pixel coords:
+        unset($this->legend_xy_world);
+
+        return TRUE;
+    }
+
+    /*
+     * Specifies the position of the legend's upper/leftmost corner,
+     * in world (data space) coordinates.
+     */
+    function SetLegendWorld($which_x, $which_y)
+    {
+        // Since conversion from world to pixel coordinates is not yet available, just
+        // remember the coordinates and set a flag to indicate conversion is needed.
+        $this->legend_x_pos = $which_x;
+        $this->legend_y_pos = $which_y;
+        $this->legend_xy_world = TRUE;
+
+        return TRUE;
+    }
+
+    /*
+     * Set legend text alignment, color box alignment, and style options.
+     *   $text_align : Alignment of the text, 'left' or 'right'.
+     *   $colorbox_align : Alignment of the color boxes, 'left', 'right', 'none', or missing/empty.
+     *       If missing or empty, the same alignment as $text_align is used. Color box is positioned first.
+     *   $style : reserved for future use.
+     */
+    function SetLegendStyle($text_align, $colorbox_align = '', $style = '')
+    {
+        $this->legend_text_align = $this->CheckOption($text_align, 'left, right', __FUNCTION__);
+        if (empty($colorbox_align))
+            $this->legend_colorbox_align = $this->legend_text_align;
+        else
+            $this->legend_colorbox_align = $this->CheckOption($colorbox_align, 'left, right, none',
+                                                              __FUNCTION__);
+        return ((boolean)$this->legend_text_align && (boolean)$this->legend_colorbox_align);
     }
 
     /*
@@ -4582,87 +4653,10 @@ class PHPlot
         return TRUE;
     }
 
-/////////////////////////////////////////////
-///////////////                        LEGEND
-/////////////////////////////////////////////
-
-    /*
-     * Set text to display in the graph's legend.
-     *   $which_leg : Array of strings for the complete legend, or a single string
-     *                to be appended to the legend.
-     *                Or NULL (or an empty array) to cancel the legend.
-     */
-    function SetLegend($which_leg)
-    {
-        if (is_array($which_leg)) {           // use array (or cancel, if empty array)
-            $this->legend = $which_leg;
-        } elseif (!is_null($which_leg)) {     // append string
-            $this->legend[] = $which_leg;
-        } else {
-            $this->legend = '';  // Reinitialize to empty, meaning no legend.
-        }
-        return TRUE;
-    }
-
-    /*
-     * Specifies the position of the legend's upper/leftmost corner, in pixel (device) coordinates.
-     * Both X and Y must be provided, or both omitted (or use NULL) to restore auto-positioning.
-     */
-    function SetLegendPixels($which_x=NULL, $which_y=NULL)
-    {
-        $this->legend_x_pos = $which_x;
-        $this->legend_y_pos = $which_y;
-        // Make sure this is unset, meaning we have pixel coords:
-        unset($this->legend_xy_world);
-
-        return TRUE;
-    }
-
-    /*
-     * Specifies the position of the legend's upper/leftmost corner, in world (data space) coordinates.
-     */
-    function SetLegendWorld($which_x, $which_y)
-    {
-        // Since conversion from world to pixel coordinates is not yet available, just
-        // remember the coordinates and set a flag to indicate conversion is needed.
-        $this->legend_x_pos = $which_x;
-        $this->legend_y_pos = $which_y;
-        $this->legend_xy_world = TRUE;
-
-        return TRUE;
-    }
-
-    /*
-     * Set legend text alignment, color box alignment, and style options.
-     *   $text_align : Alignment of the text, 'left' or 'right'.
-     *   $colorbox_align : Alignment of the color boxes, 'left', 'right', 'none', or missing/empty.
-     *       If missing or empty, the same alignment as $text_align is used. Color box is positioned first.
-     */
-    function SetLegendStyle($text_align, $colorbox_align = '')
-    {
-        $this->legend_text_align = $this->CheckOption($text_align, 'left, right', __FUNCTION__);
-        if (empty($colorbox_align))
-            $this->legend_colorbox_align = $this->legend_text_align;
-        else
-            $this->legend_colorbox_align = $this->CheckOption($colorbox_align, 'left, right, none',
-                                                              __FUNCTION__);
-        return ((boolean)$this->legend_text_align && (boolean)$this->legend_colorbox_align);
-    }
-
-    /*
-     * Use color boxes or point shapes (for points and linepoints plots only) in the legend.
-     *   $use_shapes : True to use point shapes, false to use color boxes.
-     */
-    function SetLegendUseShapes($use_shapes)
-    {
-        $this->legend_use_shapes = (bool)$use_shapes;
-        return TRUE;
-    }
-
     /*
      * Draws the graph legend
      * This is called by DrawGraph only if $this->legend is not empty.
-     * Original code submitted by Marlin Viss
+     * Base code submitted by Marlin Viss
      */
     protected function DrawLegend()
     {
@@ -4735,7 +4729,6 @@ class PHPlot
                 $x_pos = $box_start_x + $char_w;
             else
                 $x_pos = $box_end_x - $char_w;
-            $dot_left_x = 0; // Not used directly if color boxes/shapes are off, but referenced below.
         } elseif ($colorbox_align == 'left') {
             $dot_left_x = $box_start_x + $char_w;
             $dot_right_x = $dot_left_x + $colorbox_width;
@@ -4752,43 +4745,27 @@ class PHPlot
                 $x_pos = $dot_left_x - $char_w;
         }
 
-        // $y_pos is the bottom of each color box. $yc is the vertical center of the color box or
-        // the point shape (if drawn). The text is centered vertically on $yc.
+        // Calculate starting position of first text line.  The bottom of each color box
+        // lines up with the bottom (baseline) of its text line.
         $y_pos = $box_start_y + $v_margin + $dot_height;
-        $yc = (int)($y_pos - $dot_height / 2);
-        $xc = (int)($dot_left_x + $colorbox_width / 2);   // Horizontal center for point shape if drawn
-        $shape_index = 0;  // Shape number index, if drawing point shapes
-
-        // Option to use point shapes rather than solid boxes. Disallow this if the shapes array
-        // has not been initialized (see CheckPointParams). Only works with 'points' or 'linepoints' plots.
-        $use_shapes = !empty($this->legend_use_shapes) && !empty($this->point_counts);
 
         foreach ($this->legend as $leg) {
             // Draw text with requested alignment:
-            $this->DrawText($font, 0, $x_pos, $yc, $this->ndx_text_color, $leg, $text_align, 'center');
+            $this->DrawText($font, 0, $x_pos, $y_pos, $this->ndx_text_color, $leg, $text_align, 'bottom');
             if ($draw_colorbox) {
+                // Draw a box in the data color
                 $y1 = $y_pos - $dot_height + 1;
                 $y2 = $y_pos - 1;
-                if ($use_shapes) {
-                    // Draw a point shape in the data color
-                    // If plot area background is on, use that as the shape background:
-                    if ($this->draw_plot_area_background) {
-                        ImageFilledRectangle($this->img, $dot_left_x, $y1, $dot_right_x, $y2,
-                                             $this->ndx_plot_bg_color);
-                    }
-                    // Draw the shape. DrawShape() takes shape_index modulo number of defined shapes.
-                    $this->DrawShape($xc, $yc, $shape_index++, $this->ndx_data_colors[$color_index]);
-                } else {
-                    // Draw color boxes:
-                    ImageFilledRectangle($this->img, $dot_left_x, $y1, $dot_right_x, $y2,
-                                         $this->ndx_data_colors[$color_index]);
-                   // Draw a rectangle around the box
-                   ImageRectangle($this->img, $dot_left_x, $y1, $dot_right_x, $y2, $this->ndx_text_color);
-                }
+                ImageFilledRectangle($this->img, $dot_left_x, $y1, $dot_right_x, $y2,
+                                     $this->ndx_data_colors[$color_index]);
+                // Draw a rectangle around the box
+                ImageRectangle($this->img, $dot_left_x, $y1, $dot_right_x, $y2,
+                               $this->ndx_text_color);
             }
             $y_pos += $dot_height;
-            $yc += $dot_height;
-            if (++$color_index > $max_color_index)
+
+            $color_index++;
+            if ($color_index > $max_color_index)
                 $color_index = 0;
         }
         return TRUE;
@@ -4896,96 +4873,99 @@ class PHPlot
     }
 
     /*
-     * Draw a shape (dot, point). This is the bottom half of DrawDot, and is also
-     * used by legend drawing. Unlike DrawDot this takes device coordinates.
+     * Draws a styled dot. Uses world coordinates.
      * The list of supported shapes can also be found in SetPointShapes().
-     *   $x, $y - Device coordinates of the center of the shape
-     *   $record - Index into point_shapes[] and point_sizes[]. This is taken modulo the array sizes.
-     *   $color - Shape color to use.
+     * All shapes are drawn using a 3x3 grid, centered on the data point.
+     * The center is (x_mid, y_mid) and the corners are (x1, y1) and (x2, y2).
+     *   $record is the 0-based index that selects the shape and size.
      */
-    protected function DrawShape($x, $y, $record, $color)
+    protected function DrawDot($x_world, $y_world, $record, $color)
     {
         $index = $record % $this->point_counts;
         $point_size = $this->point_sizes[$index];
+
         $half_point = (int)($point_size / 2);
 
-        $x1 = $x - $half_point;
-        $x2 = $x + $half_point;
-        $y1 = $y - $half_point;
-        $y2 = $y + $half_point;
+        $x_mid = $this->xtr($x_world);
+        $y_mid = $this->ytr($y_world);
+
+        $x1 = $x_mid - $half_point;
+        $x2 = $x_mid + $half_point;
+        $y1 = $y_mid - $half_point;
+        $y2 = $y_mid + $half_point;
 
         switch ($this->point_shapes[$index]) {
         case 'halfline':
-            ImageLine($this->img, $x1, $y, $x, $y, $color);
+            ImageLine($this->img, $x1, $y_mid, $x_mid, $y_mid, $color);
             break;
         case 'line':
-            ImageLine($this->img, $x1, $y, $x2, $y, $color);
+            ImageLine($this->img, $x1, $y_mid, $x2, $y_mid, $color);
             break;
         case 'plus':
-            ImageLine($this->img, $x1, $y, $x2, $y, $color);
-            ImageLine($this->img, $x, $y1, $x, $y2, $color);
+            ImageLine($this->img, $x1, $y_mid, $x2, $y_mid, $color);
+            ImageLine($this->img, $x_mid, $y1, $x_mid, $y2, $color);
             break;
         case 'cross':
             ImageLine($this->img, $x1, $y1, $x2, $y2, $color);
             ImageLine($this->img, $x1, $y2, $x2, $y1, $color);
             break;
         case 'circle':
-            ImageArc($this->img, $x, $y, $point_size, $point_size, 0, 360, $color);
+            ImageArc($this->img, $x_mid, $y_mid, $point_size, $point_size, 0, 360, $color);
             break;
         case 'dot':
-            ImageFilledEllipse($this->img, $x, $y, $point_size, $point_size, $color);
+            ImageFilledEllipse($this->img, $x_mid, $y_mid, $point_size, $point_size, $color);
             break;
         case 'diamond':
-            $arrpoints = array($x1, $y, $x, $y1, $x2, $y, $x, $y2);
+            $arrpoints = array( $x1, $y_mid, $x_mid, $y1, $x2, $y_mid, $x_mid, $y2);
             ImageFilledPolygon($this->img, $arrpoints, 4, $color);
             break;
         case 'triangle':
-            $arrpoints = array($x1, $y, $x2, $y, $x, $y2);
+            $arrpoints = array( $x1, $y_mid, $x2, $y_mid, $x_mid, $y2);
             ImageFilledPolygon($this->img, $arrpoints, 3, $color);
             break;
         case 'trianglemid':
-            $arrpoints = array($x1, $y1, $x2, $y1, $x, $y);
+            $arrpoints = array( $x1, $y1, $x2, $y1, $x_mid, $y_mid);
             ImageFilledPolygon($this->img, $arrpoints, 3, $color);
             break;
         case 'yield':
-            $arrpoints = array($x1, $y1, $x2, $y1, $x, $y2);
+            $arrpoints = array( $x1, $y1, $x2, $y1, $x_mid, $y2);
             ImageFilledPolygon($this->img, $arrpoints, 3, $color);
             break;
         case 'delta':
-            $arrpoints = array($x1, $y2, $x2, $y2, $x, $y1);
+            $arrpoints = array( $x1, $y2, $x2, $y2, $x_mid, $y1);
             ImageFilledPolygon($this->img, $arrpoints, 3, $color);
             break;
         case 'star':
-            ImageLine($this->img, $x1, $y, $x2, $y, $color);
-            ImageLine($this->img, $x, $y1, $x, $y2, $color);
+            ImageLine($this->img, $x1, $y_mid, $x2, $y_mid, $color);
+            ImageLine($this->img, $x_mid, $y1, $x_mid, $y2, $color);
             ImageLine($this->img, $x1, $y1, $x2, $y2, $color);
             ImageLine($this->img, $x1, $y2, $x2, $y1, $color);
             break;
         case 'hourglass':
-            $arrpoints = array($x1, $y1, $x2, $y1, $x1, $y2, $x2, $y2);
+            $arrpoints = array( $x1, $y1, $x2, $y1, $x1, $y2, $x2, $y2);
             ImageFilledPolygon($this->img, $arrpoints, 4, $color);
             break;
         case 'bowtie':
-            $arrpoints = array($x1, $y1, $x1, $y2, $x2, $y1, $x2, $y2);
+            $arrpoints = array( $x1, $y1, $x1, $y2, $x2, $y1, $x2, $y2);
             ImageFilledPolygon($this->img, $arrpoints, 4, $color);
             break;
         case 'target':
-            ImageFilledRectangle($this->img, $x1, $y1, $x, $y, $color);
-            ImageFilledRectangle($this->img, $x, $y, $x2, $y2, $color);
+            ImageFilledRectangle($this->img, $x1, $y1, $x_mid, $y_mid, $color);
+            ImageFilledRectangle($this->img, $x_mid, $y_mid, $x2, $y2, $color);
             ImageRectangle($this->img, $x1, $y1, $x2, $y2, $color);
             break;
         case 'box':
             ImageRectangle($this->img, $x1, $y1, $x2, $y2, $color);
             break;
         case 'home': /* As in: "home plate" (baseball), also looks sort of like a house. */
-            $arrpoints = array($x1, $y2, $x2, $y2, $x2, $y, $x, $y1, $x1, $y);
+            $arrpoints = array( $x1, $y2, $x2, $y2, $x2, $y_mid, $x_mid, $y1, $x1, $y_mid);
             ImageFilledPolygon($this->img, $arrpoints, 5, $color);
             break;
         case 'up':
-            ImagePolygon($this->img, array($x, $y1, $x2, $y2, $x1, $y2), 3, $color);
+            ImagePolygon($this->img, array($x_mid, $y1, $x2, $y2, $x1, $y2), 3, $color);
             break;
         case 'down':
-            ImagePolygon($this->img, array($x, $y2, $x1, $y1, $x2, $y1), 3, $color);
+            ImagePolygon($this->img, array($x_mid, $y2, $x1, $y1, $x2, $y1), 3, $color);
             break;
         case 'none': /* Special case, no point shape here */
             break;
@@ -4994,15 +4974,6 @@ class PHPlot
             break;
         }
         return TRUE;
-    }
-
-    /*
-     * Draws a styled dot. Uses world coordinates.
-     * Note: DrawShape() does all the work.
-     */
-    protected function DrawDot($x_world, $y_world, $record, $color)
-    {
-        return $this->DrawShape($this->xtr($x_world), $this->ytr($y_world), $record, $color);
     }
 
     /*
@@ -5912,6 +5883,7 @@ class PHPlot
             $wy1 = 0;                       // World coordinates Y1, current sum of values
             $wy2 = $this->x_axis_position;  // World coordinates Y2, last drawn value
             $first = TRUE;
+            $upward = TRUE; // Initialize this for the case of all segments = 0
 
             for ($idx = 0; $record < $this->num_recs[$row]; $record++, $idx++) {
 
@@ -6003,6 +5975,7 @@ class PHPlot
             $wx1 = 0;                       // World coordinates X1, current sum of values
             $wx2 = $this->y_axis_position;  // World coordinates X2, last drawn value
             $first = TRUE;
+            $rightward = TRUE; // Initialize this for the case of all segments = 0
 
             for ($idx = 0; $record < $this->num_recs[$row]; $record++, $idx++) {
 
