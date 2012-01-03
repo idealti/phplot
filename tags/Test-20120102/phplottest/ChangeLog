@@ -1,0 +1,42 @@
+This is the Change Log for phplottest, the PHPlot Test Suite
+The project home page is http://sourceforge.net/projects/phplot/
+-----------------------------------------------------------------------------
+
+2012-01-02
+    * ex-pielabeltype: Resync to example from the manual. This removes two
+      data rows which were too small to display.
+
+2012-01-01
+    * LICENSES: Update copyright year, no change to licenses.
+
+2011-12-30
+    Add 70 new tests and 1 data file, for the pie sizing and label changes.
+    * ex-pielabeltype*.php: New example files and data file, from the manual.
+    * multipie.php, pieautosize*.php, pieminautosize*.php, pieminsize*.php,
+      piesize*.php: New tests for pie sizing and label types.
+    * Makefile: List new dependent file
+    * tests.ini: Add 70 new tests to run
+
+2011-12-21
+    * multiplot.php: Added option for plot-area-relative legend positioning,
+      to fix the test failure in multiplot2 with new pie chart code.
+    * multiplot2.php: Use new plot-area-relative legend positioning, not world
+      coordinates. This fixes a test failure with the new pie chart code,
+      which does not set up world coordinate mapping with pie charts. World
+      coordinates don't make sense for pie charts and this should not have
+      worked before.
+
+2011-12-10
+    * LICENSES: Fix typo, no change to licenses.
+
+2011-08-24
+    * tests.ini: Fix validation pattern for encodeimg1 per previous change.
+
+2011-08-19
+    * encodeimg1.php: Fix message from test so it does not contain the path
+      to the results directory, to avoid spurious result compare errors.
+
+2011-08-08
+    * The PHPlot Test Suite is imported into SubVersion. No prior change
+      history is available here (although the test suite development goes
+      back to 2006).
