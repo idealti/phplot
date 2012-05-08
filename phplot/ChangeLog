@@ -1,6 +1,9 @@
 This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
+2012-05-07
+    * Branch for Release 6.0.0. Mark as unreleased version.
+
 2012-04-06       ===== Released as 5.8.0 =====
     * Feature request #3515519 "Support object serialize/unserialize":
       Add __sleep() and __wakeup() magic methods to support serialize
