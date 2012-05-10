@@ -1,7 +1,60 @@
 This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
-2012-05-07
+
+2012-05-09 (/branches/Rel6)
+    * Incorporate in-progress changes for bug #2919086 "Improve tick
+      interval calculations" and bug #1795969 "Fix automatic Y range
+      calculations". This is planned for PHPlot-6.0.0.
+      NOTE: This is not complete, stable, or  ready for use!
+
+      + Remove initialization of 8 class variables: num_[xy]_ticks,
+        [xy]_tick_inc, skip_*_tick. "Unset" is now the default value.
+
+      + New internal function CalcStep125(), which calculates a tick
+        increment of the form TI = K * 10 ** I, where K = 1, 2, or 5.
+
+      + New internal function CalcStepDateTime(), which calculates a tick
+        increment for date/time scales.
+
+      + New internal function CalcStep(), which calculates a good tick
+        increment given the data range and scale type, among other factors.
+
+      + New internal function CalcRangeInit(), which provides the initial
+        guesses at the plot area range limits.
+
+      + New internal function CalcPlotRange(), which calculates the limits
+        of the plot area range for either X or Y (if not user-provided).
+        It also calculates the tick increment, if necessary.
+
+      + Rewrote internal function CalcPlotAreaWorld(). This now just calls
+        CalcPlotRange() twice - once for X, and once for Y.
+
+      + Changed SetPlotAreaWorld() to validate any provided values, making
+        sure the range is non-negative (which would break the later
+        calculations). It now throws an error on invalid range.
+
+      + Rewrote internal function CalcTicks(). This no longer calculates
+        the tick increment, which was calculated by CalcPlotRange() because
+        the range adjustment is tied to the tick increment now.
+
+      + Remove an unneeded error check in protected function
+        CalcMaxTickLabelSize().
+
+      + Changed public functions SetXTickIncrement() and SetYTickIncrement()
+        to not reset the number of tick marks.  Changed public functions
+        SetNumXTicks() and SetNumYTicks() to not reset the tick increments.
+        These changes are part of fixing an order-dependency problem with
+        these function pairs (different result from calling SetXTickIncrement()
+        then SetNumXTicks(), versus calling them in the other order).
+
+      + New public function TuneAutoRange(). This allows setting (currently)
+        5 parameters for either X or Y axis that are used to adjust the range
+        and tick increment calculations. For example, one parameter sets the
+        minimum number of tick intervals when the tick increment is
+        automatically calculated.
+
+2012-05-07 (/branches/Rel6)
     * Branch for Release 6.0.0. Mark as unreleased version.
 
 2012-04-06       ===== Released as 5.8.0 =====
