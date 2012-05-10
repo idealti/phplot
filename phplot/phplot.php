@@ -133,17 +133,6 @@ class PHPlot
     public $x_tick_pos = 'plotdown';           // plotdown, plotup, both, xaxis, none
     public $y_tick_pos = 'plotleft';           // plotright, plotleft, both, yaxis, none
 
-    public $num_x_ticks = '';
-    public $num_y_ticks = '';
-
-    public $x_tick_inc = '';                   // Set num_x_ticks or x_tick_inc, not both.
-    public $y_tick_inc = '';                   // Set num_y_ticks or y_tick_inc, not both.
-
-    public $skip_top_tick = FALSE;
-    public $skip_bottom_tick = FALSE;
-    public $skip_left_tick = FALSE;
-    public $skip_right_tick = FALSE;
-
 //Grid Formatting
     // public $draw_x_grid = FALSE;            // Default is False except for swapped data type
     // public $draw_y_grid = TRUE;             // Default is True except for swapped data type
@@ -3483,100 +3472,236 @@ class PHPlot
     }
 
     /*
-     * Calculate the World Coordinate limits of the plot area.
-     * This goes with SetPlotAreaWorld, but the calculations are
-     * deferred until the graph is being drawn.
-     * Uses and sets: plot_min_x, plot_max_x, plot_min_y, plot_max_y
-     * These can be user-supplied or NULL to auto-calculate.
-     * Pre-requisites: FindDataLimits() calculates min_x, max_x, min_y, max_y
-     * which are the limits of the data to be plotted.
-     *
-     * The general method is this:
-     *   If any part of the range is user-defined (via SetPlotAreaWorld),
-     *      use the user-defined value.
-     *   Else, if this is an implicitly-defined independent variable,
-     *      use the fixed range of 0 to (max+1).
-     *   Else, if this is an explicitly-defined independent variable,
-     *      use the exact data range (min to max).
-     *   Else, this is the dependent variable, so define a range which
-     *      includes and exceeds the data range by a bit.
+     * Calculate a tick step for a numeric range. This is used by CalcStep().
+     * Result is a multiple of 1, 2, or 5 times a power of 10, and divides the data range
+     * into no fewer than min_ticks tick intervals.
+     *   $range : The data range (max - min), already checked as > 0.
+     *   $min_ticks : is the smallest number of intervals allowed, already checked > 0.
+     * Returns the calculated tick step.
+     */
+    protected function CalcStep125($range, $min_ticks)
+    {
+        $v = log10($range / $min_ticks);
+        $vi = (int)floor($v);
+        $tick_step = pow(10, $vi);
+        $f = $v - $vi;
+        if ($f > 0.69897) $tick_step *= 5;   // Note 0.69897 = log10(5)
+        elseif ($f > 0.30103) $tick_step *= 2;  // Note 0.30103 = log10(2)
+        return $tick_step;
+    }
+
+    /*
+     * Calculate a tick step to use for a date/time interval. This is used by CalcStep().
+     * Unlike CalcStep125(), there is no equation to compute this, so an array $datetime_steps is used.
+     * The values are "natural" time intervals, keeping the ratio between adjacent entries <= 2.5
+     * (so that max_ticks <= 2.5*min_ticks). For seconds or minutes, it uses: 1 2 5 10 15 30. For hours,
+     * it uses 1 2 4 8 12 24 48 96 and 168 (=7 days). Above that, it falls back to CalcStep125 using days.
+     *   $range : The data range (max - min).
+     *   $min_ticks : is the smallest number of intervals allowed, already checked > 0.
+     * Returns the calculated tick step. This will always be >= 1 second.
+     */
+    protected function CalcStepDatetime($range, $min_ticks)
+    {
+        static $datetime_steps = array(1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600,
+                                    7200, 14400, 28800, 43200, 86400, 172800, 345600, 604800);
+        static $datetime_limit = 1512000;  // 1 week times 2.5, in seconds.
+
+        if ($range < $min_ticks) {
+            $tick_step = 1;    // Range is too small; minimum interval is 1 second.
+        } elseif (($tick_limit = $range / $min_ticks) <= $datetime_limit) {
+            // Find the biggest value in the table <= tick_limit (which is the
+            // exact interval which would give min_ticks steps):
+            foreach ($datetime_steps as $v) {
+                if ($v <= $tick_limit) $tick_step = $v;
+                else break;
+            }
+        } else {
+            // Use the numeric-mode algorithm to find a 1,2,5*10**n solution, in units of days.
+            $tick_step = $this->CalcStep125($range / 86400, $min_ticks) * 86400;
+        }
+        return $tick_step;
+    }
+
+    /*
+     * Calculate an ideal tick increment for a given data range.
+     *   $data_min, $data_max : Low and high data range values
+     *   $tick_inc : Optional user-specified tick increment.
+     *   $num_ticks : Optional user-specified number of ticks.
+     *   $min_ticks :  Minimum permitted ticks.
+     *   $use_datetime : If true, units are seconds so use the date/time algorithm.
+     *   $integer_step : If true, minimum tick interval is 1.
+     * Returns: The tick increment.
+     * Caller-specified tick_inc has priority. If empty, num_ticks has next priority. If neither
+     * tick_inc nor num_ticks is provided, the automatic algorithm is used.
+     * There are two methods, depending on $use_datetime. See CalcStep125() and CalcStepDatetime().
+     * Note the data_min and data_max arguments are reference arguments. They will be
+     * modified only if data_min==data_max (that is, if the data range is zero).
+     */
+    protected function CalcStep(&$data_min, &$data_max, $tick_inc, $num_ticks, $min_ticks,
+        $use_datetime, $integer_step = False)
+    {
+        // The range must be positive, so check for and fix the special case of zero range.
+        // The fixes here are somewhat arbitrary, lacking any other information.
+        if ($data_min == $data_max) {
+            if ($data_max == 0.0) {
+                $data_max = 10;
+            } elseif ($data_min > 0) {
+                $data_min = 0;
+                $data_max = max($data_max, 10); // Use range 0:10 or larger
+            } else {
+                $data_min = min($data_min, -10); // Use range -10:0 or larger
+                $data_max = 0;
+            }
+        }
+
+        // If a tick increment was given, just use that:
+        if (!empty($tick_inc))
+            return $tick_inc;
+
+        $range = $data_max - $data_min;
+
+        // Calculate the number of ticks.
+        if (!empty($num_ticks)) {               // Number of ticks provided: use exactly that
+            $tick_step = $range / $num_ticks;
+        } elseif ($use_datetime) {              // Date/time range
+            $tick_step = $this->CalcStepDatetime($range, $min_ticks);
+        } elseif ($integer_step && $range <= $min_ticks) {  // Forced integer ticks and range too small
+            $tick_step = 1;
+        } else {                                // Numeric range, default case
+            $tick_step = $this->CalcStep125($range, $min_ticks);
+        }
+
+        if ($this->GetCallback('debug_scale'))
+            $this->DoCallback('debug_scale', __FUNCTION__, compact('data_min', 'data_max', 'tick_step'));
+        return $tick_step;
+    }
+
+    /*
+     * Helper for CalcPlotRange() - set initial values for plot_min or plot_max.
+     *  $plot_limit : Reference to plot_{min,max}_{x,y} (which might not be set).
+     *  $implied : True if this is the implied variable (X for vertical plots).
+     *  $min_flag : True if this is the lower bound (only difference is for $implied case).
+     *  $data_limit : Actual data limit at this end: one of min_x, max_x,  etc.
+     *  $adjust_flag : Returns set to True if the return value needs further adjument.
+     * Returns: The initial value of the range limit.
+     */
+    protected function CalcRangeInit(&$plot_limit, $implied, $min_flag, $data_limit, &$adjust_flag)
+    {
+        $adjust_flag = FALSE;
+        if (isset($plot_limit) && $plot_limit !== '') {
+            $result = $plot_limit;   // Use user-supplied value, if set
+        } elseif ($implied) {
+            $result = $min_flag ? 0 : $data_limit + 1;  // Implied limit, e.g. X in text-data
+        } else {
+            $result = $data_limit;   // Start with the data limit
+            $adjust_flag = TRUE;     // Flag this as needing adjustment
+        }
+        return $result;
+    }
+
+    /*
+     * Helper for CalcPlotAreaWorld() - calculate range of X or Y, and tick increment.
+     *  $which : 'x' or 'y' - calculate the X or Y ranges.
+     */
+    protected function CalcPlotRange($which)
+    {
+        // Copy the variables for X or Y into local variables, applying defaults.
+        // Notes:
+        //   top_adjust defaults to 5% for the dependent variable, no adjustment for independent variable.
+        //   integer_step defaults to false if [xy]_tick_inc_integer is not set.
+        //   datetime tick increment is used if specified by user or if Set*LabelType('time').
+        if ($which == 'x') {
+            $implied = $this->datatype_implied && !$this->datatype_swapped_xy;
+            $plot_min = $this->CalcRangeInit($this->plot_min_x, $implied, TRUE, $this->min_x, $adjust_min);
+            $plot_max = $this->CalcRangeInit($this->plot_max_x, $implied, FALSE, $this->max_x, $adjust_max);
+            $tick_inc = empty($this->x_tick_inc) ? '' : $this->x_tick_inc;
+            $num_ticks = empty($this->num_x_ticks) ? '' : $this->num_x_ticks;
+            $min_ticks = empty($this->x_min_ticks) ? 5 : $this->x_min_ticks;
+            if (isset($this->x_top_adjust)) $top_adjust = $this->x_top_adjust;
+            else $top_adjust = $this->datatype_swapped_xy ? 0.05 : 0;
+            $zero_affinity = isset($this->x_zero_affinity) ? $this->x_zero_affinity : 0.1;
+            if (isset($this->x_datetime_interval)) $datetime = $this->x_datetime_interval;
+            else $datetime = isset($this->label_format['x']['type'])
+                             && $this->label_format['x']['type'] == 'time';
+            $integer_step = !empty($this->x_tick_inc_integer);
+        } else { // Assumed 'y'
+            $implied = $this->datatype_implied && $this->datatype_swapped_xy;
+            $plot_min = $this->CalcRangeInit($this->plot_min_y, $implied, TRUE, $this->min_y, $adjust_min);
+            $plot_max = $this->CalcRangeInit($this->plot_max_y, $implied, FALSE, $this->max_y, $adjust_max);
+            $tick_inc = empty($this->y_tick_inc) ? '' : $this->y_tick_inc;
+            $num_ticks = empty($this->num_y_ticks) ? '' : $this->num_y_ticks;
+            $min_ticks = empty($this->y_min_ticks) ? 5 : $this->y_min_ticks;
+            if (isset($this->y_top_adjust)) $top_adjust = $this->y_top_adjust;
+            else $top_adjust = $this->datatype_swapped_xy ? 0 : 0.05;
+            $zero_affinity = isset($this->y_zero_affinity) ? $this->y_zero_affinity : 0.1;
+            $datetime_interval = isset($this->y_datetime_interval) ? $this->y_datetime_interval : NULL;
+            if (isset($this->y_datetime_interval)) $datetime = $this->y_datetime_interval;
+            else $datetime = isset($this->label_format['y']['type'])
+                             && $this->label_format['y']['type'] == 'time';
+            $integer_step = !empty($this->y_tick_inc_integer);
+        }
+
+        // Adjust the min and max values, if flagged above for adjustment.
+
+        // If the lower range does not include zero, and zero_affinity is enabled, then try adjusting:
+        if ($adjust_min && $plot_min > 0 && $zero_affinity > 0 && ($zero_affinity == 1.0 ||
+                 $plot_min < ($plot_max - $plot_min) * ($zero_affinity / (1 - $zero_affinity)))) {
+            $plot_min = 0;
+        }
+
+        // Similar to above, for negative data: increase plot_max to zero if close enough:
+        if ($adjust_max && $plot_max < 0 && $zero_affinity > 0 && ($zero_affinity == 1.0 ||
+                 $plot_max > ($plot_min - $plot_max) * ($zero_affinity / (1 - $zero_affinity)))) {
+            $plot_max = 0;
+        }
+
+        // Calculate the tick interval, based on the initial plot area world coordinate limits.
+        // Note if [xy]_tick_inc is set, that will be returned as the value.
+        // Note $plot_min and $plot_max will be changed by CalcStep if plot_min==plot_max.
+        $tick_inc = $this->CalcStep($plot_min, $plot_max, $tick_inc, $num_ticks, $min_ticks,
+                                    $datetime, $integer_step);
+
+        // Adjust the lower bound, if not user-set, to start at a tick mark:
+        if ($adjust_min && $plot_min != 0) {
+            $plot_min = $tick_inc * floor($plot_min / $tick_inc);
+        }
+
+        // Adjust the upper bound, if not user-set, using the top_adjust factor.
+        if ($adjust_max && $plot_max != 0) {
+            $plot_max += $top_adjust * ($plot_max - $plot_min);
+        }
+
+        // Check log scale range - plot_min and plot_max must be > 0.
+        if ($which == 'y' && $this->yscale_type == 'log' || $which == 'x' && $this->xscale_type == 'log') {
+            if ($plot_min <= 0) $plot_min = 1;
+            if ($plot_max <= 0) {
+                // Note: Error message names the public function, not this function.
+                return $this->PrintError("SetPlotAreaWorld(): Invalid $which range for log scale");
+            }
+        }
+        // Final error check to ensure the range is positive.
+        if ($plot_min >= $plot_max) $plot_max = $plot_min + 1;
+
+        if ($this->GetCallback('debug_scale')) {
+            $this->DoCallback('debug_scale', __FUNCTION__,
+                              compact('which', 'plot_min', 'plot_max', 'tick_inc'));
+        }
+
+        // Return the calculated values. (Note these get stored back into class variables.)
+        return array($tick_inc, $plot_min, $plot_max);
+    }
+
+    /*
+     * Calculate the World Coordinate limits of the plot area, and the tick increment.
+     * (The range and increment are related, so they are calculated together.)
+     * Uses and sets: Plot Area range: plot_min_x, plot_max_x, plot_min_y, plot_max_y
+     *                Tick increment:  x_tick_inc, y_tick_inc
+     * These can be user-supplied, or NULL (or empty string) to auto-calculate.
      */
     protected function CalcPlotAreaWorld()
     {
-        // Data array omits X or Y?
-        $implied_x = $this->datatype_implied && !$this->datatype_swapped_xy;
-        $implied_y = $this->datatype_implied && $this->datatype_swapped_xy;
-
-        if (isset($this->plot_min_x) && $this->plot_min_x !== '')
-            $xmin = $this->plot_min_x; // Use user-provided value
-        elseif ($implied_x)
-            $xmin = 0;          // Implied X starts at zero
-        elseif ($this->datatype_swapped_xy)
-            // If X is the dependent variable, leave some room below.
-            $xmin = floor($this->min_x - abs($this->min_x) * 0.1);
-        else
-            $xmin = $this->min_x;  // Otherwise just start at the min data X
-
-        if (isset($this->plot_max_x) && $this->plot_max_x !== '')
-            $xmax = $this->plot_max_x; // Use user-provided value
-        elseif ($implied_x)
-            $xmax = $this->max_x + 1; // Implied X ends after last value
-        elseif ($this->datatype_swapped_xy)
-            // If X is the dependent variable, leave some room above.
-            $xmax = ceil($this->max_x + abs($this->max_x) * 0.1);
-        else
-            $xmax = $this->max_x; // Otherwise just end at the max data X
-
-        if (isset($this->plot_min_y) && $this->plot_min_y !== '')
-            $ymin = $this->plot_min_y;  // Use user-provided value
-        elseif ($implied_y)
-            $ymin = 0;    // Implied Y starts at zero
-        elseif ($this->datatype_swapped_xy)
-            $ymin = $this->min_y; // Start at min data Y
-        else
-            // If Y is the dependent variable, leave some room below.
-            $ymin = floor($this->min_y - abs($this->min_y) * 0.1);
-
-        if (isset($this->plot_max_y) && $this->plot_max_y !== '')
-            $ymax = $this->plot_max_y; // Use user-provided value
-        elseif ($implied_y)
-            $ymax = $this->max_y + 1; // Implied Y ends after last value
-        elseif ($this->datatype_swapped_xy)
-            $ymax = $this->max_y;  // End at max data Y
-        else
-            // If Y is the dependent variable, leave some room above.
-            $ymax = ceil($this->max_y + abs($this->max_y) * 0.1);
-
-        // Error checking
-
-        if ($ymin == $ymax)
-            $ymax++;
-        if ($xmin == $xmax)
-            $xmax++;
-
-        if ($this->yscale_type == 'log') {
-            if ($ymin <= 0) {
-                $ymin = 1;
-            }
-            if ($ymax <= 0) {
-                // Note: Error messages reference the user function, not this function.
-                return $this->PrintError('SetPlotAreaWorld(): Log plots need data greater than 0');
-            }
-        }
-
-        if ($ymax <= $ymin) {
-            return $this->PrintError('SetPlotAreaWorld(): Error in data - max not greater than min');
-        }
-
-        $this->plot_min_x = $xmin;
-        $this->plot_max_x = $xmax;
-        $this->plot_min_y = $ymin;
-        $this->plot_max_y = $ymax;
-        if ($this->GetCallback('debug_scale')) {
-            $this->DoCallback('debug_scale', __FUNCTION__, array(
-                'plot_min_x' => $this->plot_min_x, 'plot_min_y' => $this->plot_min_y,
-                'plot_max_x' => $this->plot_max_x, 'plot_max_y' => $this->plot_max_y));
-        }
+        list($this->x_tick_inc, $this->plot_min_x, $this->plot_max_x) = $this->CalcPlotRange('x');
+        list($this->y_tick_inc, $this->plot_min_y, $this->plot_max_y) = $this->CalcPlotRange('y');
         return TRUE;
     }
 
@@ -3584,6 +3709,7 @@ class PHPlot
      * Stores the desired World Coordinate range of the plot.
      * The user calls this to force one or more of the range limits to
      * specific values. Anything not set will be calculated in CalcPlotAreaWorld().
+     * The range is validated, because the scale calculations depend on min <= max.
      */
     function SetPlotAreaWorld($xmin=NULL, $ymin=NULL, $xmax=NULL, $ymax=NULL)
     {
@@ -3591,7 +3717,10 @@ class PHPlot
         $this->plot_max_x = $xmax;
         $this->plot_min_y = $ymin;
         $this->plot_max_y = $ymax;
-        return TRUE;
+        if (isset($xmin) && isset($xmax) && $xmin > $xmax) $bad = 'X';
+        elseif (isset($ymin) && isset($ymax) && $ymin > $ymax) $bad = 'Y';
+        else return TRUE;
+        return $this->PrintError("SetPlotAreaWorld(): $bad range error - min is greater than max");
     }
 
     /*
@@ -3811,58 +3940,39 @@ class PHPlot
     }
 
     /*
-     * Calculate tick parameters: Start, end, and delta values. This is used
-     * by both DrawXTicks() and DrawYTicks().
-     * This currently uses the same simplistic method previously used by
-     * PHPlot (basically just range/10), but splitting this out into its
-     * own function is the first step in replacing the method.
-     * This is also used by CalcMaxTickSize() for CalcMargins().
-     *
-     *   $which : 'x' or 'y' : Which tick parameters to calculate
-     *
-     * Returns an array of 3 elements: tick_start, tick_end, tick_step
+     * Get the tick parameters: Start, end, and step values. This is used by DrawXTicks()
+     * and DrawYTicks(), and also by CalcMaxTickSize() for CalcMargins().
+     *   $which : 'x' or 'y' : Which tick parameters to calculate.
+     *   Returns an array of 3 elements: tick_start, tick_end, tick_step.
+     * Note: CalcPlotAreaWorld() calculates the tick step, if necessary, and stores it
+     * back to [xy]_tick_inc. CalcTicks() just returns that value.
      */
     protected function CalcTicks($which)
     {
         if ($which == 'x') {
-            $num_ticks = $this->num_x_ticks;
-            $tick_inc = $this->x_tick_inc;
+            $tick_step = $this->x_tick_inc;
+            $anchor = &$this->x_tick_anchor;  // Reference used because it might not be set.
             $data_max = $this->plot_max_x;
             $data_min = $this->plot_min_x;
-            $skip_lo = $this->skip_left_tick;
-            $skip_hi = $this->skip_right_tick;
-            $anchor = &$this->x_tick_anchor; // Use reference because this might not be set
-        } elseif ($which == 'y') {
-            $num_ticks = $this->num_y_ticks;
-            $tick_inc = $this->y_tick_inc;
+            $skip_lo = !empty($this->skip_left_tick);
+            $skip_hi = !empty($this->skip_right_tick);
+        } else { // Assumed 'y'
+            $tick_step = $this->y_tick_inc;
+            $anchor = &$this->y_tick_anchor;
             $data_max = $this->plot_max_y;
             $data_min = $this->plot_min_y;
-            $skip_lo = $this->skip_bottom_tick;
-            $skip_hi = $this->skip_top_tick;
-            $anchor = &$this->y_tick_anchor; // Use reference because this might not be set
-        } else {
-            return $this->PrintError("CalcTicks: Invalid usage ($which)");
+            $skip_lo = !empty($this->skip_bottom_tick);
+            $skip_hi = !empty($this->skip_top_tick);
         }
 
-        if (!empty($tick_inc)) {
-            $tick_step = $tick_inc;
-        } elseif (!empty($num_ticks)) {
-            $tick_step = ($data_max - $data_min) / $num_ticks;
-        } else {
-            $tick_step = ($data_max - $data_min) / 10;
-        }
-
-        // NOTE: When working with floats, because of approximations when adding $tick_step,
-        // the value may not quite reach the end, or may exceed it very slightly.
-        // So apply a "fudge" factor.
+        // To avoid losing a final tick mark due to round-off errors, push tick_end out slightly.
         $tick_start = (double)$data_min;
         $tick_end = (double)$data_max + ($data_max - $data_min) / 10000.0;
 
         // If a tick anchor was given, adjust the start of the range so the anchor falls
         // at an exact tick mark (or would, if it was within range).
-        if (isset($anchor)) {
+        if (isset($anchor))
             $tick_start = $anchor - $tick_step * floor(($anchor - $tick_start) / $tick_step);
-        }
 
         // Lastly, adjust for option to skip left/bottom or right/top tick marks:
         if ($skip_lo)
@@ -3870,6 +3980,9 @@ class PHPlot
         if ($skip_hi)
             $tick_end -= $tick_step;
 
+        if ($this->GetCallback('debug_scale'))
+            $this->DoCallback('debug_scale', __FUNCTION__,
+                              compact('which', 'tick_start', 'tick_end', 'tick_step'));
         return array($tick_start, $tick_end, $tick_step);
     }
 
@@ -3889,11 +4002,9 @@ class PHPlot
         if ($which == 'x') {
             $font = $this->fonts['x_label'];
             $angle = $this->x_label_angle;
-        } elseif ($which == 'y') {
+        } else { // Assumed 'y'
             $font = $this->fonts['y_label'];
             $angle = $this->y_label_angle;
-        } else {
-            return $this->PrintError("CalcMaxTickLabelSize: Invalid usage ($which)");
         }
 
         $max_width = 0;
@@ -4140,59 +4251,96 @@ class PHPlot
         return $which_lab;
     }
 
+    /*
+     * Set tuning parameters for automatic range calculations.
+     *   $axis : 'x' or 'y'   
+     *   $param : One of the variable names below
+     *   $value : A value for the variable, or '' to reset it to the default.
+     * Supported param names:
+     *   min_ticks : Minimum number of tick intervals
+     *   top_adjust : Extra space above max data limit, factor of the tick interval.
+     *   zero_affinity : Controls extending the data range to include zero, 0.0 to 1.0.
+     *   datatime_interval : False for numeric range, True for date/time range, default is automatic.
+     *   integer_increment : True to force tick increment to be a whole number >= 1. Default is false.
+     */
+    function TuneAutoRange($axis, $param, $value)
+    {
+        $axis = $this->CheckOption($axis, 'x, y', __FUNCTION__);
+        if (!$axis) return FALSE;
+        switch ($param) {
+        case 'min_ticks':    // Integer > 0
+            if ($axis == 'x') $var = &$this->x_min_ticks; else $var = &$this->y_min_ticks;
+            if ($value === '') unset($var);
+            elseif ($value > 0) $var = (int)$value;
+            break;
+
+        case 'top_adjust':    // Float > 0
+            if ($axis == 'x') $var =  &$this->x_top_adjust; else $var = &$this->y_top_adjust;
+            if ($value === '') unset($var);
+            elseif ($value >= 0) $var = $value;
+            break;
+
+        case 'zero_affinity': // Float in [0,1]
+            if ($axis == 'x') $var =  &$this->x_zero_affinity; else $var = &$this->y_zero_affinity;
+            if ($value === '') unset($var);
+            elseif (0 <= $value && $value <= 1.0) $var = $value;
+            break;
+
+        case 'datetime_interval':    // Boolean
+            if ($axis == 'x') $var =  &$this->x_datetime_interval; else $var = &$this->y_datetime_interval;
+            if ($value === '') unset($var);
+            else $var = (bool)$value;
+            break;
+
+        case 'integer_increment':    // Boolean
+            if ($axis == 'x') $var =  &$this->x_tick_inc_integer; else $var = &$this->y_tick_inc_integer;
+            if ($value === '') unset($var);
+            else $var = (bool)$value;
+            break;
+
+        default:
+            return $this->PrintError("TuneAutoRange(): Unknown parameter '$param'");
+        }
+        return TRUE;
+    }
+
 /////////////////////////////////////////////
 ///////////////                         TICKS
 /////////////////////////////////////////////
 
     /*
-     * Set the step (interval) between X ticks.
-     * Use either this or SetNumXTicks(), not both, to control the X tick marks.
+     * Set the step (interval) between X ticks. If not set, it is calculated.
      */
     function SetXTickIncrement($which_ti='')
     {
         $this->x_tick_inc = $which_ti;
-        if (!empty($which_ti)) {
-            $this->num_x_ticks = '';
-        }
         return TRUE;
     }
 
     /*
-     * Set the step (interval) between Y ticks.
-     * Use either this or SetNumYTicks(), not both, to control the Y tick marks.
+     * Set the step (interval) between Y ticks. If not set, it is calculated.
      */
     function SetYTickIncrement($which_ti='')
     {
         $this->y_tick_inc = $which_ti;
-        if (!empty($which_ti)) {
-            $this->num_y_ticks = '';
-        }
         return TRUE;
     }
 
     /*
-     * Set the number of X tick marks.
-     * Use either this or SetXTickIncrement(), not both, to control the X tick marks.
+     * Set the number of X tick marks. (Actually the number of intervals)
      */
     function SetNumXTicks($which_nt='')
     {
         $this->num_x_ticks = $which_nt;
-        if (!empty($which_nt)) {
-            $this->x_tick_inc = '';
-        }
         return TRUE;
     }
 
     /*
-     * Set the number of Y tick marks.
-     * Use either this or SetYTickIncrement(), not both, to control the Y tick marks.
+     * Set the number of Y tick marks. (Actually the number of intervals)
      */
     function SetNumYTicks($which_nt='')
     {
         $this->num_y_ticks = $which_nt;
-        if (!empty($which_nt)) {
-            $this->y_tick_inc = '';  //either use num_y_ticks or y_tick_inc, not both
-        }
         return TRUE;
     }
 
