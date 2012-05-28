@@ -3524,7 +3524,7 @@ class PHPlot
 
     /*
      * Calculate an ideal tick increment for a given data range.
-     *   $data_min, $data_max : Low and high data range values
+     *   $range : The data range (max - min)
      *   $tick_inc : Optional user-specified tick increment.
      *   $num_ticks : Optional user-specified number of ticks.
      *   $min_ticks :  Minimum permitted ticks.
@@ -3534,33 +3534,14 @@ class PHPlot
      * Caller-specified tick_inc has priority. If empty, num_ticks has next priority. If neither
      * tick_inc nor num_ticks is provided, the automatic algorithm is used.
      * There are two methods, depending on $use_datetime. See CalcStep125() and CalcStepDatetime().
-     * Note the data_min and data_max arguments are reference arguments. They will be
-     * modified only if data_min==data_max (that is, if the data range is zero).
      */
-    protected function CalcStep(&$data_min, &$data_max, $tick_inc, $num_ticks, $min_ticks,
-        $use_datetime, $integer_step = False)
+    protected function CalcStep($range, $tick_inc, $num_ticks, $min_ticks, $use_datetime, $integer_step)
     {
-        // The range must be positive, so check for and fix the special case of zero range.
-        // The fixes here are somewhat arbitrary, lacking any other information.
-        if ($data_min == $data_max) {
-            if ($data_max == 0.0) {
-                $data_max = 10;
-            } elseif ($data_min > 0) {
-                $data_min = 0;
-                $data_max = max($data_max, 10); // Use range 0:10 or larger
-            } else {
-                $data_min = min($data_min, -10); // Use range -10:0 or larger
-                $data_max = 0;
-            }
-        }
-
         // If a tick increment was given, just use that:
         if (!empty($tick_inc))
             return $tick_inc;
 
-        $range = $data_max - $data_min;
-
-        // Calculate the number of ticks.
+        // Calculate the tick increment tick_step:
         if (!empty($num_ticks)) {               // Number of ticks provided: use exactly that
             $tick_step = $range / $num_ticks;
         } elseif ($use_datetime) {              // Date/time range
@@ -3572,7 +3553,7 @@ class PHPlot
         }
 
         if ($this->GetCallback('debug_scale'))
-            $this->DoCallback('debug_scale', __FUNCTION__, compact('data_min', 'data_max', 'tick_step'));
+            $this->DoCallback('debug_scale', __FUNCTION__, compact('range', 'tick_step'));
         return $tick_step;
     }
 
@@ -3600,8 +3581,64 @@ class PHPlot
     }
 
     /*
+     * Make sure the X or Y plot range is positive. The tick increment and other calculations
+     * cannot handle negative or zero range, so we need to do something to prevent it. There
+     * are 2 general cases: 1) automatic range, and data is 'flat' (all same value). 2) One side
+     * of range given in SetPlotAreaWorld(), and all the data is on the wrong side of that.
+     * Note that values specified in SetPlotAreaWorld() are never adjusted, even if it means
+     * an empty plot (because all the data is outside the range).
+     * Called by CalcPlotRange() after CalcRangeInit() applies the defaults.
+     *   $which : 'X' or 'Y', used only for reporting.
+     *   $plot_min, $plot_max : References to the range limits. Changed by this function if necessary.
+     *   $adjust_min, $adjust_max : Flags indicating if the value was specified (False) or calculated (True).
+     */
+    protected function CheckPlotRange($which, &$plot_min, &$plot_max, $adjust_min, $adjust_max)
+    {
+        if ($plot_min < $plot_max)
+            return TRUE; // No adjustment needed.
+
+        // Bad range, plot_min >= plot_max, needs fixing.
+        if ($adjust_max && $adjust_min) {
+            // Both min and max are calculated, so either or both can be adjusted.
+            // It should not be possible that plot_min > plot_max here, but check it to be safe:
+            if ($plot_max != $plot_min)
+                return $this->PrintError("SetPlotAreaWorld(): Inverse auto $which range error");
+
+            if ($plot_max == 0.0) {
+                // All 0. Use the arbitrary range 0:10
+                $plot_max = 10;
+            } elseif ($plot_min > 0) {
+                // All same positive value. Use the range 0:10 (or larger).
+                $plot_min = 0;
+                $plot_max = max($plot_max, 10);
+            } else {
+                // All same negative value. Use the range -10:0 (or larger).
+                $plot_min = min($plot_min, -10);
+                $plot_max = 0;
+            }
+        } elseif ($adjust_max) {  // Equivalent to: ($adjust_max && !$adjust_min)
+            // Max is calculated, min was set, so adjust max
+            if ($plot_min < 0) $plot_max = 0;
+            else $plot_max = $plot_min + 10;
+
+        } elseif ($adjust_min) {  // Equivalent to: (!$adjust_max && $adjust_min)
+            // Min is calculated, max was set, so adjust min
+            if ($plot_max > 0) $plot_min = 0;
+            else $plot_min = $plot_max - 10;
+
+        } else {  // Equivalent to: (!$adjust_max && !$adjust_min)
+            // Both limits are set. This should never happen, since SetPlotAreaWorld stops it.
+            return $this->PrintError("SetPlotAreaWorld(): Inverse $which range error");
+        }
+        return TRUE;
+    }
+
+    /*
      * Helper for CalcPlotAreaWorld() - calculate range of X or Y, and tick increment.
      *  $which : 'x' or 'y' - calculate the X or Y ranges.
+     * Returns an array of 3 calculated values (or false on caught and returned error):
+     *   $tick_inc : Tick increment
+     *   $plot_min, $plot_max : Min and max of the plot area range
      */
     protected function CalcPlotRange($which)
     {
@@ -3619,7 +3656,7 @@ class PHPlot
             $min_ticks = empty($this->x_min_ticks) ? 5 : $this->x_min_ticks;
             if (isset($this->x_top_adjust)) $top_adjust = $this->x_top_adjust;
             else $top_adjust = $this->datatype_swapped_xy ? 0.05 : 0;
-            $zero_affinity = isset($this->x_zero_affinity) ? $this->x_zero_affinity : 0.1;
+            $zero_magnet = isset($this->x_zero_magnet) ? $this->x_zero_magnet : 0.857142;  // Default 6/7
             if (isset($this->x_datetime_interval)) $datetime = $this->x_datetime_interval;
             else $datetime = isset($this->label_format['x']['type'])
                              && $this->label_format['x']['type'] == 'time';
@@ -3633,7 +3670,7 @@ class PHPlot
             $min_ticks = empty($this->y_min_ticks) ? 5 : $this->y_min_ticks;
             if (isset($this->y_top_adjust)) $top_adjust = $this->y_top_adjust;
             else $top_adjust = $this->datatype_swapped_xy ? 0 : 0.05;
-            $zero_affinity = isset($this->y_zero_affinity) ? $this->y_zero_affinity : 0.1;
+            $zero_magnet = isset($this->y_zero_magnet) ? $this->y_zero_magnet : 0.857142;  // Default 6/7
             $datetime_interval = isset($this->y_datetime_interval) ? $this->y_datetime_interval : NULL;
             if (isset($this->y_datetime_interval)) $datetime = $this->y_datetime_interval;
             else $datetime = isset($this->label_format['y']['type'])
@@ -3641,25 +3678,29 @@ class PHPlot
             $integer_step = !empty($this->y_tick_inc_integer);
         }
 
+        // Validate the range, which must be positive. Adjusts plot_min and plot_max if necessary.
+        if (!$this->CheckPlotRange($which, $plot_min, $plot_max, $adjust_min, $adjust_max))
+            return FALSE;
+
         // Adjust the min and max values, if flagged above for adjustment.
 
-        // If the lower range does not include zero, and zero_affinity is enabled, then try adjusting:
-        if ($adjust_min && $plot_min > 0 && $zero_affinity > 0 && ($zero_affinity == 1.0 ||
-                 $plot_min < ($plot_max - $plot_min) * ($zero_affinity / (1 - $zero_affinity)))) {
+        // If the lower range does not include zero, and zero_magnet is enabled, then try adjusting:
+        if ($adjust_min && $plot_min > 0 && $zero_magnet > 0 && ($zero_magnet == 1.0 ||
+                 $plot_max / ($plot_max - $plot_min) < $zero_magnet / (1 - $zero_magnet))) {
             $plot_min = 0;
         }
 
-        // Similar to above, for negative data: increase plot_max to zero if close enough:
-        if ($adjust_max && $plot_max < 0 && $zero_affinity > 0 && ($zero_affinity == 1.0 ||
-                 $plot_max > ($plot_min - $plot_max) * ($zero_affinity / (1 - $zero_affinity)))) {
+        // Similar to above, but for negative data: increase plot_max to zero if close enough:
+        if ($adjust_max && $plot_max < 0 && $zero_magnet > 0 && ($zero_magnet == 1.0 ||
+                 $plot_min / ($plot_min - $plot_max) < $zero_magnet / (1 - $zero_magnet))) {
             $plot_max = 0;
         }
 
+
         // Calculate the tick interval, based on the initial plot area world coordinate limits.
         // Note if [xy]_tick_inc is set, that will be returned as the value.
-        // Note $plot_min and $plot_max will be changed by CalcStep if plot_min==plot_max.
-        $tick_inc = $this->CalcStep($plot_min, $plot_max, $tick_inc, $num_ticks, $min_ticks,
-                                    $datetime, $integer_step);
+        $range = $plot_max - $plot_min;
+        $tick_inc = $this->CalcStep($range, $tick_inc, $num_ticks, $min_ticks, $datetime, $integer_step);
 
         // Adjust the lower bound, if not user-set, to start at a tick mark:
         if ($adjust_min && $plot_min != 0) {
@@ -3702,7 +3743,7 @@ class PHPlot
     {
         list($this->x_tick_inc, $this->plot_min_x, $this->plot_max_x) = $this->CalcPlotRange('x');
         list($this->y_tick_inc, $this->plot_min_y, $this->plot_max_y) = $this->CalcPlotRange('y');
-        return TRUE;
+        return isset($this->x_tick_inc, $this->y_tick_inc); // Pass thru FALSE return from CalcPlotRange()
     }
 
     /*
@@ -4259,7 +4300,7 @@ class PHPlot
      * Supported param names:
      *   min_ticks : Minimum number of tick intervals
      *   top_adjust : Extra space above max data limit, factor of the tick interval.
-     *   zero_affinity : Controls extending the data range to include zero, 0.0 to 1.0.
+     *   zero_magnet : Controls extending the data range to include zero, 0.0 to 1.0.
      *   datatime_interval : False for numeric range, True for date/time range, default is automatic.
      *   integer_increment : True to force tick increment to be a whole number >= 1. Default is false.
      */
@@ -4280,8 +4321,8 @@ class PHPlot
             elseif ($value >= 0) $var = $value;
             break;
 
-        case 'zero_affinity': // Float in [0,1]
-            if ($axis == 'x') $var =  &$this->x_zero_affinity; else $var = &$this->y_zero_affinity;
+        case 'zero_magnet': // Float in [0,1]
+            if ($axis == 'x') $var =  &$this->x_zero_magnet; else $var = &$this->y_zero_magnet;
             if ($value === '') unset($var);
             elseif (0 <= $value && $value <= 1.0) $var = $value;
             break;
