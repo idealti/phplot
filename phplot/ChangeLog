@@ -1,6 +1,37 @@
 This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
+2012-05-28 (/branches/Rel6)
+    More changes for automatic range and tick increment calculations:
+
+    + Changed internal CalcStep() usage - pass the range, not the min and
+      max.  This is possible because the range checking was moved
+      to CheckPlotRange().
+
+    + New internal CheckPlotRange() makes sure the plot range is positive,
+      after defaults are applied. This expands on code moved from
+      CalcStep().  Called by CalcPlotRange().
+
+    + CalcPlotRange() - renamed "zero affinity" to "zero magnet". Call
+      new CheckPlotRange() to validate and adjust (if necessary) the range.
+
+      Changed the zero magnet algorithm. This is based on some experiments
+      with Libreoffice Calc charting. First, greatly increased the default
+      value for zero_magnet from 0.1 (which gives 11% range expansion) to
+      0.857 (or 6/7, which gives 600% range expansion). This means PHPlot
+      will now expand the range up to 6 times if that would result in
+      including 0 in the range.  Second, the tests were corrected, so now
+      it compares the range with zero versus the original range when
+      deciding whether to extend the range to include zero.
+
+    + TuneAutoRange() - renamed "zero affinity" to "zero magnet".
+
+    + CalcPlotAreaWorld() - pass back any error return from CalcPlotRange().
+
+    Note: There is still work to be done on how it automatically adjusts the
+    end of the range away from zero.  Currently, it tends to leave too
+    little space, which is a problem with data value labels.
+
 
 2012-05-09 (/branches/Rel6)
     * Incorporate in-progress changes for bug #2919086 "Improve tick
