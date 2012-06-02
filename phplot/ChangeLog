@@ -1,6 +1,31 @@
 This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
+2012-06-01 (/branches/Rel6)
+    More changes for automatic range and tick increment calculations:
+
+    + CalcPlotRange() - renamed "top_adjust" to "end_adjust", since it
+      now potentially applies to both ends of the plot range.
+
+      Added more comments explaining some of the more opaque expressions.
+
+      Redid adjustment of max (for positive) and min (if negative) ends
+      of the plot range.  The plot range will now always begin and end at a
+      tick mark. (PHPlot-5.8.0 does this, but previous changes on this
+      branch made it stop ending on a tick mark.)
+
+      Also, it will now leave more space at the ends away from zero - by
+      default, at least 0.3 * tick increment (since it ends at a tick, you
+      get between 0.3 and 1.3 tick increments of space). This also means
+      data value labels are much less likely to run off the plot area.
+
+    + TuneAutoRange() - renamed "top_adjust" to "end_adjust".
+      Added top comments explaining the parameters in more detail.
+
+    Note: Range ends are much better now, and as a result the PHPlot
+    Test Suite results are greatly improved.
+    There are still issues with tick anchors and date/time ranges.
+
 2012-05-28 (/branches/Rel6)
     More changes for automatic range and tick increment calculations:
 
