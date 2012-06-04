@@ -1735,5 +1735,113 @@ Access to the data point row and column index was added in PHPlot-5.8.0.
 </sect1>
 
 <!-- =============================================== -->
+<pagebreak/>
+<sect1 id="ex-imagemap-bars">
+<title>Example - Image Map from Bar Chart</title>
+<para>
+This example produces a complete HTML page with an embedded bar chart and
+image map. The image map makes the bars in the bar chart into hotlinks. In
+this example, the links just display the bar index as tool-tip text,
+and clicking on a bar displays the same text in an alert popup. But this could
+be used to link to another web page, display data in a popup window, etc.
+</para>
+<para>
+See <xref linkend="adv-imgmap"/> for more information on image maps.
+This capability was added in PHPlot-5.7.0.
+See <xref linkend="EncodeImage"/> for more on embedding plot images within
+an HTML page.
+</para>
+
+<example id="example-imagemap-bars">
+<?dbfo keep-together="auto"?>
+<title>Image Map from Bar Chart</title>
+<informalfigure>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="images/imagemap-bars.png" scale="58" format="PNG" />
+    </imageobject>
+    <textobject>
+      <phrase>Image Map from Bar Chart Example</phrase>
+    </textobject>
+  </mediaobject>
+</informalfigure>
+&imagemapbars;
+</example>
+</sect1>
+
+<!-- =============================================== -->
+<pagebreak/>
+<sect1 id="ex-imagemap-pie">
+<title>Example - Image Map from Pie Chart</title>
+<para>
+This example produces a complete HTML page with an embedded pie chart and
+image map. The image map makes the pie sectors in the chart into hotlinks.
+In this example, the links just display the value of the segment as
+tool-tip text, and clicking on a pie segment displays the same text in an
+alert popup.  But this could be used to link to another web page, display
+data in a popup window, etc.
+</para>
+<para>
+Unlike the <link linkend="ex-imagemap-bars">previous example</link> with a
+bar chart, in this example the callback function needs to do some more
+significant calculations in order to produce the image map areas. This is
+because HTML image maps do not directly support any area shape which
+corresponds to a pie chart segment. Therefore the callback function has to
+interpolate the pie chart segment as a polygon.
+</para>
+<para>
+See <xref linkend="adv-imgmap"/> for more information on image maps.
+This capability was added in PHPlot-5.7.0.
+See <xref linkend="EncodeImage"/> for more on embedding plot images within
+an HTML page.
+</para>
+
+<example id="example-imagemap-pie">
+<?dbfo keep-together="auto"?>
+<title>Image Map from Pie Chart</title>
+<informalfigure>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="images/imagemap-pie.png" scale="58" format="PNG" />
+    </imageobject>
+    <textobject>
+      <phrase>Image Map from Pie Chart Example</phrase>
+    </textobject>
+  </mediaobject>
+</informalfigure>
+&imagemappie;
+</example>
+</sect1>
+
+<!-- =============================================== -->
+<pagebreak/>
+<sect1 id="ex-imagemap-nonembed">
+<title>Example - Image Map and Non-embedded Plot Image</title>
+<para>
+This the complete example described in <xref linkend="adv-imgmap-nonembed"/>.
+It shows that image maps can also be produced when using PHPlot without
+using embedded ("data-URL") images. The down-side is that the script must
+run and process the plot data twice - once to create the HTML page with the
+image map, and once to create the plot image.
+</para>
+
+<example id="example-imagemap-nonembed">
+<?dbfo keep-together="auto"?>
+<title>Image Map and Non-embedded Plot Image</title>
+<informalfigure>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="images/imagemap-nonembed.png" scale="58" format="PNG" />
+    </imageobject>
+    <textobject>
+      <phrase>Image Map and Non-embedded Plot Image Example</phrase>
+    </textobject>
+  </mediaobject>
+</informalfigure>
+&imagemapnonembed;
+</example>
+</sect1>
+
+<!-- =============================================== -->
 
 </chapter>
