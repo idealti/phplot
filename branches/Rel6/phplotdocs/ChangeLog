@@ -3,6 +3,26 @@ This is phplotdocs/ChangeLog, listing changes to the PHPlot Reference Manual
 Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
+
+* 2012-06-04 (/branches/Rel6)
+    Including documentation for image maps, a previously-experimental
+    feature added in PHPlot-5.7.0. The text and examples are based on
+    the file Imagemaps.txt included in the PHPlot releases 5.7.0 and 5.8.0.
+    + examples/imagemapbars.php, imagemapnonembed.php, imagemappie.php: New
+      example files for image maps.
+    + images/imagemap-bars.png, imagemap-nonembed.png, imagemap-pie.png:
+      Static images - screenshots of the results from the image map examples.
+      (These examples produce web pages and cannot be directly included.)
+    + Makefile: Add 6 new files for image map examples.
+    + examples.xml: Add 3 new examples of image maps.
+    + advanced.xml: Add data_points to table of callbacks.
+      Started new section on image maps, taken from "Imagemaps.txt" file.
+      Note: Only a few subsections have been converted so far.
+
+* 2012-06-03 (/branches/Rel6)
+    Branch for Release 6.0.0
+    + main.xml: Indicate this is for future release PHPlot-6.0.0
+
 * 2012-04-06
     * advanced.xml: New small section on object serialization.
     * changelog.xml: Note new section(s).
