@@ -44,6 +44,9 @@ STATIC_IMAGES=\
   images/error-image.png \
   images/fonts.png \
   images/gdinfo.png \
+  images/imagemap-bars.png \
+  images/imagemap-nonembed.png \
+  images/imagemap-pie.png \
   images/labels-bar.png \
   images/labels-horizbar.png \
   images/labels-pie.png \
@@ -109,6 +112,9 @@ EXAMPLES_PHP=\
   examples/horizbar.php \
   examples/horizstackedbar.php \
   examples/horizthinbarline.php \
+  examples/imagemapbars.php \
+  examples/imagemapnonembed.php \
+  examples/imagemappie.php \
   examples/legendshape.php \
   examples/legendshape1.php \
   examples/linepoints1.php \
