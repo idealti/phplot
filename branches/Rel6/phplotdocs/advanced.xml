@@ -885,6 +885,15 @@ The following table lists the available callback reasons.
              <xref linkend="conc-colors-datacolor-callback"/>.</entry>
         </row>
         <row>
+          <entry>data_points</entry>
+          <entry>Every time a data point is plotted, for supported plot types.</entry>
+          <entry>$shape, $row, $col, ...</entry>
+          <entry>This callback is primarily used to create image maps.
+             For more information, see <xref linkend="adv-imgmap"/>.
+             This was added in PHPlot-5.7.0.
+          </entry>
+        </row>
+        <row>
           <entry>draw_setup</entry>
           <entry>After all setup, before drawing anything.</entry>
           <entry>(None)</entry>
@@ -2786,5 +2795,309 @@ $plot->EndStream();
 </sect2>
 
 </sect1> <!-- Streaming Plots -->
+
+<sect1 id="adv-imgmap">
+<title>Image Maps for Plot Data</title>
+<!-- Note: The text for this section on Image Maps is based on the text
+     file Imagemaps.txt that was distributed with PHPlot-5.7.0.
+     The 2 examples in that file can be found in the Examples chapter, in
+     addition to the 3rd example which was quoted but not included in full.
+-->
+<abstract><title></title>
+  <para>
+This section describes the use of the <literal>data_points</literal>
+callback to generate an HTML image map (or other similar construct) from
+plot data.
+An image map created using this callback will contain links from the
+data points or shapes on the plot.
+This feature was first added in PHPlot-5.7.0 as an experimental feature,
+and was first documented in this Reference Manual with PHPlot-6.0.0.
+  </para>
+</abstract>
+
+<note>
+  <para>
+    Use of callbacks is documented in <xref linkend="callbacks"/>.
+  </para>
+</note>
+
+<para>
+TBSL
+</para>
+
+<sect2 id="adv-imgmap-usage">
+<title>Image Maps - Usage</title>
+<para>
+TBSL
+</para>
+
+<sect3 id="adv-imgmap-bars">
+<title>Image Maps from Bars and Stackedbars Plots</title>
+<para>
+With plot types <link linkend="plottype-bars">bars</link>
+and <link linkend="plottype-stackedbars">stackedbars</link>,
+an image map can be produced which indicates the area of each bar or stacked
+bar segment. This works with both vertical and horizontal plots.
+</para>
+<para>
+For bar and stackedbar plots, the <literal>data_points</literal> callback
+has this form:
+<programlisting><![CDATA[function my_handler($img, $passthru, $shape, $row, $column, $x1, $y1, $x2, $y2)
+]]></programlisting>
+The first 2 arguments are standard for all PHPlot callbacks and are not
+described here. The next 3 arguments are common to all data_points
+callbacks, and there are 4 additional arguments:
+<variablelist>
+  <varlistentry>
+    <term>$shape</term>
+    <listitem>
+      <para>
+Always <literal>rect</literal>, indicating a rectangle shape.
+      </para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term>$row</term>
+    <listitem>
+      <para>
+This is the bar group index.
+The left-most bar group (for vertical bar charts) is row 0.
+      </para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term>$column</term>
+    <listitem>
+      <para>
+This is the bar index within a group.  For vertical plot type 'bars', index 0
+is the left-most in the group. For vertical plot type 'stackedbars', index 0
+is the bar segment closest to the X axis.
+      </para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term>$x1, $y1</term>
+    <listitem>
+      <para>
+Device coordinates of the upper left corner of a bar or segment.
+      </para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term>$x2, $y2</term>
+    <listitem>
+      <para>
+Device coordinates of the lower right corner of a bar or segment.
+      </para>
+    </listitem>
+  </varlistentry>
+</variablelist>
+</para>
+
+<para>
+Generating an image map for bar and stackedbar plots is straight-forward.
+The provided <literal>$shape</literal> and coordinates are compatible with
+HTML &lt;area&gt; markup.
+You must provide the URL, alternate text, and optionally a title (tooltip text).
+</para>
+
+<para>
+This example appends the image map line to a string.
+sprintf() is used to convert the coordinates to integers for cleaner HTML.
+<programlisting><![CDATA[$coords = sprintf("%d,%d,%d,%d", $x1, $y1, $x2, $y2);
+$image_map .= "  <area shape=\"rect\" coords=\"$coords\""
+          .. " title=\"$title_text\" alt=\"$alt_text\" href=\"$url\">\n";
+]]></programlisting>
+The <literal>$url</literal>, <literal>$title_text</literal>, and
+<literal>$alt_text</literal> would typically depend on the passed
+<literal>$row</literal> and <literal>$column</literal>.
+</para>
+
+<para>
+Refer to <xref linkend="ex-imagemap-bars"/> for a complete example of an
+image map for a bar chart.
+</para>
+
+</sect3>
+
+<sect3 id="adv-imgmap-lines">
+<title>Image Maps from Points and Linepoints Plots</title>
+<para>
+TBSL
+</para>
+</sect3>
+
+<sect3 id="adv-imgmap-pie">
+<title>Image Maps from Pie Plots</title>
+<para>
+TBSL
+</para>
+</sect3>
+
+<sect3 id="adv-imgmap-bubble">
+<title>Image Maps from Bubbles Plots</title>
+<para>
+TBSL
+</para>
+</sect3>
+
+<sect3 id="adv-imgmap-ohlc">
+<title>Image Maps from Financial OHLC Plots</title>
+<para>
+TBSL
+</para>
+</sect3>
+
+</sect2>
+
+<sect2 id="adv-imgmap-callback">
+<title>Image Maps - data_points Callback Parameter Summary</title>
+<para>
+TBSL
+</para>
+</sect2>
+
+<sect2 id="adv-imgmap-impl-notes">
+<title>Image Maps - Implementation Notes and Limitations</title>
+<para>
+TBSL
+</para>
+</sect2>
+
+<sect2 id="adv-imgmap-nonembed">
+<title>Image Maps with Non-embedded Image Data</title>
+<para>
+It is also possible to generate an image map when the PHPlot script
+produces an image in the normal way (not embedded) and returns it to the
+browser as image data.  But the script will need to run twice: once to
+generate the PHPlot image, and once to generate the containing HTML page
+with the image map.  (You can use two separate scripts instead, but this is
+not recommended, since both operations must create identical plots so the
+image map areas correspond to the plot areas.)
+</para>
+
+<para>
+In the following example, the script normally generates an HTML page. The page
+contains an image map, generated with PHPlot, and also a
+<literal>&lt;img&gt;</literal> image tag which points back to the same script
+to have it generate the plot image.
+When requesting the image, the script adds a parameter 'mode=plot' to the
+URL. This tells the second execution of the script to generate the image
+data instead of the HTML page.
+</para>
+
+<para>
+The obvious drawback to this method is that you are processing a complete
+plot twice each time a plot is needed. The first time, only the image map
+is needed, and the plot itself is discarded. This is inefficient, especially
+if the plotting script needs to query a database or perform extensive
+calculations.
+</para>
+
+<para>
+Another concern is if the script queries a database, the data could change
+between the two uses of the script, resulting in an image map and plot
+which do not correlate.
+</para>
+
+<para>
+The rest of this section contains selected, annotated code from
+<xref linkend="ex-imagemap-nonembed"/>.
+</para>
+
+<para>
+Start by checking for the mode parameter:
+<programlisting><![CDATA[# Produce an image if the URL has mode=plot, and an HTML page otherwise:
+$do_html = empty($_GET['mode']) || $_GET['mode'] != 'plot';
+]]></programlisting>
+</para>
+
+<para>
+The callback handler is the same as the other imagemap examples, in that it
+appends to the global string $image_map one line from the image map.
+<programlisting><![CDATA[# Callback for 'data_points' : Generate 1 line in the image map.
+function store_map($im, $data, $shape, $row, $col, $x1, $y1, $x2, $y2)
+{ ... }
+]]></programlisting>
+</para>
+
+<para>
+The <function>generate_html()</function> function creates the containing
+HTML page. Only parts of the code are shown.
+<programlisting><![CDATA[function generate_html()
+{
+    global $image_map;
+]]></programlisting>
+</para>
+
+<para>
+Create a self-referencing URL with mode=plot parameter for the
+<literal>&lt;img&gt;</literal> tag:
+<programlisting><![CDATA[    # If the URL already has parameters, use & separator, else ?.
+    $sep = empty($_SERVER['QUERY_STRING']) ? '?' : '&';
+    $url = htmlspecialchars($_SERVER['REQUEST_URI'] . $sep .  'mode=plot');
+]]></programlisting>
+</para>
+
+<para>
+Now generate the HTML page. Include the image map using the global string
+<literal>$image_map</literal>, which our callback function has
+built line-by-line as PHPlot produced the plot.
+Also include the reference to the plot image. This will result in the browser
+making a second request to the script, this time with the mode=plot parameter.
+<programlisting><![CDATA[    echo <<<END
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+...
+<map name="map1">
+$image_map
+</map>
+...
+<img src="$url" alt="Plot image" usemap="#map1">
+...
+</html>
+
+END;
+}
+]]></programlisting>
+</para>
+
+<para>
+This ends the <function>generate_html()</function> function.
+</para>
+
+<para>
+In the main body of the script, create a PHPlot object and configure the
+plot as usual.  Set the <literal>data_points</literal> callback. (You need only
+do this in the case of generating HTML, not the image case.)
+There are two other places where the operation differs for the HTML or image
+generation, based on the <literal>$do_html</literal> flag: disabling automatic
+output with <xref linkend="SetPrintImage"/>, and calling
+the <function>generate_html()</function> function at the end.
+<programlisting><![CDATA[$plot = new PHPlot(800, 600);
+if ($do_html) {
+    // Do not output the image in this mode:
+    $plot->SetPrintImage(False);
+    // Set the callback for image map generation:
+    $plot->SetCallback('data_points', 'store_map');
+}
+... // Set up the plot, data values, plot type, etc.
+// Output the image (in plot mode), or build the image map (in html mode):
+$plot->DrawGraph();
+if ($do_html) generate_html();
+]]></programlisting>
+</para>
+
+<para>
+That's all. If <literal>$do_html</literal> is true, no image will be produced
+(due to <literal>SetPrintImage(False)</literal>),
+and <function>generate_html()</function> will be called.
+If <literal>$do_html</literal> is false, <function>DrawGraph()</function>
+will output the plot image, and the map data will be not be produced or output.
+</para>
+</sect2>
+
+</sect1> <!-- Image Maps -->
 
 </chapter>
