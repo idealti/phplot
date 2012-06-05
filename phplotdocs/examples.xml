@@ -1428,13 +1428,13 @@ Note: This feature was added in PHPlot-5.5.0.
 <para>
 This is the same plot as <xref linkend="ex-lines2"/>, except instead of
 producing the image on standard output, this script embeds the image in an HTML
-page, which is produced on standard output. The screen shot below shows how the
+page, which is produced on standard output. The screenshot below shows how the
 web page looks in Firefox.
 </para>
 
 <example id="example-encodeimage">
 <?dbfo keep-together="auto"?>
-<title>Embedding Image with EncodeImage</title>
+<title>Embedding Image with EncodeImage (Browser screenshot)</title>
 <informalfigure>
   <mediaobject>
     <imageobject>
@@ -1754,7 +1754,7 @@ an HTML page.
 
 <example id="example-imagemap-bars">
 <?dbfo keep-together="auto"?>
-<title>Image Map from Bar Chart</title>
+<title>Image Map from Bar Chart (Browser screenshot)</title>
 <informalfigure>
   <mediaobject>
     <imageobject>
@@ -1798,7 +1798,7 @@ an HTML page.
 
 <example id="example-imagemap-pie">
 <?dbfo keep-together="auto"?>
-<title>Image Map from Pie Chart</title>
+<title>Image Map from Pie Chart (Browser screenshot)</title>
 <informalfigure>
   <mediaobject>
     <imageobject>
@@ -1827,11 +1827,11 @@ image map, and once to create the plot image.
 
 <example id="example-imagemap-nonembed">
 <?dbfo keep-together="auto"?>
-<title>Image Map and Non-embedded Plot Image</title>
+<title>Image Map and Non-embedded Plot Image (Browser screenshot)</title>
 <informalfigure>
   <mediaobject>
     <imageobject>
-      <imagedata fileref="images/imagemap-nonembed.png" scale="58" format="PNG" />
+      <imagedata fileref="images/imagemap-nonembed.png" scale="55" format="PNG" />
     </imageobject>
     <textobject>
       <phrase>Image Map and Non-embedded Plot Image Example</phrase>
