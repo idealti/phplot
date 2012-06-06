@@ -4,6 +4,11 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-06-05 (/branches/Rel6)
+    Continue documentation for image maps.
+    + examples.xml: review and edit image map example descriptions.
+    + advanced.xml: Added material from Imagemaps.txt to overview and intro.
+
 * 2012-06-04 (/branches/Rel6)
     Including documentation for image maps, a previously-experimental
     feature added in PHPlot-5.7.0. The text and examples are based on
