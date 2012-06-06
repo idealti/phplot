@@ -1739,11 +1739,12 @@ Access to the data point row and column index was added in PHPlot-5.8.0.
 <sect1 id="ex-imagemap-bars">
 <title>Example - Image Map from Bar Chart</title>
 <para>
-This example produces a complete HTML page with an embedded bar chart and
-image map. The image map makes the bars in the bar chart into hotlinks. In
-this example, the links just display the bar index as tool-tip text,
-and clicking on a bar displays the same text in an alert popup. But this could
-be used to link to another web page, display data in a popup window, etc.
+This example produces an HTML page with an embedded image containing a bar
+chart, and an image map.  The image map makes the bars in the bar chart into
+hotlinks. In this example, tool-tip float-over text identifies the bars and
+groups, and clicking on a bar displays the same text in an alert popup.
+These looks could be used instead to link to another web page, display data
+in a popup window, etc.
 </para>
 <para>
 See <xref linkend="adv-imgmap"/> for more information on image maps.
@@ -1774,21 +1775,32 @@ an HTML page.
 <sect1 id="ex-imagemap-pie">
 <title>Example - Image Map from Pie Chart</title>
 <para>
-This example produces a complete HTML page with an embedded pie chart and
-image map. The image map makes the pie sectors in the chart into hotlinks.
-In this example, the links just display the value of the segment as
-tool-tip text, and clicking on a pie segment displays the same text in an
-alert popup.  But this could be used to link to another web page, display
-data in a popup window, etc.
+This example produces an HTML page with an embedded image containing a pie
+chart, and an image map.  The image map makes the pie sectors in the chart
+into hotlinks.  In this example, tool-tip text identifies the segment
+number and its numeric value, and clicking on a pie segment displays the
+same text in an alert popup.  These looks could be used instead to link to
+another web page, display data in a popup window, etc.
 </para>
+
+<para>
+This example also shows getting access to the data values. The
+callback handler accesses the data array to get the current segment value
+and uses that in the tool-tip text and alert box. This is dependent on the
+data type of the array, and the code shown here only works with data type
+text-data-single.
+</para>
+
 <para>
 Unlike the <link linkend="ex-imagemap-bars">previous example</link> with a
 bar chart, in this example the callback function needs to do some more
 significant calculations in order to produce the image map areas. This is
 because HTML image maps do not directly support any area shape which
-corresponds to a pie chart segment. Therefore the callback function has to
-interpolate the pie chart segment as a polygon.
+corresponds to a pie chart segment.
+Therefore the callback function approximates each pie chart segment with a
+polygon. This is explained in the code shown below.
 </para>
+
 <para>
 See <xref linkend="adv-imgmap"/> for more information on image maps.
 This capability was added in PHPlot-5.7.0.
