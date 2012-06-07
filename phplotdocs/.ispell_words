@@ -22,6 +22,7 @@ DarkGreen
 Debian
 DecodeDataType
 DimGrey
+DisableCaching
 DoCallback
 DrawArea
 DrawBackground
@@ -67,6 +68,7 @@ DrawYTick
 DrawYTicks
 DrawYTitle
 EncodeImage
+EndStream
 FindDataLimits
 FormatLabel
 FormatPieLabel
@@ -111,6 +113,7 @@ PeachPuff
 PostgreSQL
 PrintError
 PrintImage
+PrintImageFrame
 ProcessText
 ProcessTextGD
 ProcessTextTTF
@@ -246,6 +249,7 @@ SizeText
 SkyBlue
 SlateBlue
 SourceForge
+StartStream
 TTF
 TTFBBoxSize
 TrueType
