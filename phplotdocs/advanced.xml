@@ -2661,7 +2661,7 @@ expensive features:
     <listitem>
       <para>
 Plots that use area fills are slower. This especially includes pie charts
-with shading (because PHPLot redraws the filled pie segments for each
+with shading (because PHPlot redraws the filled pie segments for each
 level of shading). Area and stackedarea plots have a lot of area fill.
 Bar charts have some area fill, with shaded bar charts having more shading
 (but not nearly as much as shaded pie charts).
@@ -3525,50 +3525,70 @@ the same.
 The following table contains a summary of the <literal>data_points</literal>
 callback parameters for each supported plot type.
 
+<!-- Editor's note: In the first column, each cell spans 2 rows. -->
 <informaltable>
-  <tgroup cols="3">
+  <tgroup cols="2">
     <?dbhtml table-summary="data_points callback parameter summary"?>
     <colspec colname="c1" colwidth="20*" />
-    <colspec colname="c2" colwidth="40*" />
-    <colspec colname="c3" colwidth="40*" />
+    <colspec colname="c2" colwidth="80*" />
     <thead>
       <row>
         <entry>Plot Type(s)</entry>
-        <entry>Parameters</entry>
-        <entry>Notes</entry>
+        <entry>Callback Parameters / Notes</entry>
       </row>
     </thead>
     <tbody>
+
       <row>
-        <entry>points, linepoints</entry>
+        <entry morerows="1">points, linepoints</entry>
         <entry>$img, $passthru, $shape='dot', $row, $column, $x, $y</entry>
-        <entry>x,y is center. Supply a radius for image map circle areas.
-               Image map area will cover the points only, not lines.</entry>
       </row>
       <row>
-        <entry>bars, stackedbars </entry>
-        <entry>$img, $passthru, $shape='rect', $row, $column, $x1, $y1,
-               $x2, $y2</entry>
-        <entry>Image map area does not include shading.</entry>
+        <entry>
+          x,y is center. Supply a radius for image map circle areas.
+          Image map area will cover the points only, not lines.
+        </entry>
+      </row>
+
+      <row>
+        <entry morerows="1">bars, stackedbars </entry>
+        <entry>$img, $passthru, $shape='rect', $row, $column, $x1, $y1, $x2, $y2</entry>
       </row>
       <row>
-        <entry>pie</entry>
-        <entry>$img, $passthru, $shape='pie', $row, 0, $x, $y, $width, $height,
-               $start_angle, $end_angle</entry>
-        <entry>Fit a polygon to the ellipse segment.</entry>
+        <entry>
+          Image map area does not include shading.
+        </entry>
+      </row>
+
+      <row>
+        <entry morerows="1">pie</entry>
+        <entry>$img, $passthru, $shape='pie', $row, 0, $x, $y, $width, $height, $start_angle, $end_angle</entry>
       </row>
       <row>
-        <entry>bubbles</entry>
-        <entry>$img, $passthru, $shape='circle', $row, $column, $x, $y,
-              $diam</entry>
-        <entry>x,y is center. Use diam/2 for radius in image map circle
-               area.</entry>
+        <entry>
+          Callback needs to fit a polygon to the ellipse segment.
+        </entry>
+      </row>
+
+      <row>
+        <entry morerows="1">bubbles</entry>
+        <entry>$img, $passthru, $shape='circle', $row, $column, $x, $y, $diam</entry>
       </row>
       <row>
-        <entry>candlesticks, candlesticks, ohlc</entry>
-        <entry>$img, $passthru, $shape='rect', $row, 0, $x1, $y1,
-               $x2, $y2</entry>
-        <entry> </entry>
+        <entry>
+          x,y is center. Use diam/2 for radius in image map circle area.
+        </entry>
+      </row>
+
+      <row>
+        <entry morerows="1">candlesticks, candlesticks, ohlc</entry>
+        <entry>$img, $passthru, $shape='rect', $row, 0, $x1, $y1, $x2, $y2</entry>
+      </row>
+      <row>
+        <entry>
+          Rectangle shape includes body, wicks, ticks of each candlestick
+          or OHLC marker.
+        </entry>
       </row>
     </tbody>
   </tgroup>
@@ -3587,7 +3607,8 @@ pie chart segments must be interpolated by the callback function.
 </para>
 
 <para>
-You can generate image maps for error plots (data type data-data-error)
+You can generate image maps for error plots (data type
+<link linkend="data-data-error">data-data-error</link>)
 with points and linepoints plot types, but the image map areas will not
 include the error bars. For these plot types, the only the coordinates of
 the data points are provided.
@@ -3600,7 +3621,7 @@ function needs to get them from the data array, using the $row and $column
 index values. This may be complex for pie charts (for example, if you want
 tooltip text to show the percentage value of the pie segment).
 <xref linkend="ex-imagemap-pie"/> shows access to data values for a pie
-chart in the simple case of data type 'text-data-single'.
+chart in the simple case of data type <literal>text-data-single</literal>.
 <xref linkend="ex-imagemap-nonembed"/> shows access to data values for a
 bar chart.
 </para>
