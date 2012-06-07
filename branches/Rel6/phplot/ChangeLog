@@ -1,6 +1,12 @@
 This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
+
+2012-06-06 (/branches/Rel6)
+    * Remove obsolete file: Imagemaps.txt - This feature is now documented
+      in the Reference Manual and no longer 'experimental'.
+      Makefile: Remove Imagemaps.txt from release.
+
 2012-06-01 (/branches/Rel6)
     More changes for automatic range and tick increment calculations:
 
