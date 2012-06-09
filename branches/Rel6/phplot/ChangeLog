@@ -2,6 +2,14 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2012-06-09 (/branches/Rel6)
+    * Minor fixes for incorrect use of empty(). (Need to remember that
+      empty("0") and empty(0) are true, so this cannot be used on string
+      or number variables that could be "0" or 0.)
+      + Fixed handling of output_file and input_file.
+      + Fixed DrawMessage() - don't use empty() on color index (could be 0).
+      Checked and found no other misuses of empty().
+
 2012-06-06 (/branches/Rel6)
     * Remove obsolete file: Imagemaps.txt - This feature is now documented
       in the Reference Manual and no longer 'experimental'.
