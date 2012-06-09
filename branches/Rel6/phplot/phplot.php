@@ -256,8 +256,8 @@ class PHPlot
      * Constructor: Setup img resource, colors and size of the image, and font sizes.
      *   $width : Image width in pixels.
      *   $height : Image height in pixels.
-     *   $output_file : Filename for output.
-     *   $input_file : Path to a file to be used as background.
+     *   $output_file : Filename for output. Omit, or NULL, or '' to mean no output file.
+     *   $input_file : Path to a file to be used as background. Omit, NULL, or '' for none.
      */
     function PHPlot($width=600, $height=400, $output_file=NULL, $input_file=NULL)
     {
@@ -271,10 +271,10 @@ class PHPlot
     {
         $this->SetRGBArray($this->color_array);
 
-        if (!empty($output_file))
+        if (isset($output_file) && $output_file !== '')
             $this->SetOutputFile($output_file);
 
-        if (!empty($input_file)) {
+        if (isset($input_file) && $input_file !== '') {
             $this->SetInputFile($input_file);
         } else {
             $this->image_width = $width;
@@ -1613,7 +1613,10 @@ class PHPlot
      */
     function SetOutputFile($which_output_file)
     {
-        $this->output_file = $which_output_file;
+        if (isset($which_output_file) && $which_output_file !== '')
+            $this->output_file = $which_output_file;
+        else
+            unset($this->output_file);
         return TRUE;
     }
 
@@ -1683,7 +1686,7 @@ class PHPlot
         if (!$this->is_inline) {
             Header("Content-type: $mime_type");
         }
-        if ($this->is_inline && $this->output_file != '') {
+        if ($this->is_inline && isset($this->output_file)) {
             $output_f($this->img, $this->output_file);
         } else {
             $output_f($this->img);
@@ -1731,7 +1734,7 @@ class PHPlot
                 ), (array)$options));
 
         // Do colors, background, and border:
-        if ($draw_border && empty($this->ndx_i_border) || $draw_background && empty($this->ndx_bg_color))
+        if ($draw_border && !isset($this->ndx_i_border) || $draw_background && !isset($this->ndx_bg_color))
             $this->SetBgColorIndexes();
         if ($draw_background) {  // User-specified background
             $this->DrawBackground(TRUE);  // TRUE means force overwriting of background
