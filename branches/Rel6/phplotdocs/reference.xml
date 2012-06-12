@@ -6844,7 +6844,7 @@ it to standard output or to a file).
     <title>Description</title>
     <para>
 <function>SetRGBArray</function> selects a color map to use. A color map is
-an array of colors available to be used in the image. You can select from
+an array of color names available for use in the plot. You can select from
 pre-defined color maps, or define your own. Each color in a color map has a
 name, and 3 or 4 color component values (red, green, blue, and optional
 alpha). The red, green, and blue components are in the range 0 through 255, and
@@ -6891,15 +6891,22 @@ Color names are case sensitive.
 For the large color map to be loaded with SetRGBArray('large'), the file
 <filename>rgb.inc.php</filename> must be found on the PHP include path or
 in the same directory as <filename>phplot.php</filename>.
+This file is included in the PHPlot distribution.
     </para>
     <para>
-When defining a color map, care must be taken to avoid invalid color errors. 
-PHPlot uses a number of pre-defined color names, and these must either be
-defined in your color map or changed.
-If you define your own color map, it should always contain colors named 'black',
-'white', and 'gray', and you should use <xref linkend="SetDataColors" /> and
-<xref linkend="SetErrorBarColors" /> to select colors which are in your
-color map.
+You are not limited to using only the colors in the color map. The color
+map defines which <emphasis>color names</emphasis> you can use, and exactly
+what they mean. You can also specify colors numerically.
+    </para>
+    <para>
+PHPlot resolves a color name to its component values (red, green, blue) at
+the time the element's color is set, using whatever color map is present at
+that time. For PHPlot's default colors, this happens when the PHPlot object
+is created. This means that changes to the color map affect only future color
+settings.  See the Color Resolution example below for more.
+After using <function>SetRGBArray</function>, you will probably want to define
+element and data colors with the functions listed in
+<xref linkend="ref-colorstyle"/>.
     </para>
   </refsect1>
   <refsect1>
@@ -6913,6 +6920,59 @@ An example of a user-defined color map is:
        'green' => array(0, 255, 0),
        'blue'  => array(0, 0, 255) )
 ]]></programlisting>
+    </para>
+
+    <para>
+The following example is provided for the note above on color resolution.
+The main title will be black, the X title will be blue, and the Y title
+will be green. This is because:
+      <itemizedlist>
+        <listitem>
+          <para>
+The main title color is defaulted, so it gets defined as black by the
+PHPlot constructor. The later redefinition of <emphasis>black</emphasis>
+in the color array has no effect on this title.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+The X title color is set to blue, using the default ('small') color map's
+definition of <emphasis>blue</emphasis> at that time.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+The Y title color is green, because a new color map was loaded before the Y
+title color was set, and that color map defines a color named
+<emphasis>blue</emphasis> as RGB #00ff00 which is green.
+          </para>
+        </listitem>
+      </itemizedlist>
+      <programlisting><![CDATA[$plot = new PHPlot();
+...
+$plot->SetXTitleColor('blue');
+$plot->SetRGBArray(array('black' => array(255,0,0), 'blue' => array(0, 255, 0)));
+$plot->SetYTitleColor('blue');
+...
+]]></programlisting>
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>History</title>
+    <para>
+Starting with PHPlot-6.0.0, specifying an invalid string for
+<parameter>$color_array</parameter> results in an error message.
+In older releases, a two color black/white color map would be loaded with
+no error reported.
+    </para>
+    <para>
+Versions of this manual written for releases before PHPlot-6.0.0
+incorrectly stated that your color map must include the colors that PHPlot
+uses as internal defaults (black, white, and gray), and incorrectly implied
+that you could redefine existing colors (for example, change black to
+(r=255,g=0,b=0) to make it red) and have that apply to the default element
+colors. The actual behavior is as described in the note above about color
+resolution.
     </para>
   </refsect1>
 </refentry>
