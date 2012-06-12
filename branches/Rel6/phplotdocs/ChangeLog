@@ -4,6 +4,12 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-06-12 (/branches/Rel6)
+    + reference.xml: Clarified SetRGBArray() behavior. Made it clear that
+      color names are resolved when used, with the current color array.
+      Documented that colors not in the array can also be used.
+      Added history section, including upcoming error behavior change.
+
 * 2012-06-06 (/branches/Rel6)
     Final review and edits for documentation on image maps.
     + .ispell_words: Updated spelling list
