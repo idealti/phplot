@@ -38,90 +38,45 @@ class PHPlot
     const version = '6.0.0-Pre-release $Revision$';
 
     /* Declare class variables which are initialized to static values. Many more class variables
-     * are used, defined as needed, but are unset by default.
-     * All these are declared as public. While it is tempting to make them private or protected, this
-     * is avoided for two reasons. First, it will break existing code, since all member variables
-     * were public in PHP4 and who knows what internal variables people used. Second, it makes
-     * testing harder and less effective. Nevertheless, your code should not modify these.
+     * are used. These are defined as needed, but are unset by default.
+     * Refer to the chapter titled "PHPlot Class Member Variables" in the PHPlot Reference Manual
+     * for a complete list of class variables used by PHPlot.
+     *
+     * Most PHPlot class variables have public visibility, but should never be referenced
+     * from outside the class. Class variables are subject to change in any release.
      */
 
-    public $is_inline = FALSE;             // FALSE = Sends headers, TRUE = sends just raw image data
-    public $browser_cache = FALSE;         // FALSE = Sends headers for browser to not cache the image,
-                                           // (only if is_inline = FALSE also)
     public $print_image = TRUE;            // DrawGraph calls PrintImage. See SetPrintImage
 
     public $safe_margin = 5;               // Extra margin used in several places, in pixels
-
-    public $x_axis_position = '';          // X axis position in Y world coordinates, blank for default.
-    public $y_axis_position = '';          // Y axis position in X world coordinates, blank for default.
 
     public $xscale_type = 'linear';        // linear, log
     public $yscale_type = 'linear';
 
 //Fonts
-    public $use_ttf  = FALSE;              // Use True Type Fonts by default?
     public $ttf_path = '.';                // Default path to look in for TT Fonts.
-    // public $default_ttfont;             // Initialized in GetDefaultTTFont
     public $line_spacing = 4;              // Controls line spacing of multi-line labels
-
-    // Label angles: 0 or 90 degrees for fixed fonts, any for TTF
-    public $x_label_angle = 0;             // For X tick labels
-    // public $x_data_label_angle;         // For X data labels; defaults to x_label_angle - see CheckLabels()
-    public $y_label_angle = 0;             // For Y tick labels
-    public $y_data_label_angle = 0;        // For Y data labels
 
 //Formats
     public $file_format = 'png';
-    public $output_file = '';              // For output to a file instead of stdout
 
 //Data
     public $data_type = 'text-data';       // Structure of the data array
     public $plot_type = 'linepoints';      // See $plots[] below
-
     public $label_scale_position = 0.5;    // Shifts data labels in pie charts. 1 = top, 0 = bottom
-    public $group_frac_width = 0.7;        // Bars use this fraction (0 to 1) of a group's space
-    public $bar_extra_space = 0.5;         // Number of extra bar's worth of space in a group
-    public $bar_width_adjust = 1;          // 1 = bars of normal width, must be > 0
 
 // Titles
     public $title_txt = '';
-
     public $x_title_txt = '';
     public $x_title_pos = 'none';          // plotdown, plotup, both, none
-
     public $y_title_txt = '';
     public $y_title_pos = 'none';          // plotleft, plotright, both, none
 
 //Labels
-    // There are two types of labels in PHPlot:
-    //    Tick labels: Follow the grid, next to ticks in axis.
-    //                 Are drawn at grid drawing time, by DrawXTicks() and DrawYTicks()
-    //    Data labels: Follow the data points, and can be placed on the axis or the plot (x/y)
-    //                 Are drawn at graph plotting time, by Draw*DataLabel(), called by DrawLines(), etc.
-    //                 DrawXDataLabel() also draws vertical lines to data points, depending on
-    //                 draw_x_data_label_lines.
-    // Tick and Data label positions are not initialized, because PHPlot needs to tell if they
-    // defaulted or are set by the user. See CheckLabels() for details. The variables and
-    // effective defaults are shown here in comments (but CheckLabels adjusts the defaults).
-    // public $x_tick_label_pos = 'plotdown';     // X tick label position
-    // public $y_tick_label_pos = 'plotleft';     // Y tick label position
-    // public $x_data_label_pos = 'plotdown';     // X data label position
-    // public $y_data_label_pos = 'none';         // Y data label position
-
-    public $draw_x_data_label_lines = FALSE;   // Draw a line from the data point to the axis?
-
     // Label format controls: See SetLabelType() and FormatLabel()
-    // Outer index is the type of label: x, y (tick labels); xd, yd (data labels); p (pie labels).
-    // Inner indexes are:
-    //    type, precision, prefix, suffix, time_format, printf_format, custom_callback, custom_arg.
     public $label_format = array('x' => array(), 'xd' => array(), 'y' => array(), 'yd' => array());
-    // data_units_text is retained for backward compatibility, because there was never a function
-    // to set it. Use the 'suffix' argument to Set[XY]LabelType instead.
-    public $data_units_text = '';              // Units text for 'data' labels (i.e: '¤', '$', etc.)
-
-// Legend
-    public $legend = '';                       // An array with legend titles
-    // Other legend_* variables are set as needed, unset for default values.
+    // data_units_text is deprecated.  Use the 'suffix' argument to Set[XY]LabelType instead.
+    public $data_units_text = '';              // Units text for 'data' labels
 
 //Ticks
     public $x_tick_length = 5;                 // tick length in pixels for upper/lower axis
@@ -134,19 +89,12 @@ class PHPlot
     public $y_tick_pos = 'plotleft';           // plotright, plotleft, both, yaxis, none
 
 //Grid Formatting
-    // public $draw_x_grid = FALSE;            // Default is False except for swapped data type
-    // public $draw_y_grid = TRUE;             // Default is True except for swapped data type
-
     public $dashed_grid = TRUE;
-    public $grid_at_foreground = FALSE;        // Chooses whether to draw the grid below or above the graph
 
-//Colors and styles       (all colors can be array (R,G,B) or named color)
-    public $color_array = 'small';             // 'small', 'large' or array (define your own colors)
-                                            // See rgb.inc.php and SetRGBArray()
+//Colors and styles
     public $default_colors = array(       // The default colors for data and error bars
         'SkyBlue', 'green', 'orange', 'blue', 'red', 'DarkGreen', 'purple', 'peru',
         'cyan', 'salmon', 'SlateBlue', 'YellowGreen', 'magenta', 'aquamarine1', 'gold', 'violet');
-
     // See SetDefaultStyles() for default colors for PHPlot elements.
 
     public $line_widths = 1;                  // single value or array
@@ -165,9 +113,6 @@ class PHPlot
     public $image_border_type = 'none';        // 'raised', 'plain', 'none'
 
     public $shading = 5;                       // 0 for no shading, > 0 is size of shadows in pixels
-
-    public $draw_plot_area_background = FALSE;
-    public $draw_broken_lines = FALSE;          // Tells not to draw lines for missing Y data.
 
 //Miscellaneous
     public $callbacks = array(                  // Valid callback reasons (see SetCallBack)
@@ -269,7 +214,7 @@ class PHPlot
      */
     protected function initialize($imagecreate_function, $width, $height, $output_file, $input_file)
     {
-        $this->SetRGBArray($this->color_array);
+        $this->SetRGBArray('small');
 
         if (isset($output_file) && $output_file !== '')
             $this->SetOutputFile($output_file);
@@ -602,8 +547,7 @@ class PHPlot
     /*
      * Sets the array of colors to be used. It can be user defined, a small predefined one
      * or a large one included from 'rgb.inc.php'.
-     *
-     *    $which_color_array : A color array, or 'small' or 'large'.
+     *   $which_color_array : A color array, or 'small' or 'large'.
      * Color arrays map color names into arrays of R, G, B and optionally A values.
      */
     function SetRGBArray($which_color_array)
@@ -651,12 +595,12 @@ class PHPlot
                 );
         } elseif ($which_color_array == 'large')  {    // Large color array
             if (!@include('rgb.inc.php')) {
-                return $this->PrintError("SetRGBArray(): Large color map could not be loaded\n"
+                return $this->PrintError("SetRGBArray(): Large color map could not be loaded "
                                        . "from 'rgb.inc.php'.");
             }
             $this->rgb_array = $ColorArray;
-        } else {                                        // Default to black and white only.
-            $this->rgb_array = array('white' => array(255, 255, 255), 'black' => array(0, 0, 0));
+        } else {
+            return $this->PrintError("SetRGBArray(): Invalid color map selection");
         }
 
         return TRUE;
@@ -980,7 +924,7 @@ class PHPlot
     protected function SetDefaultFonts()
     {
         // TTF:
-        if ($this->use_ttf) {
+        if (!empty($this->use_ttf)) {
             return $this->SetFont('generic', '', 8)
                 && $this->SetFont('title', '', 14)
                 && $this->SetFont('legend', '', 8)
@@ -1096,7 +1040,7 @@ class PHPlot
      */
     function SetFont($which_elem, $which_font, $which_size = 12, $line_spacing = NULL)
     {
-        if ($this->use_ttf)
+        if (!empty($this->use_ttf))
             return $this->SetFontTTF($which_elem, $which_font, $which_size, $line_spacing);
         return $this->SetFontGD($which_elem, $which_font, $line_spacing);
     }
@@ -1677,16 +1621,16 @@ class PHPlot
      */
     function PrintImage()
     {
-        if (!$this->browser_cache && !$this->is_inline)
+        if (empty($this->browser_cache) && empty($this->is_inline))
             $this->DisableCaching();
 
         // Get MIME type and GD output function name:
         if (!$this->GetImageType($mime_type, $output_f)) return FALSE;
 
-        if (!$this->is_inline) {
+        if (empty($this->is_inline)) {
             Header("Content-type: $mime_type");
         }
-        if ($this->is_inline && isset($this->output_file)) {
+        if (!empty($this->is_inline) && isset($this->output_file)) {
             $output_f($this->img, $this->output_file);
         } else {
             $output_f($this->img);
@@ -1779,7 +1723,7 @@ class PHPlot
             // img will be empty if the error occurs very early - e.g. when allocating the image.
             if (!empty($this->img)) {
                 $this->DrawMessage($error_message);
-            } elseif (!$this->is_inline) {
+            } elseif (empty($this->is_inline)) {
                 Header('HTTP/1.0 500 Internal Server Error');
             }
         }
@@ -2367,12 +2311,12 @@ class PHPlot
      */
     function SetXTitle($which_xtitle, $which_xpos = 'plotdown')
     {
-        if ($which_xtitle == '')
-            $which_xpos = 'none';
-
-        $this->x_title_pos = $this->CheckOption($which_xpos, 'plotdown, plotup, both, none', __FUNCTION__);
-        if (!$this->x_title_pos) return FALSE;
-        $this->x_title_txt = $which_xtitle;
+        if (!($which_xpos = $this->CheckOption($which_xpos, 'plotdown, plotup, both, none', __FUNCTION__)))
+            return FALSE;
+        if (($this->x_title_txt = $which_xtitle) === '')
+            $this->x_title_pos = 'none';
+        else
+            $this->x_title_pos = $which_xpos;
         return TRUE;
     }
 
@@ -2381,12 +2325,12 @@ class PHPlot
      */
     function SetYTitle($which_ytitle, $which_ypos = 'plotleft')
     {
-        if ($which_ytitle == '')
-            $which_ypos = 'none';
-
-        $this->y_title_pos = $this->CheckOption($which_ypos, 'plotleft, plotright, both, none', __FUNCTION__);
-        if (!$this->y_title_pos) return FALSE;
-        $this->y_title_txt = $which_ytitle;
+        if (!($which_ypos = $this->CheckOption($which_ypos, 'plotleft, plotright, both, none', __FUNCTION__)))
+            return FALSE;
+        if (($this->y_title_txt = $which_ytitle) === '')
+            $this->y_title_pos = 'none';
+        else
+            $this->y_title_pos = $which_ypos;
         return TRUE;
     }
 
@@ -2412,21 +2356,21 @@ class PHPlot
 
     /*
      * Set the position of the X axis.
-     *  $pos : Axis position in world coordinates (as an integer).
+     *  $pos : Axis position in world coordinates (as an integer), or '' or omit for default.
      */
     function SetXAxisPosition($pos='')
     {
-        $this->x_axis_position = ($pos === '') ? $pos : (int)$pos;
+        $this->x_axis_position = ($pos === '') ? NULL : (int)$pos;
         return TRUE;
     }
 
     /*
      * Set the position of the Y axis.
-     *  $pos : Axis position in world coordinates (as an integer).
+     *  $pos : Axis position in world coordinates (as an integer), or '' or omit for default.
      */
     function SetYAxisPosition($pos='')
     {
-        $this->y_axis_position = ($pos === '') ? $pos : (int)$pos;
+        $this->y_axis_position = ($pos === '') ? NULL : (int)$pos;
         return TRUE;
     }
 
@@ -3156,16 +3100,6 @@ class PHPlot
         list($unused, $x_title_height) = $this->SizeText($this->fonts['x_title'], 0, $this->x_title_txt);
         list($y_title_width, $unused) = $this->SizeText($this->fonts['y_title'], 90, $this->y_title_txt);
 
-        // Make local variables for these. (They get used a lot and I'm tired of this, this, this.)
-        $x_tick_label_pos = $this->x_tick_label_pos;
-        $x_data_label_pos = $this->x_data_label_pos;
-        $x_tick_pos       = $this->x_tick_pos;
-        $x_tick_len       = $this->x_tick_length;
-        $y_tick_label_pos = $this->y_tick_label_pos;
-        $y_tick_pos       = $this->y_tick_pos;
-        $y_tick_len       = $this->y_tick_length;
-        $y_data_label_pos = $this->y_data_label_pos;
-
         // For X/Y tick and label position of 'xaxis' or 'yaxis', determine if the axis happens to be
         // on an edge of a plot. If it is, we need to account for the margins there.
         if ($this->x_axis_position <= $this->plot_min_y)
@@ -3182,16 +3116,16 @@ class PHPlot
             $y_axis_pos = 'none';
 
         // Calculate the heights for X tick and data labels, and the max (used if they are overlaid):
-        $x_data_label_height = ($x_data_label_pos == 'none') ? 0 : $this->CalcMaxDataLabelSize('x');
-        $x_tick_label_height = ($x_tick_label_pos == 'none') ? 0 : $this->CalcMaxTickLabelSize('x');
+        $x_data_label_height = ($this->x_data_label_pos == 'none') ? 0 : $this->CalcMaxDataLabelSize('x');
+        $x_tick_label_height = ($this->x_tick_label_pos == 'none') ? 0 : $this->CalcMaxTickLabelSize('x');
         $x_max_label_height = max($x_data_label_height, $x_tick_label_height);
 
         // Calculate the space needed above and below the plot for X tick and X data labels:
 
         // Above the plot:
-        $tick_labels_above = ($x_tick_label_pos == 'plotup' || $x_tick_label_pos == 'both'
-                          || ($x_tick_label_pos == 'xaxis' && $x_axis_pos == 'top'));
-        $data_labels_above = ($x_data_label_pos == 'plotup' || $x_data_label_pos == 'both');
+        $tick_labels_above = ($this->x_tick_label_pos == 'plotup' || $this->x_tick_label_pos == 'both'
+                          || ($this->x_tick_label_pos == 'xaxis' && $x_axis_pos == 'top'));
+        $data_labels_above = ($this->x_data_label_pos == 'plotup' || $this->x_data_label_pos == 'both');
         if ($tick_labels_above) {
             if ($data_labels_above) {
                 $label_height_above = $x_max_label_height;
@@ -3205,9 +3139,9 @@ class PHPlot
         }
 
         // Below the plot:
-        $tick_labels_below = ($x_tick_label_pos == 'plotdown' || $x_tick_label_pos == 'both'
-                          || ($x_tick_label_pos == 'xaxis' && $x_axis_pos == 'bottom'));
-        $data_labels_below = ($x_data_label_pos == 'plotdown' || $x_data_label_pos == 'both');
+        $tick_labels_below = ($this->x_tick_label_pos == 'plotdown' || $this->x_tick_label_pos == 'both'
+                          || ($this->x_tick_label_pos == 'xaxis' && $x_axis_pos == 'bottom'));
+        $data_labels_below = ($this->x_data_label_pos == 'plotdown' || $this->x_data_label_pos == 'both');
         if ($tick_labels_below) {
             if ($data_labels_below) {
                 $label_height_below = $x_max_label_height;
@@ -3222,17 +3156,17 @@ class PHPlot
 
         // Calculate the width for Y tick and data labels, if on, and the max:
         // Note CalcMaxDataLabelSize('y') returns 0 except for swapped X/Y plots.
-        $y_data_label_width = ($y_data_label_pos == 'none') ? 0 : $this->CalcMaxDataLabelSize('y');
-        $y_tick_label_width = ($y_tick_label_pos == 'none') ? 0 : $this->CalcMaxTickLabelSize('y');
+        $y_data_label_width = ($this->y_data_label_pos == 'none') ? 0 : $this->CalcMaxDataLabelSize('y');
+        $y_tick_label_width = ($this->y_tick_label_pos == 'none') ? 0 : $this->CalcMaxTickLabelSize('y');
         $y_max_label_width = max($y_data_label_width, $y_tick_label_width);
 
         // Calculate the space needed left and right of the plot for Y tick and Y data labels:
         // (Y data labels here are for swapped X/Y plots such has horizontal bars)
 
         // Left of the plot:
-        $tick_labels_left = ($y_tick_label_pos == 'plotleft' || $y_tick_label_pos == 'both'
-                         || ($y_tick_label_pos == 'yaxis' && $y_axis_pos == 'left'));
-        $data_labels_left = ($y_data_label_pos == 'plotleft' || $y_data_label_pos == 'both');
+        $tick_labels_left = ($this->y_tick_label_pos == 'plotleft' || $this->y_tick_label_pos == 'both'
+                         || ($this->y_tick_label_pos == 'yaxis' && $y_axis_pos == 'left'));
+        $data_labels_left = ($this->y_data_label_pos == 'plotleft' || $this->y_data_label_pos == 'both');
         if ($tick_labels_left) {
             if ($data_labels_left) {
                 $label_width_left = $y_max_label_width;
@@ -3246,9 +3180,9 @@ class PHPlot
         }
 
         // Right of the plot:
-        $tick_labels_right = ($y_tick_label_pos == 'plotright' || $y_tick_label_pos == 'both'
-                          || ($y_tick_label_pos == 'yaxis' && $y_axis_pos == 'right'));
-        $data_labels_right = ($y_data_label_pos == 'plotright' || $y_data_label_pos == 'both');
+        $tick_labels_right = ($this->y_tick_label_pos == 'plotright' || $this->y_tick_label_pos == 'both'
+                          || ($this->y_tick_label_pos == 'yaxis' && $y_axis_pos == 'right'));
+        $data_labels_right = ($this->y_data_label_pos == 'plotright' || $this->y_data_label_pos == 'both');
         if ($tick_labels_right) {
             if ($data_labels_right) {
                 $label_width_right = $y_max_label_width;
@@ -3275,9 +3209,8 @@ class PHPlot
         if ($title_height > 0)
             $top_margin += $title_height + $gap;
 
-        // Space for X Title?
-        if ($x_title_height > 0) {
-            $pos = $this->x_title_pos;
+        // Reserve space for X title, above and/or below as needed:
+        if ($x_title_height > 0 && ($pos = $this->x_title_pos) != 'none') {
             if ($pos == 'plotup' || $pos == 'both')
                 $top_margin += $x_title_height + $gap;
             if ($pos == 'plotdown' || $pos == 'both')
@@ -3297,29 +3230,29 @@ class PHPlot
         }
 
         // Space for X Ticks above the plot?
-        if ($x_tick_pos == 'plotup' || $x_tick_pos == 'both'
-           || ($x_tick_pos == 'xaxis' && $x_axis_pos == 'top')) {
-            $top_margin += $x_tick_len;
-            $this->x_label_top_offset = $x_tick_len + $gap;
-            $this->x_title_top_offset += $x_tick_len;
+        if ($this->x_tick_pos == 'plotup' || $this->x_tick_pos == 'both'
+           || ($this->x_tick_pos == 'xaxis' && $x_axis_pos == 'top')) {
+            $top_margin += $this->x_tick_length;
+            $this->x_label_top_offset = $this->x_tick_length + $gap;
+            $this->x_title_top_offset += $this->x_tick_length;
         } else {
             // No X Ticks above the plot:
             $this->x_label_top_offset = $gap;
         }
 
         // Space for X Ticks below the plot?
-        if ($x_tick_pos == 'plotdown' || $x_tick_pos == 'both'
-           || ($x_tick_pos == 'xaxis' && $x_axis_pos == 'bottom')) {
-            $bot_margin += $x_tick_len;
-            $this->x_label_bot_offset = $x_tick_len + $gap;
-            $this->x_title_bot_offset += $x_tick_len;
+        if ($this->x_tick_pos == 'plotdown' || $this->x_tick_pos == 'both'
+           || ($this->x_tick_pos == 'xaxis' && $x_axis_pos == 'bottom')) {
+            $bot_margin += $this->x_tick_length;
+            $this->x_label_bot_offset = $this->x_tick_length + $gap;
+            $this->x_title_bot_offset += $this->x_tick_length;
         } else {
             // No X Ticks below the plot:
             $this->x_label_bot_offset = $gap;
         }
         // Label offsets for on-axis ticks:
-        if ($x_tick_pos == 'xaxis') {
-            $this->x_label_axis_offset = $x_tick_len + $gap;
+        if ($this->x_tick_pos == 'xaxis') {
+            $this->x_label_axis_offset = $this->x_tick_length + $gap;
         } else {
             $this->x_label_axis_offset = $gap;
         }
@@ -3332,9 +3265,8 @@ class PHPlot
         $this->y_title_left_offset = $gap;
         $this->y_title_right_offset = $gap;
 
-        // Space for Y Title?
-        if ($y_title_width > 0) {
-            $pos = $this->y_title_pos;
+        // Reserve space for Y title, on left and/or right as needed:
+        if ($y_title_width > 0 && ($pos = $this->y_title_pos) != 'none') {
             if ($pos == 'plotleft' || $pos == 'both')
                 $left_margin += $y_title_width + $gap;
             if ($pos == 'plotright' || $pos == 'both')
@@ -3354,30 +3286,30 @@ class PHPlot
         }
 
         // Space for Y Ticks left of plot?
-        if ($y_tick_pos == 'plotleft' || $y_tick_pos == 'both'
-           || ($y_tick_pos == 'yaxis' && $y_axis_pos == 'left')) {
-            $left_margin += $y_tick_len;
-            $this->y_label_left_offset = $y_tick_len + $gap;
-            $this->y_title_left_offset += $y_tick_len;
+        if ($this->y_tick_pos == 'plotleft' || $this->y_tick_pos == 'both'
+           || ($this->y_tick_pos == 'yaxis' && $y_axis_pos == 'left')) {
+            $left_margin += $this->y_tick_length;
+            $this->y_label_left_offset = $this->y_tick_length + $gap;
+            $this->y_title_left_offset += $this->y_tick_length;
         } else {
             // No Y Ticks left of plot:
             $this->y_label_left_offset = $gap;
         }
 
         // Space for Y Ticks right of plot?
-        if ($y_tick_pos == 'plotright' || $y_tick_pos == 'both'
-           || ($y_tick_pos == 'yaxis' && $y_axis_pos == 'right')) {
-            $right_margin += $y_tick_len;
-            $this->y_label_right_offset = $y_tick_len + $gap;
-            $this->y_title_right_offset += $y_tick_len;
+        if ($this->y_tick_pos == 'plotright' || $this->y_tick_pos == 'both'
+           || ($this->y_tick_pos == 'yaxis' && $y_axis_pos == 'right')) {
+            $right_margin += $this->y_tick_length;
+            $this->y_label_right_offset = $this->y_tick_length + $gap;
+            $this->y_title_right_offset += $this->y_tick_length;
         } else {
             // No Y Ticks right of plot:
             $this->y_label_right_offset = $gap;
         }
 
         // Label offsets for on-axis ticks:
-        if ($x_tick_pos == 'yaxis') {
-            $this->y_label_axis_offset = $y_tick_len + $gap;
+        if ($this->x_tick_pos == 'yaxis') {
+            $this->y_label_axis_offset = $this->y_tick_length + $gap;
         } else {
             $this->y_label_axis_offset = $gap;
         }
@@ -3400,8 +3332,8 @@ class PHPlot
                 'label_height_below' => $label_height_below,
                 'label_width_left' => $label_width_left,
                 'label_width_right' => $label_width_right,
-                'x_tick_len' => $x_tick_len,
-                'y_tick_len' => $y_tick_len,
+                'x_tick_length' => $this->x_tick_length,
+                'y_tick_length' => $this->y_tick_length,
                 'x_left_margin' => $this->x_left_margin,
                 'x_right_margin' => $this->x_right_margin,
                 'y_top_margin' => $this->y_top_margin,
@@ -3800,12 +3732,16 @@ class PHPlot
             $group_width = $this->plot_area_height / $this->num_data_rows;
         }
 
-        // Actual number of bar spaces in the group. This includes the drawn bars, and
-        // 'bar_extra_space'-worth of extra bars.
+        // Assign defaults for parameters that control bar sizes:
+        $group_frac_width = isset($this->group_frac_width) ? $this->group_frac_width : 0.7;
+        $bar_extra_space = isset($this->bar_extra_space) ? $this->bar_extra_space : 0.5;
+        $bar_width_adjust = isset($this->bar_width_adjust) ? $this->bar_width_adjust : 1;
+
+        // Number of bar spaces in the group, including actual bars and bar_extra_space extra:
         if ($stacked) {
-            $num_spots = 1 + $this->bar_extra_space;
+            $num_spots = 1 + $bar_extra_space;
         } else {
-            $num_spots = $this->data_columns + $this->bar_extra_space;
+            $num_spots = $this->data_columns + $bar_extra_space;
         }
 
         // record_bar_width is the width of each bar's allocated area.
@@ -3813,7 +3749,7 @@ class PHPlot
         // the bar is centered inside record_bar_width.
         // The equation is:
         //   group_frac_width * group_width = record_bar_width * num_spots
-        $this->record_bar_width = $this->group_frac_width * $group_width / $num_spots;
+        $this->record_bar_width = $group_frac_width * $group_width / $num_spots;
 
         // Note that the extra space due to group_frac_width and bar_extra_space will be
         // evenly divided on each side of the group: the drawn bars are centered in the group.
@@ -3821,7 +3757,7 @@ class PHPlot
         // Within each bar's allocated space, if bar_width_adjust=1 the bar fills the
         // space, otherwise it is centered.
         // This is the actual drawn bar width:
-        $this->actual_bar_width = $this->record_bar_width * $this->bar_width_adjust;
+        $this->actual_bar_width = $this->record_bar_width * $bar_width_adjust;
         // This is the gap on each side of the bar (0 if bar_width_adjust=1):
         $this->bar_adjust_gap = ($this->record_bar_width - $this->actual_bar_width) / 2;
 
@@ -3853,7 +3789,7 @@ class PHPlot
     protected function CalcAxisPositions()
     {
         // Validate user-provided X axis position, or calculate a default if not provided:
-        if ($this->x_axis_position !== '') {
+        if (isset($this->x_axis_position)) {
             // Force user-provided X axis position to be within the plot range:
             $this->x_axis_position = min(max($this->plot_min_y, $this->x_axis_position), $this->plot_max_y);
         } elseif ($this->yscale_type == 'log') {
@@ -3871,7 +3807,7 @@ class PHPlot
         }
 
         // Validate user-provided Y axis position, or calculate a default if not provided:
-        if ($this->y_axis_position !== '') {
+        if (isset($this->y_axis_position)) {
             // Force user-provided Y axis position to be within the plot range:
             $this->y_axis_position = min(max($this->plot_min_x, $this->y_axis_position), $this->plot_max_x);
         } elseif ($this->xscale_type == 'log') {
@@ -4163,10 +4099,8 @@ class PHPlot
      * Check and set label parameters. This handles deferred processing for label
      * positioning and other label-related parameters.
      *   Copy label_format from 'x' to 'xd', and 'y' to 'yd', if not already set.
-     *   Set x_data_label_angle from x_label_angle, if not already set.
+     *   Set defaults for label angles.
      *   Apply defaults to X and Y tick and data label positions.
-     * Note: the label strings in the data array are used as X data labels in
-     * the normal case, but as Y data labels in the swapped X/Y case.
      */
     protected function CheckLabels()
     {
@@ -4177,12 +4111,11 @@ class PHPlot
         if (empty($this->label_format['yd']) && !empty($this->label_format['y']))
             $this->label_format['yd'] = $this->label_format['y'];
 
-        // The X tick label angle setting controls X data label angles too,
-        // unless overridden. Check and apply the default here:
-        if (!isset($this->x_data_label_angle))
-            $this->x_data_label_angle = $this->x_label_angle;
-        // Note: Y data label angle defaults to zero, unlike X,
-        // for compatibility with older releases.
+        // Apply defaults for label angles. Note difference in default for X and Y data labels.
+        if (!isset($this->x_label_angle)) $this->x_label_angle = 0;
+        if (!isset($this->x_data_label_angle)) $this->x_data_label_angle = $this->x_label_angle;
+        if (!isset($this->y_label_angle)) $this->y_label_angle = 0;
+        if (!isset($this->y_data_label_angle)) $this->y_data_label_angle = 0;
 
         // X Label position fixups, for x_data_label_pos and x_tick_label_pos:
         if ($this->datatype_swapped_xy) {
@@ -4558,7 +4491,7 @@ class PHPlot
         if (isset($this->plotbgimg)) {
             $this->tile_img($this->plotbgimg, $this->plot_area[0], $this->plot_area[1],
                             $this->plot_area_width, $this->plot_area_height, $this->plotbgmode);
-        } elseif ($this->draw_plot_area_background) {
+        } elseif (!empty($this->draw_plot_area_background)) {
             ImageFilledRectangle($this->img, $this->plot_area[0], $this->plot_area[1],
                                  $this->plot_area[2], $this->plot_area[3], $this->ndx_plot_bg_color);
         }
@@ -5056,7 +4989,7 @@ class PHPlot
                             $xpos, $this->plot_area[1] - $this->x_label_top_offset,
                             $this->ndx_datalabel_color, $xlab, 'center', 'bottom');
 
-        if ($do_lines && $this->draw_x_data_label_lines)
+        if ($do_lines && !empty($this->draw_x_data_label_lines))
             $this->DrawXDataLine($xpos, $row);
         return TRUE;
     }
@@ -5199,9 +5132,10 @@ class PHPlot
         if (is_array($which_leg)) {           // use array (or cancel, if empty array)
             $this->legend = $which_leg;
         } elseif (!is_null($which_leg)) {     // append string
+            if (!isset($this->legend)) $this->legend = array(); // Seems unnecessary, but be safe.
             $this->legend[] = $which_leg;
         } else {
-            $this->legend = '';  // Reinitialize to empty, meaning no legend.
+            unset($this->legend);  // Reset to no legend.
         }
         return TRUE;
     }
@@ -5291,7 +5225,7 @@ class PHPlot
     }
 
     /*
-     * Get legend sizing parameters.
+     * Get legend sizing parameters. Must not be called if $this->legend is empty.
      * This is used internally by DrawLegend(), and also by the public GetLegendSize().
      * It returns information based on any SetLegend*() calls already made. It does not use
      * legend position or data scaling, so it can be called before data scaling is set up.
@@ -5349,9 +5283,12 @@ class PHPlot
     /*
      * Get legend box size. This can be used to adjust the plot margins, for example.
      * Returns: Array of ($width, $height) of the legend box in pixels.
+     *   FALSE if there is no legend configured.
      */
     function GetLegendSize()
     {
+        if (empty($this->legend))
+            return FALSE;
         $params = $this->GetLegendSizeParams();
         return array($params['width'], $params['height']);
     }
@@ -5477,7 +5414,7 @@ class PHPlot
                 if ($use_shapes) {
                     // Draw a point shape in the data color
                     // If plot area background is on, use that as the shape background:
-                    if ($this->draw_plot_area_background) {
+                    if (!empty($this->draw_plot_area_background)) {
                         ImageFilledRectangle($this->img, $dot_left_x, $y1, $dot_right_x, $y2,
                                              $this->ndx_plot_bg_color);
                     }
@@ -6354,7 +6291,7 @@ class PHPlot
                     $lasty[$idx] = $y_now_pixels;
                     $lastx[$idx] = $x_now_pixels;
                     $start_lines[$idx] = TRUE;
-                } elseif ($this->draw_broken_lines) {  // Y data missing, leave a gap.
+                } elseif (!empty($this->draw_broken_lines)) {  // Y data missing, leave a gap.
                     $start_lines[$idx] = FALSE;
                 }
             }   // end for
@@ -6433,7 +6370,7 @@ class PHPlot
 
                 } else {
                     $record += 2;  // Skip over error value positions for missing Y
-                    if ($this->draw_broken_lines) {
+                    if (!empty($this->draw_broken_lines)) {
                         $start_lines[$idx] = FALSE;
                     }
                 }
@@ -6520,7 +6457,7 @@ class PHPlot
                     $lastx[$idx] = $x_now_pixels;
                     $lasty[$idx] = $y_now_pixels;
                     $start_lines[$idx] = TRUE;
-                } elseif ($this->draw_broken_lines) {  // Y data missing, leave a gap.
+                } elseif (!empty($this->draw_broken_lines)) {  // Y data missing, leave a gap.
                     $start_lines[$idx] = FALSE;
                 }
             }
@@ -7137,7 +7074,8 @@ class PHPlot
         }
         $this->DoCallback('draw_titles');
 
-        if ($draw_axes && ! $this->grid_at_foreground) {   // Usually one wants grids to go back, but...
+        // grid_at_foreground flag allows grid behind or in front of the plot
+        if ($draw_axes && empty($this->grid_at_foreground)) {
             $this->DrawYAxis();     // Y axis must be drawn before X axis (see DrawYAxis())
             $this->DrawXAxis();
             $this->DoCallback('draw_axes');
@@ -7147,7 +7085,7 @@ class PHPlot
         call_user_func_array(array($this, $draw_method), $draw_arg);
         $this->DoCallback('draw_graph', $this->plot_area);
 
-        if ($draw_axes && $this->grid_at_foreground) {   // Usually one wants grids to go back, but...
+        if ($draw_axes && !empty($this->grid_at_foreground)) {
             $this->DrawYAxis();     // Y axis must be drawn before X axis (see DrawYAxis())
             $this->DrawXAxis();
             $this->DoCallback('draw_axes');
@@ -7156,7 +7094,7 @@ class PHPlot
         $this->DrawPlotBorder($draw_axes); // Flag controls default for plot area borders
         $this->DoCallback('draw_border');
 
-        if ($this->legend) {
+        if (!empty($this->legend)) {
             $this->DrawLegend();
             $this->DoCallback('draw_legend');
         }
