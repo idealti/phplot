@@ -2,6 +2,32 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2012-06-14 (/branches/Rel6)
+    * Code cleanup: Avoid static initialization of class member variables
+      that can just as well be unset by default. (Some variables had been
+      removed in prior releases, when they needed dynamic initialization.
+      So the top of the class declaration was no longer useful as
+      documentation of all the class variables.) A comment was added to
+      direct the reader to the Reference Manual, which documents all member
+      class variables. The following class variables no longer get
+      declared and initialized:
+          $bar_extra_space, $bar_width_adjust, $browser_cache,
+          $color_array, $draw_broken_lines, $draw_plot_area_background,
+          $draw_x_data_label_lines, $grid_at_foreground,
+          $group_frac_width, $is_inline, $legend, $output_file, $use_ttf,
+          $x_axis_position, $x_label_angle, $y_axis_position,
+          $y_data_label_angle, $y_label_angle 
+
+      Except for the minor differences noted below, there are no changes
+      in behavior (provided one does not access the internal variables):
+      + SetRGBArray(): Report an error if an invalid color map name is used,
+        rather than just using a black and white array with no error reported.
+      + Removed unneeded class variable: $color_array
+      + GetLegendSize() now returns FALSE if there is no legend.
+
+    * Code cleanup: In CalcMargins(), don't make unnecessary local copies
+      of member variables.
+
 2012-06-09 (/branches/Rel6)
     * Minor fixes for incorrect use of empty(). (Need to remember that
       empty("0") and empty(0) are true, so this cannot be used on string
