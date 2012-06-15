@@ -4,6 +4,22 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-06-15 (/branches/Rel6)
+    Changes from recent code cleanup:
+    + reference.xml: GetLegendSize() returns FALSE if there is no legend.
+    + gen.vardoc: Changed a column header in the generated member variables
+      table from "Initialized to" to "Default Value".
+    + developer.xml: Fixed unwanted linebreak in FormatPieLabel (did not
+      affect output, but interfered with an script that extracts names).
+      Rewrote text above Member Variables table, explaining new notation
+      "(value)", which means the variable isn't declared at the top of
+      the class, but is assigned its default value within the code. This
+      lets us document default values for variables that are not declared
+      at the top of the class definition.
+    + variables.list: Noted default values as "(value)" for variables that
+      are not initialized at the top of the class definition. This
+      includes 17 recently changed. Also deleted 1 class variable.
+
 * 2012-06-12 (/branches/Rel6)
     + reference.xml: Clarified SetRGBArray() behavior. Made it clear that
       color names are resolved when used, with the current color array.
