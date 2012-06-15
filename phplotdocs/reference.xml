@@ -692,6 +692,7 @@ None
     <para>
 Returns an array of two values ($width, $height). These are the width and
 height required for the box containing the legend.
+Returns FALSE if no legend has been defined.
     </para>
   </refsect1>
 
@@ -708,6 +709,11 @@ other plot elements.
 
   <refsect1>
     <title>History</title>
+    <para>
+Starting with PHPlot-6.0.0, the function returns FALSE if no legend has
+been defined yet. (In previous versions, the result was undefined if there
+was no legend defined.)
+    </para>
     <para>
 This function was added in PHPlot-5.4.0.
     </para>
