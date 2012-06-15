@@ -1314,8 +1314,7 @@ in PHPlot-5.8.0.
 </varlistentry>
 
 <varlistentry>
-  <term><anchor id="FormatPieLabel"
-xreflabel="FormatPieLabel"/>FormatPieLabel($index, $pie_label_source, $arc_angle, $slice_weight)</term>
+  <term><anchor id="FormatPieLabel" xreflabel="FormatPieLabel"/>FormatPieLabel($index, $pie_label_source, $arc_angle, $slice_weight)</term>
   <listitem>
     <para>
 Formats a pie chart label. This first gets the initial value, based on
@@ -2069,19 +2068,30 @@ releases.
 
 <para>
 The table below lists the PHPlot class member variables.
+</para>
+
+<para>
+The initial or default values are listed under
+<emphasis>Default Value</emphasis>.
 If the variable is declared at the top of the PHPlot class definition,
-the initial value is listed under <emphasis>Initialized to Value</emphasis>.
-If nothing is listed under <emphasis>Initialized to Value</emphasis>, this
-means the variable is defined only when needed, and is not declared at the
-top of the PHPlot class definition.
+then its initial value is shown without enclosing parentheses.
+If the variable is not explicitly declared, but remains unset until
+needed, then the effective default (if any) is shown in parentheses.
+For this column, FALSE, NULL, and an unset variable are equivalent.
+If the <emphasis>Default Value</emphasis> column is empty, this means
+the variable does not have a fixed default.
+</para>
+
+<para>
 The <emphasis>Reference Function</emphasis> column lists the member
 function(s) used to set the variable, if the variable can be set by the
 application, else the member function which calculates the variable, if
 there is one, else the member function(s) which use the variable, if there
 are only a few.
+</para>
 
+<para>
 &variablelist;
-
 </para>
 </sect1>
 <pagebreak/>
