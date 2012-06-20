@@ -3525,7 +3525,7 @@ class PHPlot
      * Note that values specified in SetPlotAreaWorld() are never adjusted, even if it means
      * an empty plot (because all the data is outside the range).
      * Called by CalcPlotRange() after CalcRangeInit() applies the defaults.
-     *   $which : 'X' or 'Y', used only for reporting.
+     *   $which : 'x' or 'y', used only for reporting.
      *   $plot_min, $plot_max : References to the range limits. Changed by this function if necessary.
      *   $adjust_min, $adjust_max : Flags indicating if the value was specified (False) or calculated (True).
      */
@@ -3694,10 +3694,10 @@ class PHPlot
     }
 
     /*
-     * Stores the desired World Coordinate range of the plot.
-     * The user calls this to force one or more of the range limits to
-     * specific values. Anything not set will be calculated in CalcPlotAreaWorld().
-     * The range is validated, because the scale calculations depend on min <= max.
+     * Fix one or more ends of the World Coordinate range of the plot.
+     *   $xmin, $ymin, $xmax, $ymax : world coordinates limits, or NULL.
+     * Anything not set or set to NULL will be calculated in CalcPlotAreaWorld().
+     * If both ends of either range are supplied, the range is validated to ensure min < max.
      */
     function SetPlotAreaWorld($xmin=NULL, $ymin=NULL, $xmax=NULL, $ymax=NULL)
     {
@@ -3705,10 +3705,10 @@ class PHPlot
         $this->plot_max_x = $xmax;
         $this->plot_min_y = $ymin;
         $this->plot_max_y = $ymax;
-        if (isset($xmin) && isset($xmax) && $xmin > $xmax) $bad = 'X';
-        elseif (isset($ymin) && isset($ymax) && $ymin > $ymax) $bad = 'Y';
+        if (isset($xmin) && isset($xmax) && $xmin >= $xmax) $bad = 'X';
+        elseif (isset($ymin) && isset($ymax) && $ymin >= $ymax) $bad = 'Y';
         else return TRUE;
-        return $this->PrintError("SetPlotAreaWorld(): $bad range error - min is greater than max");
+        return $this->PrintError("SetPlotAreaWorld(): $bad range error - min >= max");
     }
 
     /*
