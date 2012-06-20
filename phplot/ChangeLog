@@ -2,6 +2,12 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2012-06-20 (/branches/Rel6)
+    * Fix validation in SetPlotAreaWorld(). Enforce min<max rather than
+      min<=max. Allowing min==max was pointless, as it just produced an
+      error later in CheckPlotRange rather than sooner in SetPlotAreaWorld.
+      (Found while doing documentation updates)
+
 2012-06-14 (/branches/Rel6)
     * Code cleanup: Avoid static initialization of class member variables
       that can just as well be unset by default. (Some variables had been
