@@ -2,6 +2,13 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2012-06-25 (/branches/Rel6)
+    * Removed TuneAutoRange(). The tuning parameters will be documented as
+      class variables that can be set directly, like other existing variables
+      that tune things. (The problem with TuneAutoRange is that it is a new,
+      3rd way to change plot settings - Set*() functions and directly changing
+      a class variable being the other two. We don't need another interface.)
+
 2012-06-20 (/branches/Rel6)
     * Fix validation in SetPlotAreaWorld(). Enforce min<max rather than
       min<=max. Allowing min==max was pointless, as it just produced an
