@@ -4240,68 +4240,6 @@ class PHPlot
         return $which_lab;
     }
 
-    /*
-     * Set tuning parameters for automatic range calculations.
-     *   $axis : 'x' or 'y'   
-     *   $param : One of the variable names below
-     *   $value : A value for the variable, or '' to reset it to the default.
-     * Supported param names:
-     *   min_ticks : Minimum number of tick intervals. Max will be about 2.5 * min. (Must be > 0)
-     *   end_adjust : Adjustment factor for end(s) of the data range. (Must be >= 0). This is the
-     *     minimum fraction of tick_increment to leave above the max data value (if positive), and
-     *     to leave below the min data value (if negative). For example, if tick_increment=10 and
-     *     end_adjust=0.3, if max data = 16 then the end of the scale will be 20 (.4 ticks above max),
-     *     but if max data = 18, then the end of the scale will be 30 (1.2 ticks above max).
-     *   zero_magnet : Controls extending the data range to include zero.  (Must be between >=0 and <=1)
-     *     The range will be extended to include zero if doing so will increase the range no
-     *     more than (zero_magnet / (1 - zero_magnet)). Note zero_magnet=0 means no range extension
-     *     at all, and zero_magnet=1 means always include zero ("infinite" extension).
-     *   datetime_interval : False for numeric range, True for date/time range, default is automatic.
-     *     This forces use of date/time interval calculation on or off, rather than relying on
-     *     Set*LabelType().
-     *   integer_increment : True to force tick increment to be a whole number >= 1. Default is false.
-     */
-    function TuneAutoRange($axis, $param, $value)
-    {
-        $axis = $this->CheckOption($axis, 'x, y', __FUNCTION__);
-        if (!$axis) return FALSE;
-        switch ($param) {
-        case 'min_ticks':    // Integer > 0
-            if ($axis == 'x') $var = &$this->x_min_ticks; else $var = &$this->y_min_ticks;
-            if ($value === '') unset($var);
-            elseif ($value > 0) $var = (int)$value;
-            break;
-
-        case 'end_adjust':    // Float >= 0
-            if ($axis == 'x') $var =  &$this->x_end_adjust; else $var = &$this->y_end_adjust;
-            if ($value === '') unset($var);
-            elseif ($value >= 0) $var = $value;
-            break;
-
-        case 'zero_magnet': // Float in [0,1]
-            if ($axis == 'x') $var =  &$this->x_zero_magnet; else $var = &$this->y_zero_magnet;
-            if ($value === '') unset($var);
-            elseif (0 <= $value && $value <= 1.0) $var = $value;
-            break;
-
-        case 'datetime_interval':    // Boolean
-            if ($axis == 'x') $var =  &$this->x_datetime_interval; else $var = &$this->y_datetime_interval;
-            if ($value === '') unset($var);
-            else $var = (bool)$value;
-            break;
-
-        case 'integer_increment':    // Boolean
-            if ($axis == 'x') $var =  &$this->x_tick_inc_integer; else $var = &$this->y_tick_inc_integer;
-            if ($value === '') unset($var);
-            else $var = (bool)$value;
-            break;
-
-        default:
-            return $this->PrintError("TuneAutoRange(): Unknown parameter '$param'");
-        }
-        return TRUE;
-    }
-
 /////////////////////////////////////////////
 ///////////////                         TICKS
 /////////////////////////////////////////////
