@@ -3460,26 +3460,16 @@ class PHPlot
     /*
      * Calculate an ideal tick increment for a given range.
      *   $range : The plot area range (max - min)
-     *   $tick_inc : Optional user-specified tick increment.
-     *   $num_ticks : Optional user-specified number of ticks.
      *   $min_ticks :  Minimum permitted ticks.
      *   $use_datetime : If true, units are seconds so use the date/time algorithm.
      *   $integer_step : If true, minimum tick interval is 1.
      * Returns: The tick increment.
-     * Caller-specified tick_inc has priority. If empty, num_ticks has next priority. If neither
-     * tick_inc nor num_ticks is provided, the automatic algorithm is used.
+     * This is only used when neither Set[XY]TickIncrement nor SetNum[XY]Ticks was used.
      * There are two methods, depending on $use_datetime. See CalcStep125() and CalcStepDatetime().
      */
-    protected function CalcStep($range, $tick_inc, $num_ticks, $min_ticks, $use_datetime, $integer_step)
+    protected function CalcStep($range, $min_ticks, $use_datetime, $integer_step)
     {
-        // Calculate the tick increment tick_step:
-        if (!empty($tick_inc)) {
-            // A tick increment was provided: use exactly that.
-            $tick_step = $tick_inc;
-        } elseif (!empty($num_ticks)) {
-            // Number of ticks was provided: use exactly that.
-            $tick_step = $range / $num_ticks;
-        } elseif ($use_datetime) {
+        if ($use_datetime) {
             // Date/time range is selected: calculate a date/time step.
             $tick_step = $this->CalcStepDatetime($range, $min_ticks);
         } elseif ($integer_step && $range <= $min_ticks) {
@@ -3640,10 +3630,31 @@ class PHPlot
             $plot_max = 0;
         }
 
-        // Calculate the tick interval, based on the current plot area world coordinate limits.
-        // Note if [xy]_tick_inc is set, that will be returned as the value.
-        $tick_inc = $this->CalcStep($plot_max - $plot_min, $tick_inc, $num_ticks, $min_ticks,
-                                    $datetime, $integer_step);
+        // Calculate the tick increment, if it wasn't determined by Set*() calls.
+        if (empty($tick_inc)) {
+            // This means Set[XY]TickIncrement() was not used to set a tick increment.
+            $range = $plot_max - $plot_min;
+
+            if (empty($num_ticks)) {
+                // Calculate a reasonable tick increment, based on the current plot area limits
+                $tick_inc = $this->CalcStep($range, $min_ticks, $datetime, $integer_step);
+            } else {
+                // Number of ticks was provided: use exactly that.
+                // The range adjustment algorithm used by default below is not compatible with
+                // this case, because it uses the tick increment to adjust the range, and here
+                // we use the range to calculate the tick increment. So instead fall back to a
+                // simpler method that increases the range ends by a fixed percentage.
+                if ($adjust_min && $plot_min < 0) {
+                    $plot_min -= 0.1 * $range;
+                    $adjust_min = FALSE;   // Do not allow further adjustments to range below
+                }
+                if ($adjust_max && $plot_max > 0) {
+                    $plot_max += 0.1 * $range;
+                    $adjust_max = FALSE;   // Do not allow further adjustments to range below
+                }
+                $tick_inc = ($plot_max - $plot_min) / $num_ticks;
+            }
+        }
 
         // Adjust the lower bound, if not user-set, to start at a tick mark. The end_adjust factor is
         // applied only when min is negative (to leave room for data value labels, for instance). This
