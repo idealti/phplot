@@ -2,6 +2,15 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2012-06-26 (/branches/Rel6)
+    * Fixed conflict between setting number of ticks (SetNum[XY]Ticks) and the
+      new range calculations. (The range was adjusted after calculating the
+      tick increment, but the tick increment depended on the range here. So if
+      you asked for N tick intervals, you probably got N+1.) Moved code to
+      handle pre-specified tick increment or number of ticks from CalcStep()
+      to CalcPlotRange(), and let CalcPlotRange() do special handling for the
+      case with number of ticks set.
+
 2012-06-25 (/branches/Rel6)
     * Removed TuneAutoRange(). The tuning parameters will be documented as
       class variables that can be set directly, like other existing variables
