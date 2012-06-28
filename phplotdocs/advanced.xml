@@ -1743,9 +1743,9 @@ box in that color which is drawn behind the point shape.
 </sect2>
 
 <sect2 id="conc-tuning-labels">
-<title>Label Tuning</title>
+<title>Tuning Labels</title>
 <para>
-These variables affect the display of labels.
+These variables affect the appearance of labels.
 </para>
 
 <para>
@@ -1779,6 +1779,193 @@ it determines the position of the reference point for the label.
 (This does not apply to data value labels for bars or stackedbars plots, as
 the label position is fixed for these plot types.)
 The default if unset is 5 pixels.
+        </para>
+      </listitem>
+    </varlistentry>
+  </variablelist>
+</para>
+
+</sect2>
+
+<sect2 id="conc-tuning-range">
+<title>Tuning Plot Range and Tick Increment Calculations</title>
+<para>
+These variables affect how PHPlot calculates the plot area range and the
+tick increments, when specific values have not been set.
+The plot area range can be set with <xref linkend="SetPlotAreaWorld"/>.
+PHPlot will calculate unspecified ends of the X and Y ranges, using the
+applicable variables below.
+Tick increments can be set with
+<xref linkend="SetXTickIncrement"/> or <xref linkend="SetNumXTicks"/>, and
+with <xref linkend="SetYTickIncrement"/> or <xref linkend="SetNumYTicks"/>.
+If not set, the tick increments for X and Y will be calculated by PHPlot
+using the applicable variables below.
+</para>
+
+<para>
+  <variablelist>
+    <varlistentry>
+      <term><varname>x_datetime_interval</varname></term>
+      <term><varname>y_datetime_interval</varname></term>
+      <listitem>
+        <para>
+Select a date/time tick increment along the X or Y axis.
+(Boolean flag, default is unset.)
+If the flag is TRUE, PHPlot will pick an appropriate tick increment
+assuming the values along that axis are in units of seconds.
+(For example, it might pick a tick increment of 3600, 1 hour, rather than
+2000 or 5000.)
+If the flag is FALSE, PHPlot will use its standard algorithm to pick a
+tick increment that is 1, 2, or 5 times a power of 10.
+By default, these flags are unset, meaning PHPlot will automatically decide
+which method to use. It will use the date/time tick increment algorithm if
+the corresponding axis tick labels use date/time formatting (as set with 
+<xref linkend="SetXLabelType"/><literal>('time')</literal> or
+<xref linkend="SetYLabelType"/><literal>('time')</literal>).
+Otherwise is will use the standard algorithm.
+        </para>
+        <para>
+Use these flags to override the automatic tick increment algorithm
+selection. For example, if you are using date/time values along the Y axis,
+but have a custom label formatting function (rather than selecting
+<literal>time</literal> format type), you probably want to set
+<literal>y_datetime_interval</literal> to TRUE so PHPlot will pick an
+appropriate tick increment.
+        </para>
+        <para>
+Another example is if you are using date/time label types along Y,
+but you need tick increments to be less than 1 whole second, then you must
+set <literal>y_datetime_interval</literal> to FALSE.
+This is because the date/time tick increment algorithm never selects
+a tick increment less than 1 whole second.
+        </para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><varname>x_end_adjust</varname></term>
+      <term><varname>y_end_adjust</varname></term>
+      <listitem>
+        <para>
+Adjustment factor for end(s) of the data ranges.
+(Float &gt;= 0, default is 0.3 for the dependent variable, and 0 for the
+independent variable.)
+<emphasis>End adjustment</emphasis> is the process of adjusting the ends of
+the plot range which are away from 0, in order to leave room for possible
+labels, to keep the data from pushing against the edges of the graph, and
+to have the plot range start and end at a tick mark.
+The maximum (right, or upper) end of the range is adjusted if it is greater
+than zero, and the minimum (left, or lower) end of the range is adjusted
+if it is less than zero. The adjustment extends the end of the range to
+a tick mark.
+If the next tick mark is less than
+<literal>x_end_adjust</literal> or <literal>y_end_adjust</literal>
+times the tick increment away, then the range will be extended to the next
+tick mark after that.
+        </para>
+        <para>
+For example, assume the Y tick increment is 10, and the Y end adjustment
+factor is the default 0.3.
+If the Y data maximum is 95, the top of the Y range will be 100 (next tick
+mark, 0.5 increments away).
+But if the Y data maximum is 98, then the top of the Y range will be 110
+(moves to the next tick mark because 0.2 tick increments is too low).
+Another way to look at this is that the end of the plot range will be
+between <literal>y_end_adjust * tick_increment</literal>
+and <literal>(y_end_adjust + 1) * tick_increment</literal> above (or below)
+the data range end.
+        </para>
+        <para>
+Note that the default end adjustment factor is 0 for the independent variable.
+This applies to the X axis for vertical plots, and Y axis for horizontal plots.
+When the end adjustment factor is 0, the plot range will still end at a tick
+mark, but there will not necessarily be any extra space between that
+tick mark and the end of the data range.
+        </para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><varname>x_integer_increment</varname></term>
+      <term><varname>y_integer_increment</varname></term>
+      <listitem>
+        <para>
+Allow or disallow fractional tick increments.
+(Boolean flag, default is FALSE.)
+If the flag is TRUE, PHPlot will not pick a tick increment less than 1.
+If the flag is FALSE, PHPlot may pick any tick increment.
+        </para>
+        <para>
+If you set one of these flags to TRUE, PHPlot will disregard the minimum
+number of ticks setting if the data range is small.
+For example, if your Y data range is 0 to 2, and you set
+<literal>y_integer_increment</literal>, PHPlot will use a tick increment of
+1, and you will likely get only 2 tick intervals. This is less than the
+default minimum of 5 tick intervals.
+        </para>
+        <para>
+If PHPlot uses the date/time tick increment algorithm (see
+above), then only integer increments are allowed, as the minimum
+increment in that mode is 1 second, so these flags are ignored.
+        </para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><varname>x_min_ticks</varname></term>
+      <term><varname>y_min_ticks</varname></term>
+      <listitem>
+        <para>
+Minimum number of tick intervals in the X and Y axis directions.
+(Integer &gt; 0, default 5.)
+The maximum number of tick intervals will be about 2.5 times the minimum.
+(The value 2.5 comes from the fact that the selected tick increment will be
+a multiple of 1, 2, or 5 times a power of 10. The largest ratio between
+adjacent pairs of these numbers is 2.5.)
+        </para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><varname>x_zero_magnet</varname></term>
+      <term><varname>y_zero_magnet</varname></term>
+      <listitem>
+        <para>
+Zero magnet factors, for X and Y directions.
+(Float &gt;= 0 and &lt;= 1.0, default 0.857142 or 6/7.)
+If the data range does not include zero, PHPlot considers extending the plot
+range to include zero at one end.
+The <emphasis>zero magnet factor</emphasis> determines how far PHPlot will
+extend the plot range if doing so would result in zero being included
+in the range.
+(If the data range already includes zero, these variables have no effect.)
+        </para>
+        <para>
+A value of 0 for the zero magnet factor means PHPlot will not try to extend
+the range to include 0, beyond what it does to have the range start at a
+tick mark. At the other extreme, a value of 1.0 means that PHPlot
+should always include 0 in the plot range, no matter how far it has to
+extend the range. (This may result in data points with little apparent
+variation, if they are far from 0.)
+        </para>
+        <para>
+Between 0 and 1.0, the zero magnet factor is applied as follows. Let
+<mathphrase>ZF = zero_magnet / (1 - zero_magnet)</mathphrase>.
+This maps the zero magnet domain of 0:1 into the range 0:infinity.
+PHPlot will extend the plot range to include 0 if that increases
+the range by a factor of ZF or less.
+        </para>
+        <para>
+For example, the default zero magnet factor of 6/7 results in ZF=6, so
+PHPlot will 'pull' the bottom of the plot range down to zero if doing so
+will stretch the range by 600% or less. (If the data is all negative, it
+will apply the zero magnet to 'pushing' the top of the range to zero in the
+same manner.)
+If the data range is 500 to 600, PHPlot will adjust it to become 0 to 600,
+because adjusting the lower range by 500 is less than the maximum 6*100.
+If the data range is 900 to 1000, PHPlot will not adjust it to start at 0,
+because the zero magnet is only 'strong enough' to pull the range down by
+6*100, not 900.
         </para>
       </listitem>
     </varlistentry>
