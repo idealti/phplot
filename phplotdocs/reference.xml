@@ -4917,7 +4917,7 @@ always used a period for decimal point, and comma for thousands separator.
 
   <refnamediv>
     <refname>SetNumXTicks</refname>
-    <refpurpose>Set the number of X tick marks</refpurpose>
+    <refpurpose>Set the number of X tick intervals</refpurpose>
   </refnamediv>
 
   <refsynopsisdiv>
@@ -4927,8 +4927,8 @@ always used a period for decimal point, and comma for thousands separator.
   <refsect1>
     <title>Description</title>
     <para>
-<function>SetNumXTicks</function> sets the number of tick marks to
-draw on the X axis.
+<function>SetNumXTicks</function> sets the number of tick intervals along
+the X axis.
 You can use either this function or <xref linkend="SetXTickIncrement" />
 (but not both) to control the tick mark spacing.
     </para>
@@ -4941,7 +4941,7 @@ You can use either this function or <xref linkend="SetXTickIncrement" />
         <term><replaceable>$nt</replaceable></term>
         <listitem>
           <para>
-Integer number of tick marks to draw.
+Integer number of tick intervals.
 If the value is omitted or an empty string, the default behavior is restored.
           </para>
         </listitem>
@@ -4952,7 +4952,7 @@ If the value is omitted or an empty string, the default behavior is restored.
   <refsect1>
     <title>Notes</title>
     <para>
-<function>SetNumXTicks</function> actually sets the number of intervals into
+<function>SetNumXTicks</function> sets the number of intervals into
 which PHPlot divides the X data range.  If there are N intervals, there might
 be as many as N+1 tick marks (accounting for one at each end).
 Or, there might be N or N-1 tick marks, if a tick anchor is set with
@@ -4961,13 +4961,40 @@ either end with <xref linkend="SetSkipLeftTick"/>
 or <xref linkend="SetSkipRightTick"/>.
     </para>
     <para>
+If you use <function>SetNumXTicks</function>, you will get exactly that many
+tick intervals, regardless of whether the resulting tick increment is a
+whole number. In general, you would only use <function>SetNumXTicks</function>
+when also using <xref linkend="SetPlotAreaWorld"/> to specify both ends
+of the X plot range. For example:
+      <programlisting><![CDATA[$plot->SetPlotAreaWorld(0, NULL, 200);
+$plot->SetNumXTicks(10);
+]]></programlisting>
+You will have an X range from 0 to 200, with 10 intervals of 20 units.
+    </para>
+    <para>
 If neither <function>SetNumXTicks</function> nor 
-<xref linkend="SetXTickIncrement" /> is used, the tick mark interval
-is calculated as 1/10th of the X data range.
+<xref linkend="SetXTickIncrement" /> is used, the tick interval
+is automatically calculated by PHPlot.
     </para>
   </refsect1>
   <refsect1>
     <title>History</title>
+    <para>
+Before PHPlot-6.0.0, if neither the number of ticks nor the tick increment
+were specified, PHPlot calculated the tick increment as 1/10 of the X data
+range.
+Starting with PHPlot-6.0.0, a more complex algorithm is used which tries
+to produce 'natural' tick increments.
+    </para>
+
+    <para>
+Starting with PHPlot-6.0.0, if you call both <function>SetNumXTicks</function>
+and <function>SetXTickIncrement</function>, the tick increment has priority
+and the specified number of ticks is ignored.
+Before PHPlot-6.0.0, the behavior was order-dependent: whichever function
+was used last had priority.
+    </para>
+
     <para>
 Through PHPlot-5.3.0, the argument was required.
 To restore the default behavior, it was necessary to use
@@ -4985,7 +5012,7 @@ default behavior.
 
   <refnamediv>
     <refname>SetNumYTicks</refname>
-    <refpurpose>Set the number of Y tick marks</refpurpose>
+    <refpurpose>Set the number of Y tick intervals</refpurpose>
   </refnamediv>
 
   <refsynopsisdiv>
@@ -4995,8 +5022,8 @@ default behavior.
   <refsect1>
     <title>Description</title>
     <para>
-<function>SetNumYTicks</function> sets the number of tick marks to
-draw on the Y axis.
+<function>SetNumYTicks</function> sets the number of tick intervals along
+the Y axis.
 You can use either this function or <xref linkend="SetYTickIncrement" />
 (but not both) to control the tick mark spacing.
     </para>
@@ -5009,7 +5036,7 @@ You can use either this function or <xref linkend="SetYTickIncrement" />
         <term><replaceable>$nt</replaceable></term>
         <listitem>
           <para>
-Integer number of tick marks to draw.
+Integer number of tick intervals.
 If the value is omitted or an empty string, the default behavior is restored.
           </para>
         </listitem>
@@ -5020,7 +5047,7 @@ If the value is omitted or an empty string, the default behavior is restored.
   <refsect1>
     <title>Notes</title>
     <para>
-<function>SetNumYTicks</function> actually sets the number of intervals into
+<function>SetNumYTicks</function> sets the number of intervals into
 which PHPlot divides the Y data range.  If there are N intervals, there might
 be as many as N+1 tick marks (accounting for one at each end).
 Or, there might be N or N-1 tick marks, if a tick anchor is set with
@@ -5029,13 +5056,40 @@ either end with <xref linkend="SetSkipBottomTick"/>
 or <xref linkend="SetSkipTopTick"/>.
     </para>
     <para>
+If you use <function>SetNumYTicks</function>, you will get exactly that many
+tick intervals, regardless of whether the resulting tick increment is a
+whole number. In general, you would only use <function>SetNumYTicks</function>
+when also using <xref linkend="SetPlotAreaWorld"/> to specify both ends
+of the Y plot range. For example:
+      <programlisting><![CDATA[$plot->SetPlotAreaWorld(NULL, -10, NULL, 10);
+$plot->SetNumXTicks(20);
+]]></programlisting>
+You will have a Y range from -10 to 10, with 20 intervals of 1 unit each.
+    </para>
+    <para>
 If neither <function>SetNumYTicks</function> nor 
-<xref linkend="SetYTickIncrement" /> is used, the tick mark interval
-is calculated as 1/10th of the Y data range.
+<xref linkend="SetYTickIncrement" /> is used, the tick interval
+is automatically calculated by PHPlot.
     </para>
   </refsect1>
   <refsect1>
     <title>History</title>
+    <para>
+Before PHPlot-6.0.0, if neither the number of ticks nor the tick increment
+were specified, PHPlot calculated the tick increment as 1/10 of the Y data
+range.
+Starting with PHPlot-6.0.0, a more complex algorithm is used which tries
+to produce 'natural' tick increments.
+    </para>
+
+    <para>
+Starting with PHPlot-6.0.0, if you call both <function>SetNumYTicks</function>
+and <function>SetYTickIncrement</function>, the tick increment has priority
+and the specified number of ticks is ignored.
+Before PHPlot-6.0.0, the behavior was order-dependent: whichever function
+was used last had priority.
+    </para>
+
     <para>
 Through PHPlot-5.3.0, the argument was required.
 To restore the default behavior, it was necessary to use
@@ -5856,15 +5910,11 @@ and no calculations take place until <xref linkend="DrawGraph" /> is used.
 <function>SetPlotAreaWorld</function> changes the range for World Coordinate
 space. This is the coordinate space of the data to be plotted, and is
 translated and scaled to fit into the Device Coordinate space of the image.
-By default, PHPlot defines the world coordinate space by the actual limits
+By default, PHPlot defines the world coordinate space based on the actual limits
 of the data to be plotted. By using SetPlotAreaWorld, you can override one or
-more of these calculated limits. Each parameter you specify overrides
+more of the calculated limits. Each parameter you specify overrides
 the corresponding calculated limit. Each defaulted or NULL parameter is
 ignored and the calculated limit is used.
-    </para>
-    <para>
-Since tick marks are automatically positioned based on the world coordinate
-limits, SetPlotAreaWorld is also used to force a specific range for tick marks.
     </para>
   </refsect1>
 
@@ -5928,7 +5978,15 @@ coordinates.
   <refsect1>
     <title>History</title>
     <para>
-SetPlotAreaPixels and SetPlotAreaWorld can be called in either order.
+Starting with PHPlot-6.0.0, <function>SetPlotAreaWorld</function> will
+stop with an error if a fully specified range is invalid. That is, if
+both $xmin and $xmax are given and not NULL, $xmin must be less than $xmax.
+If both $ymin and $ymax are given and not NULL, $ymin must be less than $ymax.
+In older versions, this error was not detected.
+    </para>
+    <para>
+<function>SetPlotAreaPixels</function> and <function>SetPlotAreaWorld</function>
+can be called in either order.
 Through PHPlot-5.0.4 this was because SetPlotAreaWorld would
 reset the scale factors if <xref linkend="SetPlotAreaPixels" /> was already
 called.
@@ -8895,7 +8953,7 @@ defaults.)
 
   <refnamediv>
     <refname>SetXTickIncrement</refname>
-    <refpurpose>Set the step between X ticks</refpurpose>
+    <refpurpose>Set the interval between X ticks</refpurpose>
   </refnamediv>
 
   <refsynopsisdiv>
@@ -8931,8 +8989,27 @@ If the value is omitted or an empty string, the default behavior is restored.
     <title>Notes</title>
     <para>
 If neither <function>SetXTickIncrement</function> nor 
-<xref linkend="SetNumXTicks" /> is used, the tick mark interval
-is calculated as 1/10th of the X data range.
+<xref linkend="SetNumXTicks" /> is used, the tick interval
+is automatically calculated by PHPlot.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>History</title>
+    <para>
+Before PHPlot-6.0.0, if neither the number of ticks nor the tick increment
+were specified, PHPlot calculated the tick increment as 1/10 of the X data
+range.
+Starting with PHPlot-6.0.0, a more complex algorithm is used which tries
+to produce 'natural' tick increments.
+    </para>
+
+    <para>
+Starting with PHPlot-6.0.0, if you call both <function>SetNumXTicks</function>
+and <function>SetXTickIncrement</function>, the tick increment has priority
+and the specified number of ticks is ignored.
+Before PHPlot-6.0.0, the behavior was order-dependent: whichever function
+was used last had priority.
     </para>
   </refsect1>
 </refentry>
@@ -10415,7 +10492,7 @@ See figure under <xref linkend="SetXTickCrossing" />.
 
   <refnamediv>
     <refname>SetYTickIncrement</refname>
-    <refpurpose>Set the step between Y ticks</refpurpose>
+    <refpurpose>Set the interval between Y ticks</refpurpose>
   </refnamediv>
 
   <refsynopsisdiv>
@@ -10451,8 +10528,27 @@ If the value is omitted or an empty string, the default behavior is restored.
     <title>Notes</title>
     <para>
 If neither <function>SetYTickIncrement</function> nor 
-<xref linkend="SetNumYTicks" /> is used, the tick mark interval
-is calculated as 1/10th of the Y data range.
+<xref linkend="SetNumYTicks" /> is used, the tick interval
+is automatically calculated by PHPlot.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>History</title>
+    <para>
+Before PHPlot-6.0.0, if neither the number of ticks nor the tick increment
+were specified, PHPlot calculated the tick increment as 1/10 of the X data
+range.
+Starting with PHPlot-6.0.0, a more complex algorithm is used which tries
+to produce 'natural' tick increments.
+    </para>
+
+    <para>
+Starting with PHPlot-6.0.0, if you call both <function>SetNumYTicks</function>
+and <function>SetYTickIncrement</function>, the tick increment has priority
+and the specified number of ticks is ignored.
+Before PHPlot-6.0.0, the behavior was order-dependent: whichever function
+was used last had priority.
     </para>
   </refsect1>
 </refentry>
