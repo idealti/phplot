@@ -4,6 +4,30 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-06-26 (/branches/Rel6)
+    Changes for new plot area range and tick increment calculations:
+    + advanced.xml: Added new section "Tuning Plot Range and Tick Increment
+      Calculations".
+    + developer.xml: Added 6 new internal functions used in range and tick
+      increment calculations: CalcPlotRange, CalcRangeInit, CalcStep,
+      CalcStep125, CalcStepDateTime, CheckPlotRange.
+      Additional changes to related functions, including CalcTicks.
+    + reference.xml: Changed description of SetNum[XY]Ticks() and
+      Set[XY]TickIncrement() to correspond to changes in tick increment
+      calculations. Updated SetPlotAreaWorld().
+    + variables.list: Documented 10 new variables used to tune the plot area
+      range and tick increment calculations.
+
+    Note: There are issues with some of the examples when run using
+    the new (Rel6 branch) PHPlot. Most of the examples are improved,
+    but the 3 OHLC examples (5.30-5.32) are made worse due to the new
+    "zero magnet" feature, and example 5.37(a) is pointless because
+    setting a Y tick anchor at zero is no longer necessary.
+    These will be addressed before the next release.
+
+    Note: Descriptions of Set[XY]TickAnchor() need to be updated.
+
+
 * 2012-06-15 (/branches/Rel6)
     Changes from recent code cleanup:
     + reference.xml: GetLegendSize() returns FALSE if there is no legend.
