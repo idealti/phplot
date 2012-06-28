@@ -335,8 +335,116 @@ is used to calculate margins.
 Calculates the world coordinate limits of the plot area.
 This was added to PHPlot-5.0.5 by moving the calculations out of
 <xref linkend="SetPlotAreaWorld"/>.
+Starting with PHPlot-6.0.0, it just calls <xref linkend="CalcPlotRange"/>
+twice, once for X and once for Y.
 Called by <xref linkend="DrawGraph"/>, after <xref linkend="FindDataLimits"/>
 is used to examine the data array values.
+    </para>
+  </listitem>
+</varlistentry>
+
+<varlistentry>
+  <term><anchor id="CalcPlotRange" xreflabel="CalcPlotRange"/>CalcPlotRange($which)</term>
+  <listitem>
+    <para>
+Calculates the plot range and tick increment. $which is 'x' or 'y', to
+calculate values for the X or Y axis.
+Specified values (e.g. with <xref linkend="SetPlotAreaWorld"/>
+or <xref linkend="SetXTickIncrement"/>) are used if set. Otherwise, values
+are calculated heuristically.
+Returns an array of 3 calculated values: tick_increment, plot_min, and plot_max.
+This was added in PHPlot-6.0.0.
+Calls <xref linkend="CalcStep"/> if necessary to calculate the tick
+increment. (If either the tick increment or number of ticks has been set,
+then CalcPlotRange uses those instead of calling CalcStep).
+Called by <xref linkend="CalcPlotAreaWorld"/>, once for X and once for Y.
+    </para>
+  </listitem>
+</varlistentry>
+
+<varlistentry>
+  <term><anchor id="CalcRangeInit" xreflabel="CalcRangeInit"/>CalcRangeInit(&amp;$plot_limit, $implied, $min_flag, $data_limit, &amp;$adjust_flag)</term>
+  <listitem>
+    <para>
+Calculates the initial values for the plot range ends.
+$plot_limit is one end (min or max) of a plot range. It is passed as a
+reference because it might be unset. Unset, NULL, or an empty string means
+this end of the range has not been set and needs to be calculated.
+$implied is true when the data type does not specify the value (for
+example, the X value in text-data data type).
+$min_flag is TRUE for the low end of a range; this affects the range end
+for the $implied case only.
+$data_limit is the actual data limit (min or max) at this end of the range;
+given no other information this is the initial guess for the plot range limit.
+Returns the initial value for the plot limit value, and sets the
+$adjust_flag to TRUE if that needs further adjustments.
+    </para>
+    <para>
+This was added in PHPlot-6.0.0.
+Called by <xref linkend="CalcPlotRange"/> 4 times, once for each end of the X
+and Y ranges.
+    </para>
+  </listitem>
+</varlistentry>
+
+<varlistentry>
+  <term><anchor id="CalcStep" xreflabel="CalcStep"/>CalcStep($range, $min_ticks, $use_datetime, $integer_step)</term>
+  <listitem>
+    <para>
+Calculates an appropriate tick increment.
+$range is the plot area range (max - min).
+For $min_ticks, $use_datetime, and $integer_step, see
+<xref linkend="conc-tuning-range"/>; the applicable variable (e.g.
+x_min_ticks or y_min_ticks) is passed to this function (e.g. as min_ticks).
+Returns the calculated tick increment.
+    </para>
+    <para>
+This function is not called if the user has set a tick increment
+(<xref linkend="SetXTickIncrement"/>, <xref linkend="SetYTickIncrement"/>)
+or the number of tick marks
+(<xref linkend="SetNumXTicks"/>, <xref linkend="SetNumYTicks"/>).
+It is only called if neither tick increment nor number of ticks has been set.
+The function calls either <xref linkend="CalcStep125"/> or
+<xref linkend="CalcStepDatetime"/> to calculate an appropriate value.
+This was added in PHPlot-6.0.0.
+Called by <xref linkend="CalcPlotRange"/>.
+    </para>
+  </listitem>
+</varlistentry>
+
+<varlistentry>
+  <term><anchor id="CalcStep125" xreflabel="CalcStep125"/>CalcStep125($range, $min_ticks)</term>
+  <listitem>
+    <para>
+Calculates an appropriate tick increment for a numeric (as opposed to
+date/time) range.
+$range is the plot area range (max - min).
+$min_ticks is the minimum number of tick intervals to produce.
+Returns the calculated tick increment.
+The algorithm produces the largest tick increment that is a power of 10
+times 1, 2, or 5, and divides the plot area range $range into no fewer than
+$min_ticks intervals.
+This was added in PHPlot-6.0.0.
+Called by <xref linkend="CalcStep"/>.
+    </para>
+  </listitem>
+</varlistentry>
+
+<varlistentry>
+  <term><anchor id="CalcStepDatetime"
+xreflabel="CalcStepDatetime"/>CalcStepDatetime($range, $min_ticks)</term>
+  <listitem>
+    <para>
+Calculates an appropriate tick increment for a date/time range.
+$range is the plot area range (max - min), in seconds.
+$min_ticks is the minimum number of tick intervals to produce.
+Returns the calculated tick increment.
+The function contains a list of acceptable intervals between 1 second and 1
+week, and returns one of those if possible. If the range is too large
+(would produce too many ticks with an increment of 1 week), the function
+falls back to using <xref linkend="CalcStep125"/> with units of 1 day.
+This was added in PHPlot-6.0.0.
+Called by <xref linkend="CalcStep"/>.
     </para>
   </listitem>
 </varlistentry>
@@ -345,12 +453,15 @@ is used to examine the data array values.
   <term><anchor id="CalcTicks" xreflabel="CalcTicks"/>CalcTicks($which)</term>
   <listitem>
     <para>
-Calculates the tick parameters. $which is 'x' or 'y'. Returns an array of 3
+Gets the tick parameters. $which is 'x' or 'y'. Returns an array of 3
 values: start, end, and interval.
-This was added to PHPlot-5.0.5, although it still uses the same method
+This was added to PHPlot-5.0.5, although still using the method
 of just dividing the interval by 10 if there is no user-supplied interval
 or tick count.
-It also accounts for a tick anchor value (starting with PHPlot-5.4.0).
+Starting with PHPlot-5.4.0, it also accounts for a tick anchor value, by
+shifting the start value as needed.
+Starting in PHPlot-6.0.0, it no longer calculates the tick increment, but
+simply uses the values calculated by <xref linkend="CalcPlotRange"/>.
 Called by <xref linkend="CalcMaxTickLabelSize"/>,
 <xref linkend="DrawYTicks"/>, and <xref linkend="DrawXTicks"/>.
     </para>
@@ -458,7 +569,7 @@ Checks the validity of an option passed to a PHPlot member function.
 $which_opt is the string to check, and $which_acc is a string of acceptable
 choices (with a comma and then a space between choices).
 If the string to check is not found in the string of acceptable choices, a
-fatal error will be reported using <xref linkend="DrawError"/>.
+fatal error will be reported using <xref linkend="PrintError"/>.
 The error message will include $which_func which should
 be the name of the calling function (using the PHP __FUNCTION__ magic constant).
 Note that this is used to catch programming errors, not run-time or user errors.
@@ -483,7 +594,7 @@ If the $opt argument is supplied as a string, it is first converted to an
 array with one element. Then the elements of the array are each checked
 for validity. If any element of the array of strings to check is not
 found in the string of acceptable choices, a fatal error will be reported
-using <xref linkend="DrawError"/>.  The error message will include $func
+using <xref linkend="PrintError"/>.  The error message will include $func
 which should be the name of the calling function (using the PHP
 __FUNCTION__ magic constant).  Note that this is used to catch programming
 errors, not run-time or user errors.  If all of the array elements to check
@@ -506,6 +617,37 @@ precision (if set), else 1 digit if <xref linkend="SetPrecisionY"/>
 was never called.
 Called by <xref linkend="DrawPieChart"/>.
 This was added in PHPlot-5.6.0.
+    </para>
+  </listitem>
+</varlistentry>
+
+<varlistentry>
+  <term><anchor id="CheckPlotRange"
+xreflabel="CheckPlotRange"/>CheckPlotRange($which, &amp;$plot_min, &amp;$plot_max, $adjust_min, $adjust_max)</term>
+  <listitem>
+    <para>
+Ensures that the X or Y plot range is positive.  This is necessary because the
+plot range and tick increment calculations, as well as the overall plotting
+functions, cannot handle zero or negative ranges.
+A bad range can happen as a result of 'flat' or missing data (all Y values
+the same, for example), or if <xref linkend="SetPlotAreaWorld"/> is used to
+set one end of the data range, and the actual data is on the wrong side of
+that limit. (<function>SetPlotAreaWorld</function> itself defends against
+setting both ends of a range such that min >= max).
+PHPlot will never adjust user-set plot limits, but it will adjust its own
+calculated limits to force a positive range (even if the resulting plot may
+not be useful).
+    </para>
+    <para>
+$which is 'x' or 'y' (this is only used for error reporting).
+$plot_min and $plot_max are the range limits. These are passed by reference
+and may be adjusted by the function.
+$adjust_min and $adjust_max are flags indicating if the corresponding
+$plot_min and $plot_max values were user-specified (False) or calculated (True).
+A flag value of True means <function>CheckPlotRange</function> may adjust
+the corresponding plot range value to prevent a non-positive range.
+Called by <xref linkend="CalcPlotRange"/>.
+This was added in PHPlot-6.0.0.
     </para>
   </listitem>
 </varlistentry>
@@ -595,7 +737,7 @@ function did not have a parameter and was used only for area plots.
 </varlistentry>
 
 <varlistentry>
-  <term><anchor id="DrawBackground" xreflabel="DrawBackground"/>DrawBackground($overwrite = False))</term>
+  <term><anchor id="DrawBackground" xreflabel="DrawBackground"/>DrawBackground($overwrite = False)</term>
   <listitem>
     <para>
 Draws the image background, either an image file or solid fill or nothing.
@@ -814,7 +956,7 @@ This was added in PHPlot-5.1.3.
 </varlistentry>
 
 <varlistentry>
-  <term><anchor id="DrawImageBorder" xreflabel="DrawImageBorder"/>DrawImageBorder($overwrite = False))</term>
+  <term><anchor id="DrawImageBorder" xreflabel="DrawImageBorder"/>DrawImageBorder($overwrite = False)</term>
   <listitem>
     <para>
 Draws a border around the image, if enabled by
@@ -1558,7 +1700,7 @@ fonts.
 </varlistentry>
 
 <varlistentry>
-  <term><anchor id="GetTextAlignment" xreflabel="GetTextAlignment"/>GetTextAlignment($sin_t, $cos_t, &amp;$h_align, &amp;$v_align, $reverse = FALSE))</term>
+  <term><anchor id="GetTextAlignment" xreflabel="GetTextAlignment"/>GetTextAlignment($sin_t, $cos_t, &amp;$h_align, &amp;$v_align, $reverse = FALSE)</term>
   <listitem>
     <para>
 Selects the best alignment for text which is at a specific angle ($sin_t,
