@@ -889,7 +889,7 @@ The range of Z values in the plot is linearly mapped into a range of bubble
 sizes, with the lowest plotted Z value producing a bubble with the minimum size,
 and the largest Z value producing the largest bubble.
 The smallest and largest bubble sizes are automatically calculated
-based on the plot area size, but see also <xref linkend="conc-tuning-bubbles"/>.
+based on the plot area size, but see also <xref linkend="adv-tuning-bubbles"/>.
 Note: There is no way to display the actual numeric Z values on the plot.
 </para>
 
@@ -899,7 +899,7 @@ bubbles will be drawn using the corresponding colors in the data colors
 array, as set with <xref linkend="SetDataColors"/>.
 With multiple data sets (or even a single data set), you may find
 the plot easier to read when using semi-transparent data colors as
-described in <xref linkend="conc-truecolor-using-alpha"/>.
+described in <xref linkend="adv-truecolor-using-alpha"/>.
 </para>
 
 <para>
@@ -1687,7 +1687,7 @@ chapter control the use of colors in PHPlot.
 This section describes <link linkend="def-palette">Palette images</link>.
 Starting with PHPlot-5.1.1, a second color model is available in
 PHPlot: <link linkend="def-truecolor">Truecolor images</link>.
-Refer to <xref linkend="conc-truecolor"/> for more information.
+Refer to <xref linkend="adv-truecolor"/> for more information.
   </para>
 </abstract>
 
@@ -1720,7 +1720,7 @@ being in the range 0 to 255 inclusive, for example
     </para>
   </listitem>
 </orderedlist>
-Additional color forms can be found in <xref linkend="conc-truecolor-forms"/>. 
+Additional color forms can be found in <xref linkend="adv-truecolor-forms"/>. 
 Those forms are more useful with truecolor images.
 </para>
 <note>
@@ -1968,7 +1968,7 @@ Otherwise you will get two data sets plotted in the same color, orange.
 Instead of using sequential data colors for plotted data sets, you can
 control exactly which data color is used for each data value using the
 data color callback.
-For more information, see <xref linkend="conc-colors-datacolor-callback"/>.
+For more information, see <xref linkend="adv-datacolor-callback"/>.
 </para>
 
 </sect2>
@@ -2438,7 +2438,7 @@ Y data value labels indicate the value of each point and are displayed
 PHPlot does not attempt to prevent interference between the labels and
 other plot elements.
 Use <xref linkend="SetYDataLabelPos" /> to enable Y data value labels.
-To change the position of the labels, see <xref linkend="conc-tuning-labels"/>.
+To change the position of the labels, see <xref linkend="adv-tuning-labels"/>.
 Note: data value labels for these plot types was added in PHPlot-5.3.0.
 </para>
 <para>

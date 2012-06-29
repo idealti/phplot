@@ -141,7 +141,7 @@ $newplot->DrawGraph(); // Draw it
 </para>
 </sect1>
 
-<sect1 id="conc-truecolor">
+<sect1 id="adv-truecolor">
 <title>Truecolor Images</title>
 <abstract><title></title>
   <para>
@@ -170,7 +170,7 @@ An example of using Truecolor with PHPlot can be found in
 <xref linkend="ex-truecolor-histogram"/>.
 </para>
 
-<sect2 id="conc-truecolor-overview">
+<sect2 id="adv-truecolor-overview">
 <title>Using Truecolor Images in PHPlot</title>
 <para>
 To make a Truecolor image in PHPlot, create an object of the derived class
@@ -189,7 +189,7 @@ That is all you need to do in order to create truecolor images. All PHPlot
 methods are compatible with PHPlot_truecolor objects. An image file
 produced from a PHPlot_truecolor object with no other programming changes
 will be the same as an image file produced from a PHPlot object except as
-described under <xref linkend="conc-truecolor-fileformats"/>.
+described under <xref linkend="adv-truecolor-fileformats"/>.
 </para>
 
 <para>
@@ -199,7 +199,7 @@ variable transparency. This is described in the next two sections.
 
 </sect2>
 
-<sect2 id="conc-truecolor-alpha">
+<sect2 id="adv-truecolor-alpha">
 <title>Understanding Variable Transparency (Alpha)</title>
 <para>
 Colors in a truecolor image have four components: red, green, blue, and
@@ -272,7 +272,7 @@ the images are magnified 2x to show detail.
 
 </sect2>
 
-<sect2 id="conc-truecolor-using-alpha">
+<sect2 id="adv-truecolor-using-alpha">
 <title>Using Variable Transparency (Alpha) in PHPlot</title>
 <para>
 To use partially transparent colors (that is, colors with an alpha channel)
@@ -283,7 +283,7 @@ colors.
 
 <para>
 Use of alpha values with a color specification is described below,
-in <xref linkend="conc-truecolor-forms"/>.
+in <xref linkend="adv-truecolor-forms"/>.
 Here are some examples of using colors with an alpha specification.
 </para>
 
@@ -333,7 +333,7 @@ transparent data colors without re-specifying all the colors.
 </para>
 </sect2>
 
-<sect2 id="conc-truecolor-forms">
+<sect2 id="adv-truecolor-forms">
 <title>Color Parameter Form Extensions</title>
 <para>
 In addition to the forms specified in <xref linkend="conc-colors-forms"/>,
@@ -377,7 +377,7 @@ For example,
 
 </sect2>
 
-<sect2 id="conc-truecolor-fileformats">
+<sect2 id="adv-truecolor-fileformats">
 <title>Image Formats and File Formats, Palette and Truecolor</title>
 <para>
 PHPlot can produce JPEG, PNG, and GIF image files (and possibly others).
@@ -404,7 +404,7 @@ and palette images are created with the <literal>PHPlot</literal> class.
 If you specify a background image, the GD image created by PHPlot matches the
 type - truecolor or palette - of your background image file.
 More on background image files can be found in
-<xref linkend="conc-truecolor-background"/> below.
+<xref linkend="adv-truecolor-background"/> below.
 </para>
 
 <para>
@@ -464,11 +464,11 @@ PHPlot_truecolor object. This was changed in PHPlot-5.1.2, and alpha
 channel information is used for both PHPlot and PHPlot_truecolor classes.
 However, alpha channel information is not always useful with palette
 images.
-More on this can be found in <xref linkend="conc-truecolor-palette"/> below.
+More on this can be found in <xref linkend="adv-truecolor-palette"/> below.
 </para>
 </sect2>
 
-<sect2 id="conc-truecolor-plottypes">
+<sect2 id="adv-truecolor-plottypes">
 <title>Truecolor Images and Plot Types</title>
 <para>
 All PHPlot plot types work with truecolor images, but not all plot types
@@ -505,7 +505,7 @@ portions of the bars. With alpha blending, the overlaps take on new colors.
 
 </sect2>
 
-<sect2 id="conc-truecolor-background">
+<sect2 id="adv-truecolor-background">
 <title>Background Images</title>
 <para><?dbfo keep-together="always"?>
 When creating a PHPlot or PHPlot_truecolor object, you can provide an
@@ -540,7 +540,7 @@ nor to a plot area background set with <xref linkend="SetPlotAreaBgImage"/>.
 
 </sect2>
 
-<sect2 id="conc-truecolor-callbacks">
+<sect2 id="adv-truecolor-callbacks">
 <title>Additional Operations on Truecolor Images Using Callbacks</title>
 <para>
 Advanced operations on truecolor PHPlot images are possible using PHPlot
@@ -556,7 +556,7 @@ bundled version of the GD library.
   </para>
 </note>
 
-<sect3 id="conc-truecolor-callbacks-antialias">
+<sect3 id="adv-truecolor-callbacks-antialias">
 <title>imageantialias()</title>
 <para><?dbfo keep-together="always"?>
 You can turn on anti-aliasing of truecolor images. This must be done before
@@ -583,7 +583,7 @@ palette images, regardless of the use of <function>imageantialias()</function>.
 </para>
 </sect3>
 
-<sect3 id="conc-truecolor-callbacks-alphablending">
+<sect3 id="adv-truecolor-callbacks-alphablending">
 <title>imagealphablending() and imagelayereffect()</title>
 <para>
 These functions control the combining of partially transparent colors. They
@@ -593,7 +593,7 @@ Note that alpha blending is on by default with all truecolor images.
 </para>
 </sect3>
 
-<sect3 id="conc-truecolor-callbacks-gammacorrect">
+<sect3 id="adv-truecolor-callbacks-gammacorrect">
 <title>imagegammacorrect()</title>
 <para><?dbfo keep-together="always"?>
 You can have the GD library perform gamma adjustment on a truecolor image.
@@ -612,7 +612,7 @@ $plot->SetCallback('draw_all', 'post_plot');
 </sect3>
 </sect2>
 
-<sect2 id="conc-truecolor-palette">
+<sect2 id="adv-truecolor-palette">
 <title>Palette Images and Advanced Color Features</title>
 <para>
 You will have a GD palette image if you use the <literal>PHPlot</literal>
@@ -653,7 +653,7 @@ not all viewers properly support this.
 </para>
 
 <para>
-Nothing described in <xref linkend="conc-truecolor-callbacks"/> works with
+Nothing described in <xref linkend="adv-truecolor-callbacks"/> works with
 palette images, including gamma adjust and anti-aliasing (except that
 TrueType Font text is always anti-aliased.)
 </para>
@@ -882,7 +882,7 @@ The following table lists the available callback reasons.
           <entry>The callback is expected to return an integer color index
              into the data colors array. This is for custom color selection.
              For more information, see
-             <xref linkend="conc-colors-datacolor-callback"/>.</entry>
+             <xref linkend="adv-datacolor-callback"/>.</entry>
         </row>
         <row>
           <entry>data_points</entry>
@@ -1258,7 +1258,7 @@ generic font, which can be set with <xref linkend="SetFont"/>('generic', ...)
 
 </sect1> <!-- callbacks -->
 
-<sect1 id="conc-colors-datacolor-callback">
+<sect1 id="adv-datacolor-callback">
 <title>Custom Data Color Selection</title>
 <abstract><title></title>
   <para>
@@ -1267,7 +1267,7 @@ PHPlot callback. The data color callback was added in PHPlot-5.1.3.
   </para>
 </abstract>
 
-<sect2 id="conc-colors-datacolor-callback-standard">
+<sect2 id="adv-datacolor-callback-standard">
 <title>Standard Behavior of Data Color Selection</title>
 <para>
 Before explaining how to customize data color selection, here is a review
@@ -1330,7 +1330,7 @@ data color selection.
 </para>
 </sect2>
 
-<sect2 id="conc-colors-datacolor-callback-custom">
+<sect2 id="adv-datacolor-callback-custom">
 <title>Custom Data Color Selection</title>
 <para>
 If you need more control over data colors, you can use the PHPlot
@@ -1451,7 +1451,7 @@ your callback function each time it is called.
 </para>
 </sect2>
 
-<sect2 id="conc-colors-datacolor-callback-legend">
+<sect2 id="adv-datacolor-callback-legend">
 <title>Custom Data Color Selection and Legend</title>
 <para>
 If your plot includes a <link linkend="conc-legend">legend</link>,
@@ -1466,7 +1466,7 @@ The Custom Bar Colors example referenced below demonstrates this.
 </para>
 </sect2>
 
-<sect2 id="conc-colors-datacolor-callback-examples">
+<sect2 id="adv-datacolor-callback-examples">
 <title>Custom Data Color Selection Examples</title>
 <para>
 For examples of using a data color callback, see
@@ -1477,7 +1477,7 @@ For examples of using a data color callback, see
 </sect2>
 </sect1> <!-- Custom data colors -->
 
-<sect1 id="conc-tuning">
+<sect1 id="adv-tuning">
 <title>Tuning Parameters</title>
 <abstract><title></title>
   <para>
@@ -1506,7 +1506,7 @@ $plot->grid_at_foreground = TRUE; // Draw grid after plot
 ]]></programlisting>
 </para>
 
-<sect2 id="conc-tuning-bars">
+<sect2 id="adv-tuning-bars">
 <title>Tuning Bar Charts</title>
 <para>
 These variables affect plot types <link linkend="plottype-bars">bars</link>
@@ -1558,7 +1558,7 @@ then all the bars touch (within each group, and adjacent groups).
 
 </sect2>
 
-<sect2 id="conc-tuning-bubbles">
+<sect2 id="adv-tuning-bubbles">
 <title>Tuning Bubble Plots</title>
 <para>
 These two variables set the range of bubble size in
@@ -1602,7 +1602,7 @@ will be 50 pixels (600 / 12).
 
 </sect2>
 
-<sect2 id="conc-tuning-ohlc">
+<sect2 id="adv-tuning-ohlc">
 <title>Tuning OHLC Charts</title>
 <para>
 These variables affect plot types <link linkend="plottype-ohlc">ohlc</link>,
@@ -1657,7 +1657,7 @@ Where avail_area = plot_area_width / number_data_points
 </para>
 </sect2>
 
-<sect2 id="conc-tuning-pie">
+<sect2 id="adv-tuning-pie">
 <title>Tuning Pie Charts</title>
 <para>
 These variables adjusts the appearance of
@@ -1709,7 +1709,7 @@ later still leaves a small gap between the pie and the plot area boundary.)
 
 </sect2>
 
-<sect2 id="conc-tuning-legend">
+<sect2 id="adv-tuning-legend">
 <title>Tuning the Legend</title>
 <para>
 This variable adjusts the appearance of the legend.
@@ -1742,7 +1742,7 @@ box in that color which is drawn behind the point shape.
 </para>
 </sect2>
 
-<sect2 id="conc-tuning-labels">
+<sect2 id="adv-tuning-labels">
 <title>Tuning Labels</title>
 <para>
 These variables affect the appearance of labels.
@@ -1787,7 +1787,7 @@ The default if unset is 5 pixels.
 
 </sect2>
 
-<sect2 id="conc-tuning-range">
+<sect2 id="adv-tuning-range">
 <title>Tuning Plot Range and Tick Increment Calculations</title>
 <para>
 These variables affect how PHPlot calculates the plot area range and the
@@ -1974,7 +1974,7 @@ because the zero magnet is only 'strong enough' to pull the range down by
 
 </sect2>
 
-<sect2 id="conc-tuning-misc">
+<sect2 id="adv-tuning-misc">
 <title>Miscellaneous Tuning</title>
 <para>
 These variables affect other aspects of the appearance of a plot.
