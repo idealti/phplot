@@ -920,7 +920,7 @@ inherits all the functions (methods) of the PHPlot class.
     <title>Notes</title>
     <para>
 Refer to <xref linkend="PHPlot"/> for the base class constructor. Refer to
-<xref linkend="conc-truecolor"/> for more information on truecolor images.
+<xref linkend="adv-truecolor"/> for more information on truecolor images.
     </para>
     <para>
 The output_file will be ignored unless <xref linkend="SetIsInline" />(True) is
@@ -942,7 +942,7 @@ example, a truecolor image is converted to palette if the output
 format (as set with <xref linkend="SetFileFormat"/>) is GIF, which supports
 only palette images. A palette image is converted to truecolor if the
 output format is JPEG, which supports only truecolor images.
-More information can be found in <xref linkend="conc-truecolor-fileformats"/>.
+More information can be found in <xref linkend="adv-truecolor-fileformats"/>.
     </para>
   </refsect1>
   <refsect1>
@@ -1269,7 +1269,7 @@ If you use  palette image with a JPEG background, the background will
 likely overflow your image's color map and leave no free color slots for PHPlot
 to use for plot elements.  The same is true if using a 24-bit color
 (non-mapped) PNG file for a background if it has many colors.
-For more on truecolor PHPlot images, see <xref linkend="conc-truecolor"/>.
+For more on truecolor PHPlot images, see <xref linkend="adv-truecolor"/>.
     </para>
   </refsect1>
 </refentry>
@@ -1486,7 +1486,7 @@ This is used internal to PHPlot for one-time initialization.
     </para>
     <para>
 A data colors callback, as described in
-<xref linkend="conc-colors-datacolor-callback" />,
+<xref linkend="adv-datacolor-callback" />,
 also controls selection of the color for data borders (if used).
     </para>
   </refsect1>
@@ -1544,7 +1544,7 @@ Use <xref linkend="SetDataBorderColors" /> instead.
 A default alpha value to apply to all data colors which do not have an alpha
 value. This is generally useful only with Truecolor images.
 A value of zero means opaque, and 127 means fully transparent.
-See <xref linkend="conc-truecolor"/> for more information.
+See <xref linkend="adv-truecolor"/> for more information.
           </para>
         </listitem>
       </varlistentry>
@@ -1602,7 +1602,7 @@ data colors.
     </para>
     <para>
 You can control how the data colors array is used with a data colors callback.
-See <xref linkend="conc-colors-datacolor-callback" /> for more information.
+See <xref linkend="adv-datacolor-callback" /> for more information.
     </para>
   </refsect1>
   <refsect1>
@@ -2644,7 +2644,7 @@ you probably want to change the error bar colors to the same array.
     </para>
     <para>
 A data colors callback, as described in
-<xref linkend="conc-colors-datacolor-callback" />,
+<xref linkend="adv-datacolor-callback" />,
 also controls selection of the color for error bars.
     </para>
   </refsect1>
@@ -3834,7 +3834,7 @@ Each line has a color box or point shape with the corresponding color from
 the data colors array.
 The colors used in the legend color boxes or point shapes are independent of
 any custom data color callback
-(see <xref linkend="conc-colors-datacolor-callback"/>).
+(see <xref linkend="adv-datacolor-callback"/>).
     </para>
     <para>
 To cancel a legend (perhaps as part of drawing multiple plots on an image),
@@ -5220,7 +5220,7 @@ With automatic pie chart sizing enabled, PHPlot prevents overly long labels
 from resulting in a pie chart which is too small.  It does this by limiting
 the minimum pie size to one half of the plot width or height, even if this
 causes labels to run off the edge.
-This behavior can be adjusted - see <xref linkend="conc-tuning-pie"/> for more.
+This behavior can be adjusted - see <xref linkend="adv-tuning-pie"/> for more.
     </para>
   </refsect1>
   <refsect1>
@@ -5770,7 +5770,7 @@ If you use  palette image with a JPEG background, the background will
 likely overflow your image's color map and leave no free color slots for PHPlot
 to use for plot elements.  The same is true if using a 24-bit color
 (non-mapped) PNG file for a background if it has many colors.
-For more on truecolor PHPlot images, see <xref linkend="conc-truecolor"/>.
+For more on truecolor PHPlot images, see <xref linkend="adv-truecolor"/>.
     </para>
   </refsect1>
 </refentry>
@@ -6946,7 +6946,7 @@ If SetRGBArray is not called, the 'small' color map is used.
 More information about the color maps can be found in
 <xref linkend="conc-colors-map" />.
 More information about using the alpha component can be found in
-<xref linkend="conc-truecolor" />.
+<xref linkend="adv-truecolor" />.
     </para>
     <para>
 Color names are case sensitive.
@@ -9754,7 +9754,7 @@ For plot types 'bars' and 'stackedbars', Y data value labels are drawn
 (if enabled) at fixed positions within or above/below the bars.
 For plot types 'lines', 'points', 'linepoints', and 'squared', Y data labels
 are drawn (if enabled) above the data points by default.
-The position can be changed (see <xref linkend="conc-tuning-labels"/>), but
+The position can be changed (see <xref linkend="adv-tuning-labels"/>), but
 PHPlot does not attempt to prevent interference between the labels and
 other plot elements.
 Y data value labels are not available with other plot types.

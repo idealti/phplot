@@ -131,7 +131,7 @@ Through PHPlot-5.2.0, the width of the color boxes was always
 <varname>char_w</varname>, the width of one character (or the width of the
 upper case letter "E") in the legend text font.
 Starting with PHPlot-5.3.0, this can be adjusted using a class variable.
-See <xref linkend="conc-tuning-legend"/> for more.
+See <xref linkend="adv-tuning-legend"/> for more.
 </para>
 <para>
 If point shapes are used in the legend instead of color boxes
@@ -394,7 +394,7 @@ and Y ranges.
 Calculates an appropriate tick increment.
 $range is the plot area range (max - min).
 For $min_ticks, $use_datetime, and $integer_step, see
-<xref linkend="conc-tuning-range"/>; the applicable variable (e.g.
+<xref linkend="adv-tuning-range"/>; the applicable variable (e.g.
 x_min_ticks or y_min_ticks) is passed to this function (e.g. as min_ticks).
 Returns the calculated tick increment.
     </para>
@@ -2082,7 +2082,7 @@ Converts a general color specification into a standard form as an array of
 color components are integers in the range 0-255, and the alpha component
 is an integer in the range 0-127 (where 0 means opaque).  The acceptable
 color specification forms are documented in <xref linkend="conc-colors-forms"/>
-and <xref linkend="conc-truecolor-forms"/>,
+and <xref linkend="adv-truecolor-forms"/>,
 and include color names, component arrays, and strings of the form #RRGGBB
 and #RRGGBBAA.  The alpha argument provides a default value if the color
 specification does not include alpha; the default 0 makes the color
@@ -2198,7 +2198,7 @@ releases without concern for backward compatibility.
 </para>
 
 <para>
-<xref linkend="conc-tuning"/> describes how some of these PHPlot variables
+<xref linkend="adv-tuning"/> describes how some of these PHPlot variables
 can be used to adjust plot appearance. Although these are also internal
 variables, setting them from your script is generally safe, as they have
 relatively small effects on plots, and are less likely to change in future

@@ -70,7 +70,7 @@ direct the output, control browser caching, and control error handling.
 The functions in this section are used to control the colors and
 line styles of PHPlot elements.
 More information about using colors in PHPlot can be found in
-<xref linkend="conc-colors" /> and <xref linkend="conc-truecolor" />.
+<xref linkend="conc-colors" /> and <xref linkend="adv-truecolor" />.
 </para>
 
 <para>

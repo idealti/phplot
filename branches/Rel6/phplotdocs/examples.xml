@@ -683,7 +683,7 @@ This example creates a <link linkend="def-truecolor">Truecolor</link>
 plot containing a histogram of a photograph, then overlays the histogram on
 a scaled-down copy of the photograph. The histogram is partly transparent so
 you can still see the photograph below.
-Refer to <xref linkend="conc-truecolor"/> for more information on using
+Refer to <xref linkend="adv-truecolor"/> for more information on using
 truecolor PHPlot images.
 </para>
 <para>
@@ -771,11 +771,11 @@ allowed in a palette image.
 </para>
 <para>
 Using the data color callback is described in
-<xref linkend="conc-colors-datacolor-callback"/>.
+<xref linkend="adv-datacolor-callback"/>.
 More information on callbacks can be found in
 <xref linkend="callbacks" />.
 More information on truecolor images can be found in
-<xref linkend="conc-truecolor" />.
+<xref linkend="adv-truecolor" />.
 </para>
 <example id="example-colorcallbackgradient">
 <?dbfo keep-together="auto"?>
@@ -814,7 +814,7 @@ colors array: 0, 1, or 2, depending on the value.
 </para>
 <para>
 Using the data color callback is described in
-<xref linkend="conc-colors-datacolor-callback"/>.
+<xref linkend="adv-datacolor-callback"/>.
 More information on callbacks can be found in <xref linkend="callbacks" />.
 </para>
 <example id="example-colorcallbackbars">
