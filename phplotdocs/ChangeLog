@@ -4,6 +4,14 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-06-28 (/branches/Rel6)
+     + advanced.xml, concepts.xml, developer.xml, examples.xml,
+       functions.xml, reference.xml, variables.list: Changed ID values for
+       sections in the Advanced chapter that used to be in Concepts, and all
+       links to them. They still had the old IDs (conc-*) and now they match
+       the others (adv-*) in that chapter.  Note that the IDs are used to
+       name the HTML files (for the top-level sections).
+
 * 2012-06-26 (/branches/Rel6)
     Changes for new plot area range and tick increment calculations:
     + advanced.xml: Added new section "Tuning Plot Range and Tick Increment
