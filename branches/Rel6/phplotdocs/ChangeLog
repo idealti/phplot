@@ -4,6 +4,12 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-06-29 (/trunk, merged into /branches/Rel6)
+    * webform.xml: Fix bug in parameter validation in the example. It did
+      not accept 0 for deposit or interest, due to incorrect use of empty()
+      vs isset().  Using 0 produces uninteresting results, but it was supposed
+      to work.  Found and reported by Sourceforge user bvn1 on the forum.
+
 * 2012-06-28 (/branches/Rel6)
      + advanced.xml, concepts.xml, developer.xml, examples.xml,
        functions.xml, reference.xml, variables.list: Changed ID values for
