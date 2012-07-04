@@ -116,6 +116,7 @@ ohlc_min_width	(2)	DrawOHLC	Minimum half-width for elements in OHLC plots (candl
 output_file	(NULL)	SetOutputFile	Redirect to output file
 pie_diam_factor	(0.5)	DrawPieChart	Aspect ratio for shaded pie charts. <link linkend="adv-tuning-pie">(See Tuning Parameters for more)</link> (Added in PHPlot-5.6.0)
 pie_full_size	(FALSE)	SetPieAutoSize	Flag: If true, do not include label sizes when calculating pie size. (Added in PHPlot-5.6.0)
+pie_label_source		SetPieLabelType	Source of label text for pie charts (percent, value, label, or index) (Added in PHPlot-5.6.0)
 pie_min_size_factor	(0.5)	DrawPieChart	Minimum amount of the plot area that will be reserved for the pie <link linkend="adv-tuning-pie">(See Tuning Parameters for more)</link> (Added in PHPlot-5.6.0)
 pielabel_color		SetPieLabelColor	Color (R,G,B,A) to use for pie chart data labels (Added in PHPlot-5.7.0)
 plot_area		CalcPlotAreaPixels	Array defining the calculated plot area. ([0],[1]) is the top left corner, ([2],[3]) is the bottom right corner.
@@ -141,6 +142,7 @@ record_bar_width		CalcBarWidths	Area for each bar in a bar chart
 records_per_group		SetDataValues	Maximum of num_recs[], max number of entries (including label and X if present) for all data rows
 rgb_array		SetRGBArray	Array mapping color names to array of R, G, B values
 safe_margin	5		Fixed extra margin used in multiple places <link linkend="adv-tuning-misc">(See Tuning Parameters for more)</link>
+saved_version		__sleep __wakeup	Stores PHPlot version when object was serialized
 shading	5	SetShading	Drop shadow size for pie and bar charts
 skip_bottom_tick	(FALSE)	SetSkipBottomTick	Skip bottom tick mark
 skip_left_tick	(FALSE)	SetSkipLeftTick	Skip left tick mark
@@ -161,25 +163,26 @@ title_offset		CalcMargins	Y offset of main title position (Added in PHPlot-5.1.2
 title_txt	''	SetTitle	Main title text
 total_records		SetDataValues	Total number of entries (rows times columns in each row) in the data array.
 transparent_color	(NULL)	SetTransparentColor	Color (R,G,B,A) designated as transparent (Added in PHPlot-5.2.0)
+truecolor		__sleep __wakeup	Flag: True if serialized object had a truecolor image
 ttf_path	'.'	SetTTFPath	TrueType font directory
 use_ttf	(FALSE)	SetUseTTF	Default font type, True for TrueType, False for GD
 x_axis_position	(NULL)	SetXAxisPosition	Position of X axis (in world coordinates)
 x_axis_y_pixels		CalcTranslation	Device coordinate for the X axis
 x_data_label_angle		SetXDataLabelAngle	X data label text angle (Added in PHPlot-5.1.0)
 x_data_label_pos		SetXDataLabelPos	Position of X data labels. (Default was 'plotdown', but is now applied at graph drawing time.)
-x_datetime_interval	(NULL)	CalcPlotRange	Flag: Use date/time steps for X tick increment. NULL means automatically determine based on X tick label formatting. (Added in PHPlot-6.0.0)
-x_end_adjust	(0 or 0.3)	CalcPlotRange	Minimum extra space (factor of tick increment) for X data range. Default is 0 for vertical plots, 0.3 for horizontal plots. (Added in PHPlot-6.0.0)
-x_integer_increment	(FALSE)	CalcPlotRange	Flag: Force X tick increment to be a whole number (Added in PHPlot-6.0.0)
+x_datetime_interval	(NULL)	CalcPlotRange	Flag: Use date/time steps for X tick increment. NULL means automatically determine based on X tick label formatting. <link linkend="adv-tuning-range">(See Tuning Parameters for more)</link> (Added in PHPlot-6.0.0)
+x_end_adjust	(0 or 0.3)	CalcPlotRange	Minimum extra space (factor of tick increment) for X data range. Default is 0 for vertical plots, 0.3 for horizontal plots. <link linkend="adv-tuning-range">(See Tuning Parameters for more)</link> (Added in PHPlot-6.0.0)
 x_label_angle	(0)	SetXLabelAngle	X tick label text angle (and default for x_data_label_angle)
 x_label_axis_offset		CalcMargins	Label offset relative to plot area
 x_label_bot_offset		CalcMargins	Label offset relative to plot area
 x_label_top_offset		CalcMargins	Label offset relative to plot area
 x_left_margin		CalcMargins	Calculated plot area margin - left side
-x_min_ticks	(5)	CalcPlotRange	Minimum number of tick intervals along X axis (Added in PHPlot-6.0.0)
+x_min_ticks	(5)	CalcPlotRange	Minimum number of tick intervals along X axis <link linkend="adv-tuning-range">(See Tuning Parameters for more)</link> (Added in PHPlot-6.0.0)
 x_right_margin		CalcMargins	Calculated plot area margin - right side
 x_tick_anchor		SetXTickAnchor	X tick anchor point (Added in PHPlot-5.4.0)
 x_tick_cross	3	SetXTickCrossing	Length of X tick marks (inside plot area)
 x_tick_inc	('')	SetXTickIncrement	Step between X tick marks
+x_tick_inc_integer	(FALSE)	CalcPlotRange	Flag: Force X tick increment to be a whole number <link linkend="adv-tuning-range">(See Tuning Parameters for more)</link> (Added in PHPlot-6.0.0)
 x_tick_label_pos		SetXTickLabelPos	Position of X tick labels. (Default was 'plotdown', but is now applied at graph drawing time.)
 x_tick_length	5	SetXTickLength	Length of X tick marks (outside plot area)
 x_tick_pos	'plotdown'	SetXTickPos	Position of X tick marks
@@ -188,7 +191,7 @@ x_title_color		SetXTitleColor	Color (R,G,B,A) for X title (Added in PHPlot-5.2.0
 x_title_pos	'none'	SetXTitle	X Axis title position
 x_title_top_offset		CalcMargins	Title offset relative to plot area
 x_title_txt	''	SetXTitle	X Axis title text
-x_zero_magnet	(0.857142)	CalcPlotRange	Controls extending the X data range to include zero. Range is 0 (never extend) to 1 (always extend to zero). Default is 6/7 which allows extending up to 600% if that would include X=0. (Added in PHPlot-6.0.0)
+x_zero_magnet	(0.857142)	CalcPlotRange	Controls extending the X data range to include zero. Range is 0 (never extend) to 1 (always extend to zero). Default is 6/7 which allows extending up to 600% if that would include X=0. <link linkend="adv-tuning-range">(See Tuning Parameters for more)</link> (Added in PHPlot-6.0.0)
 xscale		CalcTranslation	X scale factor for converting World to Device coordinates
 xscale_type	'linear'	SetXScaleType	Linear or log scale on X
 y_axis_position	(NULL)	SetYAxisPosition	Position of Y axis (in world coordinates)
@@ -196,17 +199,17 @@ y_axis_x_pixels		CalcTranslation	Device coordinate for the Y axis
 y_bot_margin		CalcMargins	Calculated plot area margin - bottom
 y_data_label_angle	(0)	SetYDataLabelAngle	Y data label text angle (Added in PHPlot-5.1.0)
 y_data_label_pos		SetYDataLabelPos CheckLabels	Position of Y labels above bars
-y_datetime_interval	(NULL)	CalcPlotRange	Flag: Use date/time steps for Y tick increment. NULL means automatically determine based on Y tick label formatting. (Added in PHPlot-6.0.0)
-y_end_adjust	(0 or 0.3)	CalcPlotRange	Minimum extra space (factor of tick increment) for Y data range. Default is 0 for horizontal plots, 0.3 for vertical plots. (Added in PHPlot-6.0.0)
-y_integer_increment	(FALSE)	CalcPlotRange	Flag: force Y tick increment to be a whole number (Added in PHPlot-6.0.0)
+y_datetime_interval	(NULL)	CalcPlotRange	Flag: Use date/time steps for Y tick increment. NULL means automatically determine based on Y tick label formatting. <link linkend="adv-tuning-range">(See Tuning Parameters for more)</link> (Added in PHPlot-6.0.0)
+y_end_adjust	(0 or 0.3)	CalcPlotRange	Minimum extra space (factor of tick increment) for Y data range. Default is 0 for horizontal plots, 0.3 for vertical plots. <link linkend="adv-tuning-range">(See Tuning Parameters for more)</link> (Added in PHPlot-6.0.0)
 y_label_angle	(0)	SetYLabelAngle	Y tick label text angle
 y_label_axis_offset		CalcMargins	Label offset relative to plot area
 y_label_left_offset		CalcMargins	Label offset relative to plot area
 y_label_right_offset		CalcMargins	Label offset relative to plot area
-y_min_ticks	(5)	CalcPlotRange	Minimum number of tick intervals along Y axis (Added in PHPlot-6.0.0)
+y_min_ticks	(5)	CalcPlotRange	Minimum number of tick intervals along Y axis <link linkend="adv-tuning-range">(See Tuning Parameters for more)</link> (Added in PHPlot-6.0.0)
 y_tick_anchor		SetYTickAnchor	Y tick anchor point (Added in PHPlot-5.4.0)
 y_tick_cross	3	SetYTickCrossing	Length of Y tick marks (inside plot area)
 y_tick_inc	('')	SetYTickIncrement	Step between Y tick marks
+y_tick_inc_integer	(FALSE)	CalcPlotRange	Flag: force Y tick increment to be a whole number <link linkend="adv-tuning-range">(See Tuning Parameters for more)</link> (Added in PHPlot-6.0.0)
 y_tick_label_pos		SetYTickLabelPos CheckLabels	Position of Y tick labels
 y_tick_length	5	SetYTickLength	Length of Y tick marks (outside plot area)
 y_tick_pos	'plotleft'	SetYTickPos	Position of Y tick marks
@@ -216,6 +219,6 @@ y_title_pos	'none'	SetYTitle	Y Axis title position
 y_title_right_offset		CalcMargins	Title offset relative to plot area
 y_title_txt	''	SetYTitle	Y Axis title text
 y_top_margin		CalcMargins	Calculated plot area margin - top
-y_zero_magnet	(0.857142)	CalcPlotRange	Controls extending the Y data range to include zero. Range is 0 (never extend) to 1 (always extend to zero). Default is 6/7 which allows extending up to 600% if that would include Y=0. (Added in PHPlot-6.0.0)
+y_zero_magnet	(0.857142)	CalcPlotRange	Controls extending the Y data range to include zero. Range is 0 (never extend) to 1 (always extend to zero). Default is 6/7 which allows extending up to 600% if that would include Y=0. <link linkend="adv-tuning-range">(See Tuning Parameters for more)</link> (Added in PHPlot-6.0.0)
 yscale		CalcTranslation	Y scale factor for converting World to Device coordinates
 yscale_type	'linear'	SetYScaleType	Linear or log scale on Y

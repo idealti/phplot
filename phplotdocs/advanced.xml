@@ -1886,8 +1886,8 @@ tick mark and the end of the data range.
     </varlistentry>
 
     <varlistentry>
-      <term><varname>x_integer_increment</varname></term>
-      <term><varname>y_integer_increment</varname></term>
+      <term><varname>x_tick_inc_integer</varname></term>
+      <term><varname>y_tick_inc_integer</varname></term>
       <listitem>
         <para>
 Allow or disallow fractional tick increments.
@@ -1899,9 +1899,9 @@ If the flag is FALSE, PHPlot may pick any tick increment.
 If you set one of these flags to TRUE, PHPlot will disregard the minimum
 number of ticks setting if the data range is small.
 For example, if your Y data range is 0 to 2, and you set
-<literal>y_integer_increment</literal>, PHPlot will use a tick increment of
-1, and you will likely get only 2 tick intervals. This is less than the
-default minimum of 5 tick intervals.
+<literal>y_tick_inc_integer</literal> to TRUE, then PHPlot will use a tick
+increment of 1, and you will likely get only 2 tick intervals.
+This is less than the default minimum of 5 tick intervals.
         </para>
         <para>
 If PHPlot uses the date/time tick increment algorithm (see
