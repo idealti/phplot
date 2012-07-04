@@ -2178,6 +2178,34 @@ See <xref linkend="GetDeviceXY"/> for a public interface.
     </para>
   </listitem>
 </varlistentry>
+
+<varlistentry>
+  <term><anchor id="__sleep" xreflabel="__sleep"/>__sleep()</term>
+  <listitem>
+    <para>
+This is a PHP "magic method" that prepares a PHPlot object for serialization.
+It stores the PHPlot version string (for checking at wakeup time), and a
+flag indicating if it used a truecolor image or not.
+See <xref linkend="adv-serialize"/>.
+This was added in PHPlot-5.8.0.
+    </para>
+  </listitem>
+</varlistentry>
+
+<varlistentry>
+  <term><anchor id="__wakeup" xreflabel="__wakeup"/>__wakeup()</term>
+  <listitem>
+    <para>
+This is a PHP "magic method" that re-creates a PHPlot object after
+unserialization.
+It checks the stored version string to make sure the object was serialized with
+the exact same PHPlot version, and then re-creates the image resource.
+See <xref linkend="adv-serialize"/>.
+This was added in PHPlot-5.8.0.
+    </para>
+  </listitem>
+</varlistentry>
+
 </variablelist>
 
 </chapter>
