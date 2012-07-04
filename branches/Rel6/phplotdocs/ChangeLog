@@ -4,6 +4,16 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-07-04 (/branches/Rel6)
+    * Checked and corrected errors with documentation for class variables.
+      + advanced.xml: Fixed mis-named tuning variables [xy]_tick_inc_integer.
+      + variables.list: Added missing variable pie_label_source.
+        Added missing variables saved_version, truecolor used by the
+            serialize/unserialize methods __sleep() and __wake().
+        Fixed mis-named tuning variables [xy]_tick_inc_integer.
+        Linked 10 variables to the Tuning Plot Range section.
+      + developer.xml: Added missing __sleep() and __wake() methods.
+
 * 2012-06-29 (/trunk, merged into /branches/Rel6)
     * webform.xml: Fix bug in parameter validation in the example. It did
       not accept 0 for deposit or interest, due to incorrect use of empty()
