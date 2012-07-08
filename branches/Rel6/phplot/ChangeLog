@@ -2,6 +2,17 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2012-07-07 (/branches/Rel6)
+    * Changed internal DrawText() and SizeText() to take a text element
+      name (e.g. 'x_title') rather than a font name. This is actually
+      implemented in the lower-level ProcessText().  For compatibility,
+      however, ProcessText() still does accept a font array.  The reason for
+      the change is that when using a drawing annotation callback with a pie
+      chart, this makes it much easier for the callback to draw text using a
+      different font than the one used for the pie chart labels.
+      Changed all internal callers of DrawText() and SizeText() to pass the
+      text element name rather than the $fonts[] array entry.
+
 2012-06-26 (/branches/Rel6)
     * Fixed conflict between setting number of ticks (SetNum[XY]Ticks) and the
       new range calculations. (The range was adjusted after calculating the
