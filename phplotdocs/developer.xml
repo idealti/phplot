@@ -1153,19 +1153,26 @@ calls <xref linkend="DrawHorizStackedBars"/> instead.
 </varlistentry>
 
 <varlistentry>
-  <term><anchor id="DrawText" xreflabel="DrawText"/>DrawText($which_font, $which_angle, $which_xpos, $which_ypos, $which_color, $which_text, $which_halign = 'left', $which_valign = 'bottom')</term>
+  <term><anchor id="DrawText" xreflabel="DrawText"/>DrawText($font, $angle, $xpos, $ypos, $color, $text, $halign = 'left', $valign = 'bottom')</term>
   <listitem>
     <para>
-Draws a string of text $which_text, at position ($which_xpos, $which_ypos).
-The font is selected with $which_font, which is one of the font arrays in
-the object.
-The text is drawn at angle $which_angle (built-in fonts can be used at 0
-and 90 degrees only, TrueType at any angle). $which_color is a GD color
+Draws a string of text $text, at position ($xpos, $ypos).
+The font settings are specified by $font, which is one of the text element
+names used by <xref linkend="SetFont"/> such as <literal>'title'</literal>
+or <literal>'x_label'</literal>.  An empty string or NULL can be used to get
+the <literal>'generic'</literal> font.  For backward compatibility,
+a font array (from the PHPlot object $fonts[] array) can be used too.
+    </para>
+    <para>
+The text is drawn at angle $angle (built-in fonts can be used at 0
+and 90 degrees only, TrueType at any angle). $color is a GD color
 index for the image. Text alignment relative to the (x,y) point is
-controlled with $which_halign (<literal>center</literal>,
+controlled with $halign (<literal>center</literal>,
 <literal>left</literal>, or <literal>right</literal>)
-and $which_valign (<literal>center</literal>, <literal>bottom</literal>,
+and $valign (<literal>center</literal>, <literal>bottom</literal>,
 or <literal>top</literal>).
+    </para>
+    <para>
 Multi-line text strings are supported. This function accounts for the
 limitations and differences in GD text drawing routines for built-in and
 TrueType fonts.
@@ -1178,19 +1185,16 @@ by all internal PHPlot code that needs to draw text, and ProcessText should
 only be used by DrawText and SizeText.
     </para>
     <para>
-There are 7 font array variables in the PHPlot object.
-Through PHPlot-5.0.5, these were separate variables: generic_font,
-title_font, legend_font, x_label_font, y_label_font, x_title_font, and
-y_title_font. Starting with PHPlot-5.0.6, these were combined into a
-single class array variable <literal>fonts</literal>,
-indexed by the element name, for example $fonts['generic'].
+Starting with PHPlot-5.1.0, $font can be NULL or an empty string to
+use the <emphasis>generic</emphasis> font.
+This was intended to allow callbacks to avoid having to reference the internal
+class array variable which stores font information.
     </para>
     <para>
-Starting with PHPlot-5.1.0, $which_font can be NULL or an empty string to
-use the <emphasis>generic</emphasis> font.
-This was intended to allow callbacks to avoid
-having to reference the internal class array variable which stores font
-information.
+Starting with PHPlot-6.0.0, the preferred form for $font is the name of a
+PHPlot text element, with use of the $fonts[] member variable deprecated.
+This further eases use of DrawText by callbacks, which can specify a font
+other than 'generic' without referencing internal class variables.
     </para>
   </listitem>
 </varlistentry>
@@ -1837,7 +1841,7 @@ and exited.)
 </varlistentry>
 
 <varlistentry>
-  <term><anchor id="ProcessText" xreflabel="ProcessText"/>ProcessText($draw_it, $font, $angle, $x, $y, $color, $text, $halign, $valign)</term>
+  <term><anchor id="ProcessText" xreflabel="ProcessText"/>ProcessText($draw_it, $font_id, $angle, $x, $y, $color, $text, $halign, $valign)</term>
   <listitem>
     <para>
 This function acts as a bridge, or switch, between the two functions
@@ -1854,6 +1858,14 @@ calculating the text bounding box size.
 This function is only called by
 <xref linkend="SizeText"/> and <xref linkend="DrawText"/>, and calls either
 <xref linkend="ProcessTextTTF"/> or <xref linkend="ProcessTextGD"/>.
+    </para>
+    <para>
+<function>ProcessText</function> examines the $font_id argument and handles
+the variations described under <xref linkend="DrawText"/>. If $font_id is
+an array, it is assumed to be an element of the member array $fonts[], and
+is passed as-is to the lower level functions.
+If it is a string that exists as an index to $fonts[], that font array is
+used. In all other cases, the <literal>generic</literal> font is used.
     </para>
   </listitem>
 </varlistentry>
@@ -2095,13 +2107,15 @@ Use of alpha in the color specification, the default alpha argument, and the
 </varlistentry>
 
 <varlistentry>
-  <term><anchor id="SizeText" xreflabel="SizeText"/>SizeText($which_font, $which_angle, $which_text)</term>
+  <term><anchor id="SizeText" xreflabel="SizeText"/>SizeText($font, $angle, $text)</term>
   <listitem>
     <para>
 Calculates the size of a block of text. It works on both GD (fixed-font) and TTF
 text.
-$which_font is a PHPlot font array, $which_angle is the text angle in degrees,
-and $which_text is the text string. The text string can contain multiple lines,
+$font is a text element name, empty, or a PHPlot font array (use of an array
+is deprecated); see <xref linkend="DrawText"/> for details.
+$angle is the text angle in degrees.
+$text is the text string. The text string can contain multiple lines,
 with a newline character between lines.
 This function just calls <xref linkend="ProcessText"/> in text sizing mode
 to do the work.
