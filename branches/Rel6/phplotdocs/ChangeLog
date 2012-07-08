@@ -4,6 +4,12 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-07-08 (/branches/Rel6)
+    * Documented changes to internal DrawText() and SizeText() that makes
+      them easier to use from a callback.
+      + developer.xml: Updated DrawText() and SizeText() descriptions.
+      + advanced.xml: Link to DrawText().
+
 * 2012-07-04 (/branches/Rel6)
     * Checked and corrected errors with documentation for class variables.
       + advanced.xml: Fixed mis-named tuning variables [xy]_tick_inc_integer.
