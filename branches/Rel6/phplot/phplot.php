@@ -1420,7 +1420,8 @@ class PHPlot
      * ProcessText() - Wrapper for ProcessTextTTF() and ProcessTextGD(). See notes above.
      * This is intended for use from within PHPlot only, and only by DrawText() and SizeText().
      *    $draw_it : True to draw the text, False to just return the orthogonal width and height.
-     *    $font : PHPlot font array, or NULL or empty string to use 'generic'
+     *    $font_id : PHPlot text element name, or font array, or NULL or empty string to use 'generic'
+     *            Font array is for backward compatibility (via DrawText or SizeText).
      *    $angle : Text angle in degrees
      *    $x, $y : Reference point for the text (ignored if !$draw_it)
      *    $color : GD color index to use for drawing the text (ignored if !$draw_it)
@@ -1430,7 +1431,7 @@ class PHPlot
      *      Note: Alignment is relative to the image, not the text.
      * Returns: True, if drawing text, or an array of ($width, $height) if not.
      */
-    protected function ProcessText($draw_it, $font, $angle, $x, $y, $color, $text, $halign, $valign)
+    protected function ProcessText($draw_it, $font_id, $angle, $x, $y, $color, $text, $halign, $valign)
     {
         // Empty text case:
         if ($text === '') {
@@ -1446,8 +1447,11 @@ class PHPlot
         elseif ($halign == 'center') $h_factor = 0.5;
         else $h_factor = 1.0; // 'right'
 
-        // Apply a default font. This is mostly for external (callback) users.
-        if (empty($font)) $font = $this->fonts['generic'];
+        // Preferred usage for $font_id is a text element name (see SetFont()), but for compatibility
+        // accept a font array too. For external (callback) usage, support a default font.
+        if (is_array($font_id)) $font = $font_id; // Use supplied array; deprecated
+        elseif (!empty($font_id) && isset($this->fonts[$font_id])) $font = $this->fonts[$font_id];
+        else $font = $this->fonts['generic']; // Fallback default, or font_id is empty.
 
         if ($font['ttf']) {
             return $this->ProcessTextTTF($draw_it, $font, $angle, $x, $y, $color, $text,
@@ -1458,7 +1462,7 @@ class PHPlot
 
     /*
      * Draws a block of text. See comments above before ProcessText().
-     *    $which_font : PHPlot font array, or NULL or empty string to use 'generic'
+     *    $which_font : PHPlot text element name, font array, or NULL or empty string to use 'generic'
      *    $which_angle : Text angle in degrees
      *    $which_xpos, $which_ypos: Reference point for the text
      *    $which_color : GD color index to use for drawing the text
@@ -1480,7 +1484,7 @@ class PHPlot
      * box aligned with the X and Y axes of the text. Only for angle=0 is this the actual
      * width and height of the text block, but for any angle it is the amount of space needed
      * to contain the text.
-     *    $which_font : PHPlot font array, or NULL or empty string to use 'generic'
+     *    $which_font : PHPlot text element name, font array, or NULL or empty string to use 'generic'
      *    $which_angle : Text angle in degrees
      *    $which_text :  The text to draw, with newlines (\n) between lines.
      * Returns a two element array with: $width, $height.
@@ -1696,10 +1700,10 @@ class PHPlot
 
         // Determine the space needed for the text, and center the text box within the image:
         if ($text_wrap) $text = wordwrap($text, $wrap_width);
-        list($text_width, $text_height) = $this->SizeText($this->fonts['generic'], 0, $text);
+        list($text_width, $text_height) = $this->SizeText('generic', 0, $text);
         $x = max($this->safe_margin, ($this->image_width - $text_width) / 2);
         $y = max($this->safe_margin, ($this->image_height - $text_height) / 2);
-        $this->DrawText($this->fonts['generic'], 0, $x, $y, $ndx_text_color, $text, 'left', 'top');
+        $this->DrawText('generic', 0, $x, $y, $ndx_text_color, $text, 'left', 'top');
         if ($force_print || $this->print_image) $this->PrintImage();
         return TRUE;
     }
@@ -3078,7 +3082,7 @@ class PHPlot
         $min_margin = 2 * $gap + $base_margin;
 
         // Calculate the title sizes (main here, axis titles below):
-        list($unused, $title_height) = $this->SizeText($this->fonts['title'], 0, $this->title_txt);
+        list($unused, $title_height) = $this->SizeText('title', 0, $this->title_txt);
 
         // Special case for maximum area usage with no X/Y titles or labels, only main title:
         if ($maximize) {
@@ -3097,8 +3101,8 @@ class PHPlot
             return TRUE;
         }
 
-        list($unused, $x_title_height) = $this->SizeText($this->fonts['x_title'], 0, $this->x_title_txt);
-        list($y_title_width, $unused) = $this->SizeText($this->fonts['y_title'], 90, $this->y_title_txt);
+        list($unused, $x_title_height) = $this->SizeText('x_title', 0, $this->x_title_txt);
+        list($y_title_width, $unused) = $this->SizeText('y_title', 90, $this->y_title_txt);
 
         // For X/Y tick and label position of 'xaxis' or 'yaxis', determine if the axis happens to be
         // on an edge of a plot. If it is, we need to account for the margins there.
@@ -4003,10 +4007,10 @@ class PHPlot
         list($tick_start, $tick_end, $tick_step) = $this->CalcTicks($which);
 
         if ($which == 'x') {
-            $font = $this->fonts['x_label'];
+            $font_id = 'x_label';
             $angle = $this->x_label_angle;
         } else { // Assumed 'y'
-            $font = $this->fonts['y_label'];
+            $font_id = 'y_label';
             $angle = $this->y_label_angle;
         }
 
@@ -4019,7 +4023,7 @@ class PHPlot
         $tick_val = $tick_start;
         while ($tick_val <= $tick_end) {
             $tick_label = $this->FormatLabel($which, $tick_val);
-            list($width, $height) = $this->SizeText($font, $angle, $tick_label);
+            list($width, $height) = $this->SizeText($font_id, $angle, $tick_label);
             if ($width > $max_width) $max_width = $width;
             if ($height > $max_height) $max_height = $height;
             $tick_val = $tick_start + ++$n * $tick_step;
@@ -4050,13 +4054,13 @@ class PHPlot
         if ($which == 'x') {
           if ($this->datatype_swapped_xy)
               return 0; // Shortcut: labels aren't on top/bottom.
-          $font = $this->fonts['x_label'];
+          $font_id = 'x_label';
           $angle = $this->x_data_label_angle;
           $format_code = 'xd';
         } elseif ($which == 'y') {
           if (!$this->datatype_swapped_xy)
               return 0; // Shortcut: labels aren't on left/right.
-          $font = $this->fonts['y_label'];
+          $font_id = 'y_label';
           $angle = $this->y_data_label_angle;
           $format_code = 'yd';
         } else {
@@ -4068,7 +4072,7 @@ class PHPlot
         // Loop over all data labels and find the biggest:
         for ($i = 0; $i < $this->num_data_rows; $i++) {
             $label = $this->FormatLabel($format_code, $this->data[$i][0], $i);
-            list($width, $height) = $this->SizeText($font, $angle, $label);
+            list($width, $height) = $this->SizeText($font_id, $angle, $label);
             if ($width > $max_width) $max_width = $width;
             if ($height > $max_height) $max_height = $height;
         }
@@ -4571,8 +4575,7 @@ class PHPlot
         // Place it at almost at the top
         $ypos = $this->title_offset;
 
-        $this->DrawText($this->fonts['title'], 0, $xpos, $ypos,
-                        $this->ndx_title_color, $this->title_txt, 'center', 'top');
+        $this->DrawText('title', 0, $xpos, $ypos, $this->ndx_title_color, $this->title_txt, 'center', 'top');
 
         $this->done['title'] = TRUE;
         return TRUE;
@@ -4592,13 +4595,13 @@ class PHPlot
         // Upper title
         if ($this->x_title_pos == 'plotup' || $this->x_title_pos == 'both') {
             $ypos = $this->plot_area[1] - $this->x_title_top_offset;
-            $this->DrawText($this->fonts['x_title'], 0, $xpos, $ypos, $this->ndx_x_title_color,
+            $this->DrawText('x_title', 0, $xpos, $ypos, $this->ndx_x_title_color,
                             $this->x_title_txt, 'center', 'bottom');
         }
         // Lower title
         if ($this->x_title_pos == 'plotdown' || $this->x_title_pos == 'both') {
             $ypos = $this->plot_area[3] + $this->x_title_bot_offset;
-            $this->DrawText($this->fonts['x_title'], 0, $xpos, $ypos, $this->ndx_x_title_color,
+            $this->DrawText('x_title', 0, $xpos, $ypos, $this->ndx_x_title_color,
                             $this->x_title_txt, 'center', 'top');
         }
         return TRUE;
@@ -4617,12 +4620,12 @@ class PHPlot
 
         if ($this->y_title_pos == 'plotleft' || $this->y_title_pos == 'both') {
             $xpos = $this->plot_area[0] - $this->y_title_left_offset;
-            $this->DrawText($this->fonts['y_title'], 90, $xpos, $ypos, $this->ndx_y_title_color,
+            $this->DrawText('y_title', 90, $xpos, $ypos, $this->ndx_y_title_color,
                             $this->y_title_txt, 'right', 'center');
         }
         if ($this->y_title_pos == 'plotright' || $this->y_title_pos == 'both') {
             $xpos = $this->plot_area[2] + $this->y_title_right_offset;
-            $this->DrawText($this->fonts['y_title'], 90, $xpos, $ypos, $this->ndx_y_title_color,
+            $this->DrawText('y_title', 90, $xpos, $ypos, $this->ndx_y_title_color,
                             $this->y_title_txt, 'left', 'center');
         }
 
@@ -4692,21 +4695,21 @@ class PHPlot
 
             // Label on X axis
             if ($this->x_tick_label_pos == 'xaxis') {
-                $this->DrawText($this->fonts['x_label'], $this->x_label_angle,
+                $this->DrawText('x_label', $this->x_label_angle,
                                 $x_pixels, $this->x_axis_y_pixels + $this->x_label_axis_offset,
                                 $this->ndx_ticklabel_color, $x_label, 'center', 'top');
             }
 
             // Label on top of the plot area
             if ($this->x_tick_label_pos == 'plotup' || $this->x_tick_label_pos == 'both') {
-                $this->DrawText($this->fonts['x_label'], $this->x_label_angle,
+                $this->DrawText('x_label', $this->x_label_angle,
                                 $x_pixels, $this->plot_area[1] - $this->x_label_top_offset,
                                 $this->ndx_ticklabel_color, $x_label, 'center', 'bottom');
             }
 
             // Label on bottom of the plot area
             if ($this->x_tick_label_pos == 'plotdown' || $this->x_tick_label_pos == 'both') {
-                $this->DrawText($this->fonts['x_label'], $this->x_label_angle,
+                $this->DrawText('x_label', $this->x_label_angle,
                                 $x_pixels, $this->plot_area[3] + $this->x_label_bot_offset,
                                 $this->ndx_ticklabel_color, $x_label, 'center', 'top');
             }
@@ -4744,21 +4747,21 @@ class PHPlot
 
             // Labels on Y axis
             if ($this->y_tick_label_pos == 'yaxis') {
-                $this->DrawText($this->fonts['y_label'], $this->y_label_angle,
+                $this->DrawText('y_label', $this->y_label_angle,
                                 $this->y_axis_x_pixels - $this->y_label_axis_offset, $y_pixels,
                                 $this->ndx_ticklabel_color, $y_label, 'right', 'center');
             }
 
             // Labels to the left of the plot area
             if ($this->y_tick_label_pos == 'plotleft' || $this->y_tick_label_pos == 'both') {
-                $this->DrawText($this->fonts['y_label'], $this->y_label_angle,
+                $this->DrawText('y_label', $this->y_label_angle,
                                 $this->plot_area[0] - $this->y_label_left_offset, $y_pixels,
                                 $this->ndx_ticklabel_color, $y_label, 'right', 'center');
             }
 
             // Labels to the right of the plot area
             if ($this->y_tick_label_pos == 'plotright' || $this->y_tick_label_pos == 'both') {
-                $this->DrawText($this->fonts['y_label'], $this->y_label_angle,
+                $this->DrawText('y_label', $this->y_label_angle,
                                 $this->plot_area[2] + $this->y_label_right_offset, $y_pixels,
                                 $this->ndx_ticklabel_color, $y_label, 'left', 'center');
             }
@@ -4890,11 +4893,11 @@ class PHPlot
     {
         if ($x_or_y == 'x') {
             $angle = $this->x_data_label_angle;
-            $font = $this->fonts['x_label'];
+            $font_id = 'x_label';
             $formatted_text = $this->FormatLabel('xd', $text, $row, $column);
         } else { // Assumed 'y'
             $angle = $this->y_data_label_angle;
-            $font = $this->fonts['y_label'];
+            $font_id = 'y_label';
             $formatted_text = $this->FormatLabel('yd', $text, $row, $column);
         }
         // Assign defaults and then extract control variables from $dvl:
@@ -4904,13 +4907,13 @@ class PHPlot
 
         // Check to see if the text fits in the available space, if requested.
         if (isset($min_width) || isset($min_height)) {
-            list($width, $height) = $this->SizeText($font, $angle, $formatted_text);
+            list($width, $height) = $this->SizeText($font_id, $angle, $formatted_text);
             if ((isset($min_width) && ($min_width - $width)  < 2)
                 || (isset($min_height) && ($min_height - $height) < 2))
                 return FALSE;
         }
 
-        $this->DrawText($font, $angle, $this->xtr($x_world) + $x_offset, $this->ytr($y_world) + $y_offset,
+        $this->DrawText($font_id, $angle, $this->xtr($x_world) + $x_offset, $this->ytr($y_world) + $y_offset,
                         $this->ndx_dvlabel_color, $formatted_text, $h_align, $v_align);
         return TRUE;
     }
@@ -4928,13 +4931,13 @@ class PHPlot
 
         // Labels below the plot area
         if ($this->x_data_label_pos == 'plotdown' || $this->x_data_label_pos == 'both')
-            $this->DrawText($this->fonts['x_label'], $this->x_data_label_angle,
+            $this->DrawText('x_label', $this->x_data_label_angle,
                             $xpos, $this->plot_area[3] + $this->x_label_bot_offset,
                             $this->ndx_datalabel_color, $xlab, 'center', 'top');
 
         // Labels above the plot area
         if ($this->x_data_label_pos == 'plotup' || $this->x_data_label_pos == 'both')
-            $this->DrawText($this->fonts['x_label'], $this->x_data_label_angle,
+            $this->DrawText('x_label', $this->x_data_label_angle,
                             $xpos, $this->plot_area[1] - $this->x_label_top_offset,
                             $this->ndx_datalabel_color, $xlab, 'center', 'bottom');
 
@@ -4956,13 +4959,13 @@ class PHPlot
 
         // Labels left of the plot area
         if ($this->y_data_label_pos == 'plotleft' || $this->y_data_label_pos == 'both')
-            $this->DrawText($this->fonts['y_label'], $this->y_data_label_angle,
+            $this->DrawText('y_label', $this->y_data_label_angle,
                             $this->plot_area[0] - $this->y_label_left_offset, $ypos,
                             $this->ndx_datalabel_color, $ylab, 'right', 'center');
 
         // Labels right of the plot area
         if ($this->y_data_label_pos == 'plotright' || $this->y_data_label_pos == 'both')
-            $this->DrawText($this->fonts['y_label'], $this->y_data_label_angle,
+            $this->DrawText('y_label', $this->y_data_label_angle,
                             $this->plot_area[2] + $this->y_label_right_offset, $ypos,
                             $this->ndx_datalabel_color, $ylab, 'left', 'center');
         return TRUE;
@@ -5061,7 +5064,7 @@ class PHPlot
         // Calculate text alignment (h_align, v_align) based on angle:
         $this->GetTextAlignment($sin_mid, $cos_mid, $h_align, $v_align, $r['reverse']);
         // Draw the label:
-        $this->DrawText($this->fonts['generic'], 0, $label_x, $label_y + $yoff, $this->ndx_pielabel_color,
+        $this->DrawText('generic', 0, $label_x, $label_y + $yoff, $this->ndx_pielabel_color,
                         $label_txt, $h_align, $v_align);
         return TRUE;
     }
@@ -5194,7 +5197,7 @@ class PHPlot
         // Find maximum legend label line width.
         $max_width = 0;
         foreach ($this->legend as $line) {
-            list($width, $unused) = $this->SizeText($font, 0, $line);
+            list($width, $unused) = $this->SizeText('legend', 0, $line);
             if ($width > $max_width) $max_width = $width;
         }
 
@@ -5275,7 +5278,7 @@ class PHPlot
 
         case 'title': // SetLegendPosition with mode='title', relative to main title.
             // Recalculate main title position/size, since CalcMargins does not save it. See DrawTitle()
-            list($title_width, $title_height) = $this->SizeText($this->fonts['title'], 0, $this->title_txt);
+            list($title_width, $title_height) = $this->SizeText('title', 0, $this->title_txt);
             $title_x = (int)(($this->image_width - $title_width) / 2);
             return array((int)($x_base * $title_width - $x * $width) + $title_x + $x_offset,
                          (int)($y_base * $title_height - $y * $height) + $this->title_offset + $y_offset);
@@ -5293,8 +5296,6 @@ class PHPlot
      */
     protected function DrawLegend()
     {
-        $font = &$this->fonts['legend']; // Shortcut to font info array
-
         // Calculate legend box sizing parameters:
         // See GetLegendSizeParams() to see what variables are set by this.
         extract($this->GetLegendSizeParams());
@@ -5356,7 +5357,7 @@ class PHPlot
 
         foreach ($this->legend as $leg) {
             // Draw text with requested alignment:
-            $this->DrawText($font, 0, $x_pos, $yc, $this->ndx_text_color, $leg, $text_align, 'center');
+            $this->DrawText('legend', 0, $x_pos, $yc, $this->ndx_text_color, $leg, $text_align, 'center');
             if ($draw_colorbox) {
                 $y1 = $y_pos - $dot_height + 1;
                 $y2 = $y_pos - 1;
@@ -5792,7 +5793,7 @@ class PHPlot
                 if ($arc_start_angle > $arc_end_angle) { // Skip segments with angle < 1 degree
                     $labels[$j] = $this->FormatPieLabel($j, $pie_label_source, $arc_angle, $slice_weight);
                     if ($labels_outside) {   // Labels are outside the pie chart
-                        list($width, $height) = $this->SizeText($this->fonts['generic'], 0, $labels[$j]);
+                        list($width, $height) = $this->SizeText('generic', 0, $labels[$j]);
                         if ($width > $label_max_width) $label_max_width = $width;
                         if ($height > $label_max_height) $label_max_height = $height;
                     }
