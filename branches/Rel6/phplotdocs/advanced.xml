@@ -1149,7 +1149,7 @@ functions, you need device coordinates, as described above.
 </para>
 <para>
 You can also add text to your plot using the PHPlot function
-<function>DrawText</function>. This is documented only for internal
+<xref linkend="DrawText"/>. This is documented only for internal
 use by PHPlot, so there is a risk of future incompatibility. But this
 function provides support for controlling the text justification, and works
 better with multi-line text.
@@ -1245,9 +1245,10 @@ imagestring($img, $font, $best_x-$fw*4, $best_y-$fh-10, 'Good Job!', $green);
 </para>
 
 <para>
-Or, we can use the PHPlot internal function DrawText. With a PHPlot version
-5.1.0 and later, we omit the font specification and it will default to the
-generic font, which can be set with <xref linkend="SetFont"/>('generic', ...)
+Or, we can use the PHPlot internal function <xref linkend="DrawText"/>.
+With a PHPlot version 5.1.0 and later, we omit the font specification
+and it will default to the generic font, which can be set with
+<xref linkend="SetFont"/>('generic', ...)
 <programlisting><![CDATA[$plot->DrawText('', 0, $worst_x, $worst_y-10, $red, 'Bad News!', 'center', 'bottom');
 ]]></programlisting>
 </para>
