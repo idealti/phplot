@@ -3406,8 +3406,9 @@ Always <literal>pie</literal>, indicating a pie segment of an ellipse.
     <term>$row</term>
     <listitem>
       <para>
-The pie segment index, starting at 0 for the first segment (drawn from the
-X axis in a counter-clockwise direction).
+The pie segment index, starting at 0 for the first segment.
+(By default, segments are drawn counter-clockwise from 0 degrees, but this
+can be changed.)
       </para>
     </listitem>
   </varlistentry>
@@ -3469,8 +3470,7 @@ Ending angle for the segment, in clockwise degrees.
 measured in the conventional sense: counter-clockwise from the X axis.
 For example, a pie segment that starts at the top of the pie ('North') and
 ends at the bottom point ('South') would have start_angle=270 and end_angle=90.
-The start_angle is always greater than the end angle. Pie segments are drawn
-in order, counter-clockwise starting at the 'East' position.
+The start_angle is always greater than the end angle.
   </para>
 </note>
 
