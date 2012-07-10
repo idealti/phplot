@@ -115,9 +115,11 @@ ohlc_max_width	(8)	DrawOHLC	Maximum half-width for elements in OHLC plots (candl
 ohlc_min_width	(2)	DrawOHLC	Minimum half-width for elements in OHLC plots (candlestick bodies or tick pairs). Default is 2 pixels. <link linkend="adv-tuning-ohlc">(See Tuning Parameters for more)</link> (Added in PHPlot-5.3.0)
 output_file	(NULL)	SetOutputFile	Redirect to output file
 pie_diam_factor	(0.5)	DrawPieChart	Aspect ratio for shaded pie charts. <link linkend="adv-tuning-pie">(See Tuning Parameters for more)</link> (Added in PHPlot-5.6.0)
+pie_direction_cw	(FALSE)	SetPieDirection	Flag: If true, pie chart segments are drawn in clockwise direction. If false or unset, they are counter-clockwise. (Added in PHPlot-6.0.0)
 pie_full_size	(FALSE)	SetPieAutoSize	Flag: If true, do not include label sizes when calculating pie size. (Added in PHPlot-5.6.0)
 pie_label_source		SetPieLabelType	Source of label text for pie charts (percent, value, label, or index) (Added in PHPlot-5.6.0)
 pie_min_size_factor	(0.5)	DrawPieChart	Minimum amount of the plot area that will be reserved for the pie <link linkend="adv-tuning-pie">(See Tuning Parameters for more)</link> (Added in PHPlot-5.6.0)
+pie_start_angle	(0)	SetPieStartAngle	Starting angle in degrees for the first segment in a pie chart. (Added in PHPlot-6.0.0)
 pielabel_color		SetPieLabelColor	Color (R,G,B,A) to use for pie chart data labels (Added in PHPlot-5.7.0)
 plot_area		CalcPlotAreaPixels	Array defining the calculated plot area. ([0],[1]) is the top left corner, ([2],[3]) is the bottom right corner.
 plot_area_height		CalcPlotAreaPixels	Height of the plot area
