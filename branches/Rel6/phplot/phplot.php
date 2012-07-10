@@ -2904,6 +2904,27 @@ class PHPlot
         return TRUE;
     }
 
+    /*
+     * Set the start angle for the first pie sector to $angle degrees.
+     */
+    function SetPieStartAngle($angle)
+    {
+        $this->pie_start_angle = $angle;
+        return TRUE;
+    }
+
+    /*
+     * Set the direction of the pie segments: clockwise or counter-clockwise.
+     *  $which : 'clockwise' or 'CW', or 'counterclockwise' or 'CCW' (case insensitive).
+     */
+    function SetPieDirection($which)
+    {
+        $control = $this->CheckOption($which, 'clockwise, cw, counterclockwise, ccw', __FUNCTION__);
+        if (empty($control)) return FALSE;
+        $this->pie_direction_cw = ($control == 'clockwise' || $control == 'cw');
+        return TRUE;
+    }
+
 //////////////////////////////////////////////////////////
 ///////////         DATA ANALYSIS, SCALING AND TRANSLATION
 //////////////////////////////////////////////////////////
@@ -5726,6 +5747,10 @@ class PHPlot
             $labels_outside = $this->label_scale_position >= 0.5;  // Only defined if ($do_labels)
         }
 
+        // Defaults for pie start angle and direction:
+        $pie_start_angle = isset($this->pie_start_angle) ? $this->pie_start_angle : 0;
+        $clockwise = !empty($this->pie_direction_cw); // Unset = False
+
         $max_data_colors = count($this->ndx_data_colors); // Number of colors available
 
         // Check shading. Diameter factor $diam_factor is (height / width)
@@ -5781,13 +5806,18 @@ class PHPlot
         $label_max_width = 0;  // Widest label width, in pixels
         $label_max_height = 0; // Tallest label height, in pixels
         if ($do_labels) {
-            $labels = array(); // Store the formatted label strings
-            $end_angle = 0;
+            $labels = array(); // Array to store the formatted label strings
+            $end_angle = $start_angle = $pie_start_angle;
             for ($j = 0; $j < $num_slices; $j++) {
                 $slice_weight = $sumarr[$j];
                 $arc_angle = 360 * $slice_weight / $total;
-                $start_angle = $end_angle;
-                $end_angle += $arc_angle;
+                if ($clockwise) {
+                    $end_angle = $start_angle;
+                    $start_angle -= $arc_angle;
+                } else {
+                    $start_angle = $end_angle;
+                    $end_angle += $arc_angle;
+                }
                 $arc_start_angle = (int)(360 - $start_angle);
                 $arc_end_angle = (int)(360 - $end_angle);
                 if ($arc_start_angle > $arc_end_angle) { // Skip segments with angle < 1 degree
@@ -5865,7 +5895,12 @@ class PHPlot
         // Draw the pie. For shaded pies, draw one set for each shading level ($h).
         for ($h = $this->shading; $h >= 0; $h--) {
             $color_index = 0;
-            $end_angle = 0;
+
+            // Initialize the start angle (for clockwise) or end angle (for counter-clockwise).
+            // See "Calculate the two angles" below to make sense of this.
+            $end_angle = $start_angle = $pie_start_angle;
+
+            // Loop over all pie segments:
             for ($j = 0; $j < $num_slices; $j++) {
                 $slice_weight = $sumarr[$j];
                 $arc_angle = 360 * $slice_weight / $total;
@@ -5876,17 +5911,21 @@ class PHPlot
                 else
                     $slicecol = $this->ndx_data_dark_colors[$color_index];
 
-                // Note that imagefilledarc() fills clockwise from start to end angles.
-                // Also note imagefilledarc() only takes angles in integer degrees. If the start and
-                // end angles match, you would get a full circle. So skip any wedge with integer angle = 0.
-                // To avoid cumulative error, keep the running total as a float, and round the angles.
-                $start_angle = $end_angle;
-                $end_angle += $arc_angle;
-                // This method of conversion to integer - truncate after reversing it - was
-                // chosen to match the implicit method of PHPlot<=5.0.4, to get the exact same slices.
+                // Calculate the two angles that define this pie segment.
+                // Note that regardless of the direction (CW or CCW), start_angle < end_angle.
+                if ($clockwise) {
+                    $end_angle = $start_angle;
+                    $start_angle -= $arc_angle;
+                } else {
+                    $start_angle = $end_angle;
+                    $end_angle += $arc_angle;
+                }
+
+                // Calculate the arc angles for ImageFilledArc(), which measures angles in the opposite
+                // direction (counter-clockwise), and only takes integer values.
                 $arc_start_angle = (int)(360 - $start_angle);
                 $arc_end_angle = (int)(360 - $end_angle);
-
+                // Don't try to draw a 0 degree slice - it would make a full circle.
                 if ($arc_start_angle > $arc_end_angle) {
                     // Draw the slice
                     ImageFilledArc($this->img, $xpos, $ypos+$h, $pie_width, $pie_height,
@@ -5902,7 +5941,7 @@ class PHPlot
                         // Draw the label:
                         if ($do_labels)
                             $this->DrawPieLabel($labels[$j], $xpos, $ypos, $start_angle, $arc_angle, $r);
-                        // Trigger a data points callback; note it gets the 'modified' angles:
+                        // Trigger a data points callback; note it gets the calculated (reversed) angles:
                         $this->DoCallback('data_points', 'pie', $j, 0, $xpos, $ypos, $pie_width,
                                           $pie_height, $arc_start_angle, $arc_end_angle);
                     }
