@@ -1156,8 +1156,10 @@ This plot type was added in PHPlot-5.3.0.
 <para>
 This plot type draws pie charts. The pie chart can have a 3-D look or be
 drawn flat.
-The first pie segment starts at 0 degrees (East, or 3:00PM) and they go around
-the pie in a counter-clockwise direction.
+By default, the first pie segment starts at 0 degrees (East, or 3:00 on an
+analog clock face) and segments go around the pie in a counter-clockwise
+direction.  (The start point and direction can be changed with
+<xref linkend="SetPieStartAngle"/> and <xref linkend="SetPieDirection"/>.)
 Each segment can be labeled. By default, the labels show the percentage of
 each segment.
 </para>
