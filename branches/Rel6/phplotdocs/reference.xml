@@ -5236,6 +5236,75 @@ automatic sizing will produce identical results compared to previous releases.
   </refsect1>
 </refentry>
 
+<refentry id="SetPieDirection">
+  <refmeta>
+    <refentrytitle>SetPieDirection</refentrytitle>
+  </refmeta>
+
+  <refnamediv>
+    <refname>SetPieDirection</refname>
+    <refpurpose>Set the direction for pie chart segments</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <synopsis>$plot-&gt;SetPieDirection(<parameter>$which</parameter>)</synopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Description</title>
+    <para>
+<function>SetPieDirection</function> sets the direction for segments around
+a pie chart - clockwise or counter-clockwise.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Parameters</title>
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>$which</replaceable></term>
+        <listitem>
+          <para>
+Indicates the direction for pie segments.
+Use the string <literal>'clockwise'</literal> or <literal>'CW'</literal>
+to get segments in a clockwise direction.
+Use the string <literal>'counterclockwise'</literal> or <literal>'CCW'</literal>
+to get segments in a counter-clockwise direction.
+(The argument value is not case sensitive.)
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Notes</title>
+    <para>
+The default direction is counter-clockwise.
+    </para>
+    <para>
+See also <xref linkend="SetPieStartAngle"/> which is used to set the
+starting angle for the first pie segment.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Example</title>
+    <para>
+See <xref linkend="ex-pieangle"/>.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>History</title>
+    <para>
+This function was added in PHPlot-6.0.0. Before that, pie chart segments
+always started at 0 degrees and advanced in a counter-clockwise direction
+around the pie.
+    </para>
+  </refsect1>
+</refentry>
+
 <refentry id="SetPieLabelColor">
   <refmeta>
     <refentrytitle>SetPieLabelColor</refentrytitle>
@@ -5507,8 +5576,9 @@ be useful.
 
     <para>
 If $source is <literal>index</literal>, the label source is an integer
-starting with 0 for the first pie segment (the one drawn from 0 degrees
-counter-clockwise), 1 for the second pie segment, etc.
+starting with 0 for the first pie segment, 1 for the second pie segment, etc.
+(By default, segments are drawn counter-clockwise from 0 degrees, but this
+can be changed.)
 This can be useful with <literal>custom</literal> type formatting, by
 providing a formatting function to get the label text from an external
 array (for example).
@@ -5689,6 +5759,72 @@ PHPlot-5.6.0 still does that, but only if <function>SetPieLabelType</function>
 was never called (or reset to all defaults). That is, if
 <function>SetPieLabelType</function> was not called to set up a label source
 and formatting type, the Y label precision will be used if set, else 1 digit.
+    </para>
+  </refsect1>
+</refentry>
+
+<refentry id="SetPieStartAngle">
+  <refmeta>
+    <refentrytitle>SetPieStartAngle</refentrytitle>
+  </refmeta>
+
+  <refnamediv>
+    <refname>SetPieStartAngle</refname>
+    <refpurpose>Set the starting angle for pie chart segments</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <synopsis>$plot-&gt;SetPieStartAngle(<parameter>$angle</parameter>)</synopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Description</title>
+    <para>
+<function>SetPieStartAngle</function> sets the starting angle for the first
+segment in a pie chart.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Parameters</title>
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>$angle</replaceable></term>
+        <listitem>
+          <para>
+Starting angle in degrees
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Notes</title>
+    <para>
+The default starting angle is 0 degrees.
+This results in the first pie segment starting on the right-pointing
+horizontal radius ("East"), and extending upwards in a counter-clockwise
+direction (by default).
+    </para>
+    <para>
+See also <xref linkend="SetPieDirection"/> which is used to set the
+direction for pie chart segments - clockwise or counter-clockwise.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Example</title>
+    <para>
+See <xref linkend="ex-pieangle"/>.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>History</title>
+    <para>
+This function was added in PHPlot-6.0.0. Before that, the first segment
+of a pie chart always started at 0 degrees.
     </para>
   </refsect1>
 </refentry>
