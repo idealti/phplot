@@ -1855,5 +1855,42 @@ image map, and once to create the plot image.
 </sect1>
 
 <!-- =============================================== -->
+<pagebreak/>
+<sect1 id="ex-pieangle">
+<title>Example - Pie Chart Start Angle and Direction</title>
+<para>
+This example shows the use of <xref linkend="SetPieStartAngle"/> and
+<xref linkend="SetPieDirection"/> to set the starting angle for the first
+segment in a pie chart, and the direction of the segments (clockwise or
+counter-clockwise).
+Note that the ability to change the starting angle and segment direction
+was added to PHPlot-6.0.0.
+</para>
 
+<para>
+In each of the 8 plots, the pie segments are numbered from 0, with segment 0
+being the first entry in the data array.
+The upper-left plot represents the default, and the only available
+option before PHPlot-6.0.0, with counter-clockwise pie segments starting
+at 0 degrees.
+</para>
+
+<example id="example-pieangle">
+<?dbfo keep-together="auto"?>
+<title>Pie Chart Start Angle and Direction</title>
+<informalfigure>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="examples/pieangle.png" scale="58" format="PNG" />
+    </imageobject>
+    <textobject>
+      <phrase>Pie Chart Start Angle and Direction Example</phrase>
+    </textobject>
+  </mediaobject>
+</informalfigure>
+&pieangle;
+</example>
+</sect1>
+
+<!-- =============================================== -->
 </chapter>
