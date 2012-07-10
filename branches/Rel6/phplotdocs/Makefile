@@ -128,6 +128,7 @@ EXAMPLES_PHP=\
   examples/pie1.php \
   examples/pie2.php \
   examples/pie3.php \
+  examples/pieangle.php \
   examples/pielabeltype1.php \
   examples/pielabeltype2.php \
   examples/pielabeltype3.php \
@@ -187,6 +188,7 @@ EXAMPLES_IMAGES=\
   examples/pie1.png \
   examples/pie2.png \
   examples/pie3.png \
+  examples/pieangle.png \
   examples/pielabeltype1.png \
   examples/pielabeltype2.png \
   examples/pielabeltype3.png \
