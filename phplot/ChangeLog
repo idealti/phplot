@@ -2,6 +2,11 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2012-07-09 (/branches/Rel6)
+    * Feature request #3541471 "Control pie chart start angle":
+      Added SetPieStartAngle() and SetPieDirection(), and changed
+      DrawPieChart() to work with any start angle and either direction.
+
 2012-07-07 (/branches/Rel6)
     * Changed internal DrawText() and SizeText() to take a text element
       name (e.g. 'x_title') rather than a font name. This is actually
