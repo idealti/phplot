@@ -7,6 +7,10 @@ CalcMaxDataLabelSize
 CalcMaxTickLabelSize
 CalcPlotAreaPixels
 CalcPlotAreaWorld
+CalcPlotRange
+CalcRangeInit
+CalcStep
+CalcStepDatetime
 CalcTicks
 CalcTranslation
 CheckDataArray
@@ -17,6 +21,7 @@ CheckLabelsAllEmpty
 CheckOption
 CheckOptionArray
 CheckPieLabels
+CheckPlotRange
 CheckPointParams
 DarkGreen
 Debian
@@ -185,8 +190,10 @@ SetNumYTicks
 SetNumberFormat
 SetOutputFile
 SetPieAutoSize
+SetPieDirection
 SetPieLabelColor
 SetPieLabelType
+SetPieStartAngle
 SetPlotAreaBgImage
 SetPlotAreaPixels
 SetPlotAreaWorld
