@@ -116,10 +116,12 @@ plots, and shading for 3D affects.
   <listitem><para><xref linkend="SetDrawBrokenLines" /></para></listitem>
   <listitem><para><xref linkend="SetDrawPlotAreaBackground" /></para></listitem>
   <listitem><para><xref linkend="SetImageBorderType" /></para></listitem>
+  <listitem><para><xref linkend="SetPieDirection" /></para></listitem>
+  <listitem><para><xref linkend="SetPieStartAngle" /></para></listitem>
+  <listitem><para><xref linkend="SetPlotAreaBgImage" /></para></listitem>
+  <listitem><para><xref linkend="SetPlotBorderType" /></para></listitem>
   <listitem><para><xref linkend="SetPointShapes" /></para></listitem>
   <listitem><para><xref linkend="SetPointSizes" /></para></listitem>
-  <listitem><para><xref linkend="SetPlotBorderType" /></para></listitem>
-  <listitem><para><xref linkend="SetPlotAreaBgImage" /></para></listitem>
   <listitem><para><xref linkend="SetShading" /></para></listitem>
 </itemizedlist>
 </para>
