@@ -4,6 +4,23 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-07-09 (/branches/Rel6)
+    * Documented changes for feature request #3541471 "Control pie chart start
+      angle":
+      + Makefile: Added new file with pie chart example
+      + advanced.xml: Updated pie chart image map info callback info on
+        segment start angle and direction.
+      + concepts.xml: Updated 'pie' plottype info on segment start angle
+        and direction.
+      + examples.xml: New example of pie chart options
+      + functions.xml: Add links to 2 new functions
+      + reference.xml: Document new SetPieStartAngle() and SetPieDirection().
+        Fixed SetPieLabelType() description of 'index' type,
+        since segments do not now always start at 0 degrees and go clockwise.
+      + variables.list: Document new pie_start_angle, pie_direction_cw.
+      + examples/pieangle.php: New example file for pie chart options
+    * .ispell_words: Updated spelling list
+
 * 2012-07-08 (/branches/Rel6)
     * Documented changes to internal DrawText() and SizeText() that makes
       them easier to use from a callback.
