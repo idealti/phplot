@@ -3716,17 +3716,19 @@ class PHPlot
     }
 
     /*
-     * Calculate the World Coordinate limits of the plot area, and the tick increment.
+     * Calculate the World Coordinate limits of the plot area, and the tick increments.
      * (The range and increment are related, so they are calculated together.)
-     * Uses and sets: Plot Area range: plot_min_x, plot_max_x, plot_min_y, plot_max_y
-     *                Tick increment:  x_tick_inc, y_tick_inc
-     * These can be user-supplied, or NULL (or empty string) to auto-calculate.
+     * The plot range variables (plot_min_x, plot_max_x, plot_min_y, plot_max_y) are calculated
+     * if necessary, then stored back into the object ('sticky' for multiple plots on an image).
+     * The tick increments (x_tick_inc, y_tick_inc) are also calculated if needed, but stored back
+     * into the object under different names (x_tick_step, y_tick_step), for use by CalcTicks().
+     * Thus they will be recalculated for a second plot (which may have a different data range).
      */
     protected function CalcPlotAreaWorld()
     {
-        list($this->x_tick_inc, $this->plot_min_x, $this->plot_max_x) = $this->CalcPlotRange('x');
-        list($this->y_tick_inc, $this->plot_min_y, $this->plot_max_y) = $this->CalcPlotRange('y');
-        return isset($this->x_tick_inc, $this->y_tick_inc); // Pass thru FALSE return from CalcPlotRange()
+        list($this->x_tick_step, $this->plot_min_x, $this->plot_max_x) = $this->CalcPlotRange('x');
+        list($this->y_tick_step, $this->plot_min_y, $this->plot_max_y) = $this->CalcPlotRange('y');
+        return isset($this->x_tick_step, $this->y_tick_step); // Pass thru FALSE return from CalcPlotRange()
     }
 
     /*
@@ -3972,20 +3974,21 @@ class PHPlot
      * and DrawYTicks(), and also by CalcMaxTickSize() for CalcMargins().
      *   $which : 'x' or 'y' : Which tick parameters to calculate.
      *   Returns an array of 3 elements: tick_start, tick_end, tick_step.
-     * Note: CalcPlotAreaWorld() calculates the tick step, if necessary, and stores it
-     * back to [xy]_tick_inc. CalcTicks() just returns that value.
+     * Note: CalcPlotAreaWorld() calculates the tick steps and stores them into
+     * [xy]_tick_step (not [xy]_tick_inc) for use here. This is so the values will be
+     * recalculated for each plot (when doing multiple plots on an image).
      */
     protected function CalcTicks($which)
     {
         if ($which == 'x') {
-            $tick_step = $this->x_tick_inc;
+            $tick_step = $this->x_tick_step;
             $anchor = &$this->x_tick_anchor;  // Reference used because it might not be set.
             $data_max = $this->plot_max_x;
             $data_min = $this->plot_min_x;
             $skip_lo = !empty($this->skip_left_tick);
             $skip_hi = !empty($this->skip_right_tick);
         } else { // Assumed 'y'
-            $tick_step = $this->y_tick_inc;
+            $tick_step = $this->y_tick_step;
             $anchor = &$this->y_tick_anchor;
             $data_max = $this->plot_max_y;
             $data_min = $this->plot_min_y;
