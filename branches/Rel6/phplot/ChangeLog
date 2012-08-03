@@ -2,6 +2,17 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2012-08-03 (/branches/Rel6)
+    * Fixed problem with multiple plots and calculated tick increments.
+      The calculated values were stored back into the object, using the same
+      class variables as SetXTickIncrement() and SetYTickIncrement(). With
+      subsequent plots using the same object, the calculated values were seen
+      as user-provided, so new values were not calculated even if the data
+      range changed. This differs from the 5.x behavior and the manual.
+      Now, new class variables x_tick_step y_tick_step are used to store
+      the effective values for the tick increments. If not user-set, the
+      values will be recalculated for each plot.
+
 2012-07-09 (/branches/Rel6)
     * Feature request #3541471 "Control pie chart start angle":
       Added SetPieStartAngle() and SetPieDirection(), and changed
