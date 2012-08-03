@@ -4,6 +4,9 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-08-03 (/branches/Rel6)
+    * variables.list: Documented new class variables x_tick_step, y_tick_step.
+
 * 2012-07-09 (/branches/Rel6)
     * Documented changes for feature request #3541471 "Control pie chart start
       angle":
