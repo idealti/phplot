@@ -188,6 +188,7 @@ x_tick_inc_integer	(FALSE)	CalcPlotRange	Flag: Force X tick increment to be a wh
 x_tick_label_pos		SetXTickLabelPos	Position of X tick labels. (Default was 'plotdown', but is now applied at graph drawing time.)
 x_tick_length	5	SetXTickLength	Length of X tick marks (outside plot area)
 x_tick_pos	'plotdown'	SetXTickPos	Position of X tick marks
+x_tick_step		CalcPlotAreaWorld	Effective step between X tick marks.  This is equal to x_tick_inc if SetXTickIncrement was used, else a calculated value. (Added in PHPlot-6.0.0)
 x_title_bot_offset		CalcMargins	Title offset relative to plot area
 x_title_color		SetXTitleColor	Color (R,G,B,A) for X title (Added in PHPlot-5.2.0)
 x_title_pos	'none'	SetXTitle	X Axis title position
@@ -215,6 +216,7 @@ y_tick_inc_integer	(FALSE)	CalcPlotRange	Flag: force Y tick increment to be a wh
 y_tick_label_pos		SetYTickLabelPos CheckLabels	Position of Y tick labels
 y_tick_length	5	SetYTickLength	Length of Y tick marks (outside plot area)
 y_tick_pos	'plotleft'	SetYTickPos	Position of Y tick marks
+y_tick_step		CalcPlotAreaWorld	Effective step between Y tick marks.  This is equal to y_tick_inc if SetYTickIncrement was used, else a calculated value. (Added in PHPlot-6.0.0)
 y_title_color		SetYTitleColor	Color (R,G,B,A) for Y title (Added in PHPlot-5.2.0)
 y_title_left_offset		CalcMargins	Title offset relative to plot area
 y_title_pos	'none'	SetYTitle	Y Axis title position
