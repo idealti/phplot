@@ -2,6 +2,17 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2012-08-09 (/branches/Rel6)
+    * Fixed problem with grid defaults and multiple plots. The default
+      setting, to draw the grid or not, was being stored back to the class
+      variables, and then this was used for the next plot rather than a new
+      default being calculated. This was wrong when mixing vertical and
+      horizontal plots. Removed internal CalcGridSettings() and added new
+      internal GetGridSetting(), so the default is not stored back into the
+      class variables.
+      Also changed DrawXGrid() and DrawYGrid() to allow NULL or omitted
+      argument to mean restore the default behavior.
+
 2012-08-03 (/branches/Rel6)
     * Fixed problem with multiple plots and calculated tick increments.
       The calculated values were stored back into the object, using the same
