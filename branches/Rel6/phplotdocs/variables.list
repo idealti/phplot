@@ -47,8 +47,8 @@ done		DrawBackground DrawImageBorder DrawTitle	Array of flags for elements that 
 draw_broken_lines	(FALSE)	SetDrawBrokenLines	Flag: How to handle missing Y values
 draw_plot_area_background	(FALSE)	SetDrawPlotAreaBackground	Flag: Draw the background of the plot area
 draw_x_data_label_lines	(FALSE)	SetDrawXDataLabelLines	Flag: Draw X data label lines
-draw_x_grid		SetDrawXGrid CalcGridSettings	Flag: Draw X grid lines?
-draw_y_grid		SetDrawYGrid CalcGridSettings	Flag: Draw Y grid lines?
+draw_x_grid		SetDrawXGrid	Flag: Draw X grid lines? (True, False, or NULL meaning the default behavior)
+draw_y_grid		SetDrawYGrid	Flag: Draw Y grid lines? (True, False, or NULL meaning the default behavior)
 dvlabel_color		SetDataValueLabelColor	Color (R,G,B,A) to use for data value labels (Added in PHPlot-5.7.0)
 error_bar_colors		SetErrorBarColors	Array of colors (R,G,B,A) for error bars. See default_colors for initial value.
 error_bar_line_width	1	SetErrorBarLineWidth	Thickness of error bar lines
@@ -66,7 +66,7 @@ image_height		PHPlot	Image height
 image_width		PHPlot	Image width
 img		PHPlot	Image resource
 in_error		PrintError	Prevent recursion in error message image production
-is_inline	(FALSE)	SetIsInline	Don't sent headers
+is_inline	(FALSE)	SetIsInline	Don't send headers
 label_format	array(...)	SetPieLabelType SetPrecisionX SetPrecisionY SetXDataLabelType SetXLabelType SetXTimeFormat SetYDataLabelType SetYLabelType SetYTimeFormat	Label format info. <link linkend="var-label-format">(See notes for more)</link>
 label_scale_position	0.5	SetLabelScalePosition	Pie chart label position factor
 legend	(NULL)	SetLegend	Legend text array. Each index is a legend text line.
