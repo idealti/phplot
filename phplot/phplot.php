@@ -2267,18 +2267,18 @@ class PHPlot
     /*
      * Enable or disable drawing of the X grid lines.
      */
-    function SetDrawXGrid($dxg)
+    function SetDrawXGrid($dxg = NULL)
     {
-        $this->draw_x_grid = (bool)$dxg;
+        $this->draw_x_grid = $dxg;
         return TRUE;
     }
 
     /*
      * Enable or disable drawing of the Y grid lines.
      */
-    function SetDrawYGrid($dyg)
+    function SetDrawYGrid($dyg = NULL)
     {
-        $this->draw_y_grid = (bool)$dyg;
+        $this->draw_y_grid = $dyg;
         return TRUE;
     }
 
@@ -4111,19 +4111,6 @@ class PHPlot
     }
 
     /*
-     * Set grid control defaults.
-     * X grid defaults off, Y grid defaults on, except the reverse is true
-     * with swapped graphs such as horizontal bars.
-     */
-    protected function CalcGridSettings()
-    {
-        if (!isset($this->draw_x_grid))
-            $this->draw_x_grid = $this->datatype_swapped_xy;
-        if (!isset($this->draw_y_grid))
-            $this->draw_y_grid = !$this->datatype_swapped_xy;
-    }
-
-    /*
      * Helper for CheckLabels() - determine if there are any non-empty labels.
      * Returns True if all data labels are empty, else False.
      */
@@ -4810,6 +4797,9 @@ class PHPlot
             $style = $this->ndx_light_grid_color;
         }
 
+        // Draw grids lines?
+        $draw_grid = $this->GetGridSetting('x');
+
         // Calculate the tick start, end, and step:
         list($x_start, $x_end, $delta_x) = $this->CalcTicks('x');
 
@@ -4818,7 +4808,7 @@ class PHPlot
             $x_pixels = $this->xtr($x);
 
             // Draw vertical grid line:
-            if ($this->draw_x_grid) {
+            if ($draw_grid) {
                 ImageLine($this->img, $x_pixels, $this->plot_area[1], $x_pixels, $this->plot_area[3], $style);
             }
 
@@ -4843,6 +4833,9 @@ class PHPlot
             $style = $this->ndx_light_grid_color;
         }
 
+        // Draw grids lines?
+        $draw_grid = $this->GetGridSetting('y');
+
         // Calculate the tick start, end, and step:
         list($y_start, $y_end, $delta_y) = $this->CalcTicks('y');
 
@@ -4851,7 +4844,7 @@ class PHPlot
             $y_pixels = $this->ytr($y);
 
             // Draw horizontal grid line:
-            if ($this->draw_y_grid) {
+            if ($draw_grid) {
                 ImageLine($this->img, $this->plot_area[0]+1, $y_pixels, $this->plot_area[2]-1,
                           $y_pixels, $style);
             }
@@ -5509,6 +5502,20 @@ class PHPlot
         } else {
             $alt_color = $this->ndx_data_border_colors[$i_border];
         }
+    }
+
+    /*
+     * Get the grid setting. This is a function, because the default depends on the data type.
+     *  $xy : 'x' or 'y', which grid setting to get.
+     *  Returns TRUE if the grid should be drawn, FALSE if it should not.
+     *  Note: The grid defaults ON for the dependent variable, OFF for the independent variable.
+     */
+    protected function GetGridSetting($xy)
+    {
+        if ($xy == 'x')
+            return isset($this->draw_x_grid) ? $this->draw_x_grid : $this->datatype_swapped_xy;
+        // Assumed 'y'
+        return isset($this->draw_y_grid) ? $this->draw_y_grid : !$this->datatype_swapped_xy;
     }
 
     /*
@@ -7033,9 +7040,6 @@ class PHPlot
 
             // Process label-related parameters:
             $this->CheckLabels();
-
-            // Apply grid defaults:
-            $this->CalcGridSettings();
         }
 
         // Calculate the plot margins, if needed.
