@@ -2418,7 +2418,7 @@ For an example of data label lines, see <xref linkend="ex-linepoints2"/>.
   </refnamediv>
 
   <refsynopsisdiv>
-    <synopsis>$plot-&gt;SetDrawXGrid(<parameter>$dxg</parameter>)</synopsis>
+    <synopsis>$plot-&gt;SetDrawXGrid(<optional><parameter>$dxg</parameter></optional>)</synopsis>
   </refsynopsisdiv>
 
   <refsect1>
@@ -2440,6 +2440,7 @@ and to draw the X grid for horizontal plots.
         <listitem>
           <para>
 True to draw the X grid lines, False to not draw the X grid lines.
+If this parameter is omitted or NULL, the default behavior is restored.
           </para>
         </listitem>
       </varlistentry>
@@ -2455,6 +2456,15 @@ Grid lines are drawn at tick mark positions.
 <xref linkend="SetLightGridColor" /> sets the color of the grid lines.
     </para>
   </refsect1>
+
+  <refsect1>
+    <title>History</title>
+    <para>
+The ability to specify NULL or omit the parameter to restore the default
+behavior was added in PHPlot-6.0.0.
+    </para>
+  </refsect1>
+
 </refentry>
 
 <refentry id="SetDrawYAxis">
@@ -2529,7 +2539,7 @@ This function was added in PHPlot-5.3.0.
   </refnamediv>
 
   <refsynopsisdiv>
-    <synopsis>$plot-&gt;SetDrawYGrid(<parameter>$dyg</parameter>)</synopsis>
+    <synopsis>$plot-&gt;SetDrawYGrid(<optional><parameter>$dyg</parameter></optional>)</synopsis>
   </refsynopsisdiv>
 
   <refsect1>
@@ -2551,6 +2561,7 @@ and not draw the Y grid for horizontal plots.
         <listitem>
           <para>
 True to draw the Y grid lines, False to not draw the Y grid lines.
+If this parameter is omitted or NULL, the default behavior is restored.
           </para>
         </listitem>
       </varlistentry>
@@ -2566,6 +2577,15 @@ Grid lines are drawn at tick mark positions.
 <xref linkend="SetLightGridColor" /> sets the color of the grid lines.
     </para>
   </refsect1>
+
+  <refsect1>
+    <title>History</title>
+    <para>
+The ability to specify NULL or omit the parameter to restore the default
+behavior was added in PHPlot-6.0.0.
+    </para>
+  </refsect1>
+
 </refentry>
 
 <refentry id="SetErrorBarColors">
