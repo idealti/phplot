@@ -4,6 +4,18 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-08-09 (/branches/Rel6)
+    * Changes to fix problem with grid drawing defaults being stored back
+      into the class, and applied to subsequent multiple-plots:
+      + developer.xml: Indicated that CalcGridSettings() was removed, and
+        documented new internal function GetGridSetting(). Also added a
+        comment tag to all removed internal functions, for maintenance.
+      + reference.xml: Documented new feature in SetDrawXGrid() and
+        SetDrawYGrid(): parameter may be omitted or NULL to restore the
+        default behavior.
+      + variables.list: Changed descriptions of draw_x_grid, draw_y_grid.
+    * variables.list: Fixed typo in is_inline description
+
 * 2012-08-03 (/branches/Rel6)
     * variables.list: Documented new class variables x_tick_step, y_tick_step.
 
