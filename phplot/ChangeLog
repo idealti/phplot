@@ -2,6 +2,11 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2012-08-14 (/branches/Rel6)
+    * Code cleanup: Use 'self::' to access static properties and constants,
+      rather than the actual class name.
+    * Cleanup SetDefaultFonts(); no functional change.
+
 2012-08-09 (/branches/Rel6)
     * Fixed problem with grid defaults and multiple plots. The default
       setting, to draw the grid or not, was being stored back to the class
