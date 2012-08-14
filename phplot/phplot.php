@@ -242,7 +242,7 @@ class PHPlot
     function __sleep()
     {
         $this->truecolor = imageistruecolor($this->img); // Remember image type
-        $this->saved_version = PHPlot::version; // Remember version of PHPlot, for checking on unserialize
+        $this->saved_version = self::version; // Remember version of PHPlot, for checking on unserialize
         return array_keys(get_object_vars($this));
     }
 
@@ -251,7 +251,7 @@ class PHPlot
      */
     function __wakeup()
     {
-        if (strcmp($this->saved_version, PHPlot::version) != 0)
+        if (strcmp($this->saved_version, self::version) != 0)
             $this->PrintError(get_class($this) . '(): Unserialize version mismatch');
         $imagecreate_function = $this->truecolor ? 'imagecreatetruecolor' : 'imagecreate';
         $this->img = call_user_func($imagecreate_function, $this->image_width, $this->image_height);
@@ -923,24 +923,24 @@ class PHPlot
      */
     protected function SetDefaultFonts()
     {
-        // TTF:
         if (!empty($this->use_ttf)) {
-            return $this->SetFont('generic', '', 8)
-                && $this->SetFont('title', '', 14)
-                && $this->SetFont('legend', '', 8)
-                && $this->SetFont('x_label', '', 6)
-                && $this->SetFont('y_label', '', 6)
-                && $this->SetFont('x_title', '', 10)
-                && $this->SetFont('y_title', '', 10);
+            // Defaults for use of TrueType fonts:
+            return $this->SetFontTTF('generic', '', 8)
+                && $this->SetFontTTF('title', '', 14)
+                && $this->SetFontTTF('legend', '', 8)
+                && $this->SetFontTTF('x_label', '', 6)
+                && $this->SetFontTTF('y_label', '', 6)
+                && $this->SetFontTTF('x_title', '', 10)
+                && $this->SetFontTTF('y_title', '', 10);
         }
-        // Fixed GD Fonts:
-        return $this->SetFont('generic', 2)
-            && $this->SetFont('title', 5)
-            && $this->SetFont('legend', 2)
-            && $this->SetFont('x_label', 1)
-            && $this->SetFont('y_label', 1)
-            && $this->SetFont('x_title', 3)
-            && $this->SetFont('y_title', 3);
+        // Defaults for use of GD fonts:
+        return $this->SetFontGD('generic', 2)
+            && $this->SetFontGD('title', 5)
+            && $this->SetFontGD('legend', 2)
+            && $this->SetFontGD('x_label', 1)
+            && $this->SetFontGD('y_label', 1)
+            && $this->SetFontGD('x_title', 3)
+            && $this->SetFontGD('y_title', 3);
     }
 
     /*
@@ -2353,7 +2353,7 @@ class PHPlot
      */
     function SetPlotType($which_pt)
     {
-        $avail_plot_types = implode(', ', array_keys(PHPlot::$plots)); // List of known plot types
+        $avail_plot_types = implode(', ', array_keys(self::$plots)); // List of known plot types
         $this->plot_type = $this->CheckOption($which_pt, $avail_plot_types, __FUNCTION__);
         return (boolean)$this->plot_type;
     }
@@ -2947,8 +2947,8 @@ class PHPlot
     protected function FindDataLimits()
     {
         // Does this plot type need special processing of the data values?
-        $sum_vals = !empty(PHPlot::$plots[$this->plot_type]['sum_vals']); // Add up values in each row
-        $abs_vals = !empty(PHPlot::$plots[$this->plot_type]['abs_vals']); // Take absolute values
+        $sum_vals = !empty(self::$plots[$this->plot_type]['sum_vals']); // Add up values in each row
+        $abs_vals = !empty(self::$plots[$this->plot_type]['abs_vals']); // Take absolute values
 
         // These need to be initialized in case there are multiple plots and missing data points.
         $this->data_min = array();
@@ -7019,7 +7019,7 @@ class PHPlot
         // Set defaults then import plot type configuration:
         $draw_axes = TRUE;
         $draw_arg = array(); // Default is: no arguments to the drawing function
-        extract(PHPlot::$plots[$this->plot_type]);
+        extract(self::$plots[$this->plot_type]);
 
         // Allocate colors for the plot:
         $this->SetColorIndexes();
