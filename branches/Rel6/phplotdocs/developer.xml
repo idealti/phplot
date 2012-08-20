@@ -2243,18 +2243,28 @@ This chapter provides information about the PHPlot class member variables.
 </abstract>
 
 <para>
-All PHPlot class member variables are meant for internal use only,
-although they are declared as <emphasis>public</emphasis>.
-You may use these in applications, but they are subject to change in future
+Most PHPlot class member variables are meant for internal use only,
+and are declared to have <emphasis>protected</emphasis> visibility
+(starting with PHPlot-6.0.0).
+This means they are not accessible from your application, unless you define
+a class that extends PHPlot.
+All these member variables are subject to change in future
 releases without concern for backward compatibility.
 </para>
 
 <para>
-<xref linkend="adv-tuning"/> describes how some of these PHPlot variables
-can be used to adjust plot appearance. Although these are also internal
-variables, setting them from your script is generally safe, as they have
-relatively small effects on plots, and are less likely to change in future
-releases.
+One exception is the plot tuning variables, which have public visibility.
+<xref linkend="adv-tuning"/> describes how these PHPlot member variables
+can be used to adjust plot appearance.
+Setting them from your application is generally safe, as they have relatively
+small effects on plots, and are less likely to change in future releases.
+</para>
+
+<para>
+A few additional member class variables have public visibility, due to past
+use in applications, but you should avoid using them. This includes
+<literal>img</literal>, the GD image resource, and <literal>fonts</literal>,
+the array of font information.
 </para>
 
 <sect1 id="dev-vars-list">
@@ -2265,15 +2275,11 @@ The table below lists the PHPlot class member variables.
 </para>
 
 <para>
-The initial or default values are listed under
-<emphasis>Default Value</emphasis>.
-If the variable is declared at the top of the PHPlot class definition,
-then its initial value is shown without enclosing parentheses.
-If the variable is not explicitly declared, but remains unset until
-needed, then the effective default (if any) is shown in parentheses.
-For this column, FALSE, NULL, and an unset variable are equivalent.
-If the <emphasis>Default Value</emphasis> column is empty, this means
-the variable does not have a fixed default.
+The initial values are listed under <emphasis>Default Value</emphasis>.
+Variables which are declared but not initialized at the top of the
+PHPlot class definition have nothing in this column. They can be considered
+to have an initial value of NULL, which is significant for some variables
+but not for others.
 </para>
 
 <para>
@@ -2282,6 +2288,12 @@ function(s) used to set the variable, if the variable can be set by the
 application, else the member function which calculates the variable, if
 there is one, else the member function(s) which use the variable, if there
 are only a few.
+</para>
+
+<para>
+Variables which hold color values are initialized to defaults using
+<xref linkend="SetDefaultStyles"/> when a PHPlot object is created.
+For the default colors, see <xref linkend="conc-colors-elements"/>.
 </para>
 
 <para>
