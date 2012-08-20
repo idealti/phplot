@@ -2,6 +2,45 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2012-08-20 (/branches/Rel6)
+    * Declare all class variables at top, initialize where valid, and make
+      most PHPlot class variables 'protected' rather than 'public' visibility.
+      This is a significant change, and undoes the change of 2012-06-14
+      below ("Code cleanup: Avoid static initialization of class member
+      variables that can just as well be unset by default").
+
+      All variables listed in the "Tuning Parameters" section of the manual
+      remain public. In addition, the $img and $fonts member variables
+      remain public, although use in scripts is discouraged. (These are
+      public due to historical use, including use in the PHPlot Test Suite.)
+
+      Compatibility warning: This will break any script that accesses PHPlot
+      member variables other than those listed above as remaining public.
+
+      Code changes were made (mostly undoing changes from 2012-06-14) to
+      account for variable initialization, in many places. For example,
+      we can now test $this->use_ttf directly, rather than using empty() on it.
+      Replace unset() with assignment to NULL where variables have a special
+      state of "unspecified default".
+
+    * Bug #3557510 "Calculated defaults applied to subsequent plots":
+      Use two variables for X Data Label Angle: one for user-set value, and
+      one for the effective value. This fixes a problem with multiple plots,
+      where the X Data Label angle was calculated for the first plot, then
+      applied to subsequent plots as if it was user-set (rather than being
+      recalculated).
+
+    * Renamed variables: x_tick_inc to x_tick_inc_u, and tick_step to
+      x_tick_inc (similar for y_tick) for consistency with above X Data
+      Label Angle variables. The _u suffix is set by the user; the other
+      is the effective value.
+
+    * Changed return from internal GetLegendSizeParams() - removed text_align
+      and colorbox_align from the array. These were the same as the two
+      class variables (with defaults applied), but now the defaults are
+      initialized so there is no need to return them separately.
+
+
 2012-08-14 (/branches/Rel6)
     * Code cleanup: Use 'self::' to access static properties and constants,
       rather than the actual class name.
