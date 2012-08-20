@@ -4,6 +4,19 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-08-20 (/branches/Rel6)
+    * Updated for class variable visibility and initialization changes.
+      + advanced.xml: Variables have default values, not unset by default.
+      + concepts.xml: Noted that color map has the available color names,
+        not the available colors.
+      + developer.xml: Noted that most variables now have protected
+        visibility. Exception is the tuning variables. Redid explanation
+        of Default Value column in table of variables (undoes some of
+        2012-06-15 change).
+      + variables.list: Fix default values, and added a few variable name
+        changes and new variable. Don't list colors, as they are not assigned
+        as defaults in the class variable declarations.
+
 * 2012-08-09 (/branches/Rel6)
     * Changes to fix problem with grid drawing defaults being stored back
       into the class, and applied to subsequent multiple-plots:
