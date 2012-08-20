@@ -1742,7 +1742,7 @@ the array with the colors, for example:
 <title>Built-in Color Maps</title>
 <para>
 There are 36 colors defined in the 'small' internal color map.
-This is the set of colors available by default, unless
+This is the set of color names which are available by default, unless
 <xref linkend="SetRGBArray" /> is used to load in a different color map.
 The colors and their names are shown in the figure below.
   <informalfigure>
@@ -1832,6 +1832,15 @@ PHPlot loads a much larger list of colors equivalent to the entire
 X11 RGB Color Database. Note that there are some duplicate colors in the
 maps, as they include alternate spellings (like 'gray' and 'grey').
 </para>
+
+<note>
+  <para>
+You are not limited to only using colors from the color map.  The color map
+contains a list of color names that PHPlot can translate into color values,
+but you can use any color at all by specifying the color value using
+one of the numeric representations described above.
+  </para>
+</note>
 
 </sect2>
 
