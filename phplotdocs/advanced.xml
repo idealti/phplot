@@ -1761,7 +1761,7 @@ Together with <varname>data_value_label_distance</varname>,
 it determines the position of the reference point for the label.
 (This does not apply to data value labels for bars or stackedbars plots, as
 the label position is fixed for these plot types.)
-The default if unset is 90 degrees, which places the label above the data point.
+The default is 90 degrees, which places the label above the data point.
 PHPlot automatically selects which text alignment to use, based on the angle.
 For example, with the default 90 degree angle, the label will
 be horizontally centered, vertically bottom aligned.  If the angle is 0
@@ -1779,7 +1779,7 @@ Together with <varname>data_value_label_angle</varname>,
 it determines the position of the reference point for the label.
 (This does not apply to data value labels for bars or stackedbars plots, as
 the label position is fixed for these plot types.)
-The default if unset is 5 pixels.
+The default is 5 pixels.
         </para>
       </listitem>
     </varlistentry>
@@ -1811,14 +1811,14 @@ using the applicable variables below.
       <listitem>
         <para>
 Select a date/time tick increment along the X or Y axis.
-(Boolean flag, default is unset.)
+(Boolean flag, default is NULL.)
 If the flag is TRUE, PHPlot will pick an appropriate tick increment
 assuming the values along that axis are in units of seconds.
 (For example, it might pick a tick increment of 3600, 1 hour, rather than
 2000 or 5000.)
 If the flag is FALSE, PHPlot will use its standard algorithm to pick a
 tick increment that is 1, 2, or 5 times a power of 10.
-By default, these flags are unset, meaning PHPlot will automatically decide
+By default, these flags are NULL, meaning PHPlot will automatically decide
 which method to use. It will use the date/time tick increment algorithm if
 the corresponding axis tick labels use date/time formatting (as set with 
 <xref linkend="SetXLabelType"/><literal>('time')</literal> or
