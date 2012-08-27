@@ -4,6 +4,13 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-08-23 (/branches/Rel6)
+    * quickstart.xml: Updated the list of plot types under Customization,
+      mostly to fix the obsolete information that error plots can be used
+      for stock market graphs (PHPlot now has OHLC plots for that).
+    * concepts.xml: Stated that error handler returning FALSE will result
+      in PHP error handling, so the script will exit.
+
 * 2012-08-20 (/branches/Rel6)
     * Updated for class variable visibility and initialization changes.
       + advanced.xml: Variables have default values, not unset by default.
