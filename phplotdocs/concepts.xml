@@ -3494,8 +3494,17 @@ not return.
 Some of the PHPlot functions will correctly handle a return from an error
 handler, and return FALSE to their callers, but not all. At the very least,
 a PHPlot object instance should be unset and not re-used after error.
-Use of error handlers that return is untested and unsupported.
 </para>
+
+<para>
+Note that if you do choose to have an error handler that returns, a return
+value of FALSE from the handler function will result in the standard PHP error
+handling, meaning the script will exit with an error message. If you want
+your script to continue after the handled error, your error handler must
+return TRUE.  (A return with no value, or return of NULL, seems to work the
+same as TRUE, but this is not documented.)
+</para>
+
 <para>
 Note that an error image will be created and output, as described above,
 even if you have established an error handler.
