@@ -4,6 +4,12 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-08-27 (/branches/Rel6)
+    * reference.xml: SetDefaultTTFont() argument is now optional, and added
+      text here and in SetUseTTF() about resetting fonts to defaults.
+      SetTransparentColor() argument is now optional, and rewrote some of
+      the descriptive text for this function.
+
 * 2012-08-23 (/branches/Rel6)
     * quickstart.xml: Updated the list of plot types under Customization,
       mostly to fix the obsolete information that error plots can be used
