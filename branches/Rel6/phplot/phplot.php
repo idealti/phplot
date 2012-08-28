@@ -677,10 +677,12 @@ class PHPlot
 
     /*
      * Designate color $which_color to be transparent, if supported by the image format.
+     * If $which_color is omitted or empty, reset to "no transparent color".
      */
-    function SetTransparentColor($which_color)
+    function SetTransparentColor($which_color = NULL)
     {
-        return (bool)($this->transparent_color = $this->SetRGBColor($which_color));
+        $this->transparent_color = empty($which_color) ? NULL : $this->SetRGBColor($which_color);
+        return ($this->transparent_color !== FALSE); // True unless SetRGBColor() returned an error
     }
 
     /*
@@ -1013,12 +1015,10 @@ class PHPlot
 
     /*
      * Sets the default TrueType font and updates all fonts to that.
-     * The default font might be a full path, or relative to the TTFPath,
-     * so let SetFont check that it exists.
-     * Side effects: Enables use of TrueType fonts as the default font type,
-     * and resets all font settings.
+     *  $which_font : Font filename or path. Missing or NULL to use a default (see GetDefaultTTFont).
+     * Also enables use of TrueType fonts as the default font type, and resets all font settings.
      */
-    function SetDefaultTTFont($which_font)
+    function SetDefaultTTFont($which_font = NULL)
     {
         $this->default_ttfont = $which_font;
         return $this->SetUseTTF(TRUE);
