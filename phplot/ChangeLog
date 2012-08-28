@@ -2,6 +2,13 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2012-08-27 (/branches/Rel6)
+    Ongoing effort to provide 'reset to default' options where missing:
+    * Fixed SetTransparentColor() to accept NULL (or no argument) to mean
+      reset to default - no transparency.
+    * Allow missing argument to SetDefaultTTFont() to mean the same thing
+      as NULL - reset to default TrueType font name.
+
 2012-08-20 (/branches/Rel6)
     * Declare all class variables at top, initialize where valid, and make
       most PHPlot class variables 'protected' rather than 'public' visibility.
