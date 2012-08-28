@@ -2039,7 +2039,7 @@ line style set to dashed with <xref linkend="SetLineStyles" />.
   </refnamediv>
 
   <refsynopsisdiv>
-    <synopsis>$plot-&gt;SetDefaultTTFont(<parameter>$font</parameter>)</synopsis>
+    <synopsis>$plot-&gt;SetDefaultTTFont(<optional><parameter>$font</parameter></optional>)</synopsis>
   </refsynopsisdiv>
 
   <refsect1>
@@ -2061,6 +2061,7 @@ default font type.
 Name of the TrueType font file to use as default. Specify either a
 filename in the default TrueType font directory (or one that can be
 found by GD using its own rules), or the full pathname to a font file.
+If this parameter is omitted or NULL, the default TrueType font is cleared.
           </para>
         </listitem>
       </varlistentry>
@@ -2091,9 +2092,23 @@ Change the font used by individual text elements with
 <xref linkend="SetFont" />, <xref linkend="SetFontGD" />,
 and <xref linkend="SetFontTTF" /> after using SetDefaultTTFont.
     </para>
+    <para>
+Using <literal>SetDefaultTTFont(NULL)</literal> or
+<literal>SetDefaultTTFont()</literal> will erase the default font, then
+set TrueType fonts as the default font type and reset all fonts. This will
+immediately result in PHPlot using its default algorithm to locate a usable
+TrueType font. On systems where PHPlot is unable to locate a TrueType font
+without help, <literal>SetDefaultTTFont([NULL])</literal> will fail, although
+using <xref linkend="SetTTFPath"/> first may help.
+    </para>
   </refsect1>
+
   <refsect1>
     <title>History</title>
+    <para>
+Starting in PHPlot-6.0.0, the argument can be omitted and defaults to NULL,
+which clears the default font. In previous versions, the argument was required.
+    </para>
     <para>
 Starting with PHPlot-5.1.3, TrueType fonts are validated using GD.
 This allows GD to apply its own rules to try to locate a font file. On at
@@ -7729,7 +7744,7 @@ and Y titles.
   </refnamediv>
 
   <refsynopsisdiv>
-    <synopsis>$plot-&gt;SetTransparentColor(<parameter>$color</parameter>)</synopsis>
+    <synopsis>$plot-&gt;SetTransparentColor(<optional><parameter>$color</parameter></optional>)</synopsis>
   </refsynopsisdiv>
 
   <refsect1>
@@ -7750,8 +7765,10 @@ By default, no color is transparent.
         <term><replaceable>$color</replaceable></term>
         <listitem>
           <para>
-Name of the color in the current color map (see <xref linkend="SetRGBArray" />)
-which should become transparent.
+Color value to designate as transparent.
+See <xref linkend="conc-colors" /> for more on color values.
+If this parameter is omitted or NULL, the default behavior of not having a
+transparent color is restored.
           </para>
         </listitem>
       </varlistentry>
@@ -7767,7 +7784,21 @@ and the user's browser or viewer support transparency.
 GIF format supports transparency.
 PNG format also supports transparency, but viewer support is more limited.
     </para>
+    <para>
+As an alternative to designating a single color as transparent, you can
+control the transparency, or alpha value, of any color.
+See <xref linkend="adv-truecolor"/> for more information.
+    </para>
+    <para>
+An image either has a transparent color or it does not. (This is aside from
+use of alpha values for colors.) If you designate 'yellow' as transparent,
+for example, everything drawn on the image in yellow becomes transparent,
+regardless of when it was drawn - before or after the transparent color
+selection. This is because the transparent color designation occurs in the
+image's color map - it does not change the pixels in the image.
+    </para>
   </refsect1>
+
   <refsect1>
     <title>Example</title>
     <para>
@@ -7777,6 +7808,14 @@ like this:
       <programlisting><![CDATA[$plot->SetBackgroundColor('yellow');
 $plot->SetTransparentColor('yellow');
 ]]></programlisting>
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>History</title>
+    <para>
+The ability to specify NULL or omit the parameter to disable having a
+transparent color was added in PHPlot-6.0.0.
     </para>
   </refsect1>
 </refentry>
@@ -7903,10 +7942,35 @@ by default.
   <refsect1>
     <title>Notes</title>
     <para>
-Changing the font type re-initializes all the font settings to the defaults.
+Changing the font type re-initializes all the font settings to the PHPlot
+defaults.
+      <itemizedlist>
+        <listitem>
+          <para>
+<literal>SetUseTTF(FALSE)</literal> resets all text elements to use the
+built-in GD fonts in the default sizes, and sets GD fonts as the default.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+<literal>SetUseTTF(TRUE)</literal> resets all text elements to use TrueType
+fonts, in the default point sizes, but without changing the default font
+name (if one was set). It sets TrueType fonts as the default.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+<literal>SetDefaultTTFont(NULL)</literal> or
+<literal>SetDefaultTTFont()</literal> resets all text elements to use
+TrueType fonts, in the default point sizes, and also erases any default
+font name. See <xref linkend="SetDefaultTTFont"/> for details.
+          </para>
+        </listitem>
+      </itemizedlist>
     </para>
+
     <para>
-The default is False, to use the built-in GD fonts.
+By default, built-in GD fonts are used.
     </para>
     <para>
 When you enable TrueType fonts with SetUseTTF, there must be a valid
