@@ -6359,8 +6359,8 @@ class PHPlot
 
         // Flag array telling if the current point is valid, one element per plot line.
         // If start_lines[i] is true, then (lastx[i], lasty[i]) is the previous point.
-        if ($this->data_columns == 0) return TRUE; // No data to plot; prevent array_fill error.
-        $start_lines = array_fill(0, $this->data_columns, FALSE);
+        if ($this->data_columns > 0)
+            $start_lines = array_fill(0, $this->data_columns, FALSE);
 
         $gcvars = array(); // For GetDataColor, which initializes and uses this.
 
@@ -6429,8 +6429,8 @@ class PHPlot
      */
     protected function DrawLinesError($paired = FALSE)
     {
-        if ($this->data_columns == 0) return TRUE; // No data to plot; prevent array_fill error.
-        $start_lines = array_fill(0, $this->data_columns, FALSE);
+        if ($this->data_columns > 0)
+            $start_lines = array_fill(0, $this->data_columns, FALSE);
 
         $gcvars = array(); // For GetDataErrorColors, which initializes and uses this.
 
@@ -6522,10 +6522,10 @@ class PHPlot
         if (!$this->CheckDataType('text-data, data-data'))
             return FALSE;
 
-        if ($this->data_columns == 0) return TRUE; // No data to plot; prevent array_fill error.
         // Flag array telling if the current point is valid, one element per plot line.
         // If start_lines[i] is true, then (lastx[i], lasty[i]) is the previous point.
-        $start_lines = array_fill(0, $this->data_columns, FALSE);
+        if ($this->data_columns > 0)
+            $start_lines = array_fill(0, $this->data_columns, FALSE);
 
         $gcvars = array(); // For GetDataColor, which initializes and uses this.
 
@@ -6578,7 +6578,7 @@ class PHPlot
                     $start_lines[$idx] = FALSE;
                 }
             }
-        }   // end while
+        }
 
         ImageSetThickness($this->img, 1);
         return TRUE;
@@ -7069,7 +7069,6 @@ class PHPlot
     {
         if (!$this->CheckDataType('data-data-xyz'))
             return FALSE;
-        if ($this->data_columns == 0) return TRUE; // No data to plot; prevents error on min_z/max_z.
 
         $gcvars = array(); // For GetDataColor, which initializes and uses this.
 
