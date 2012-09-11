@@ -2,6 +2,17 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2012-09-10 (/branches/Rel6)
+    * Fixed bug #165 "Missing axis labels on some empty plots":
+      Don't skip the body of DrawLines(), DrawLinesError(), DrawSquared(),
+      or DrawBubbles() when the data column count is zero. Even though there
+      are no points to plot, the outer loops need to run in order to get
+      the X axis data labels drawn.
+
+    Note: Bug and Feature Request numbers above this point refer to the
+    new "Sourceforge2" trackers (low numbers). Below this point, the older
+    tracker numbers (large numbers, unique across all trackers) are used.
+
 2012-08-27 (/branches/Rel6)
     Ongoing effort to provide 'reset to default' options where missing:
     * Fixed SetTransparentColor() to accept NULL (or no argument) to mean
