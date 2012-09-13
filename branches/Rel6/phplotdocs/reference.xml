@@ -2223,6 +2223,63 @@ True to use dashed lines, False to use solid lines.
   </refsect1>
 </refentry>
 
+<refentry id="SetDrawPieBorders">
+  <refmeta>
+    <refentrytitle>SetDrawPieBorders</refentrytitle>
+  </refmeta>
+
+  <refnamediv>
+    <refname>SetDrawPieBorders</refname>
+    <refpurpose>Enable or disable drawing of pie chart segment borders</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <synopsis>$plot-&gt;SetDrawPieBorders(<parameter>$draw</parameter>)</synopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Description</title>
+    <para>
+<function>SetDrawPieBorders</function> enables or disables drawing of the
+the segment borders on pie charts. These are the lines that outline each
+pie segment.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Parameters</title>
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>$draw</replaceable></term>
+        <listitem>
+          <para>
+True to draw pie chart segment borders, False to not draw them.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Notes</title>
+    <para>
+By default, the pie chart segment borders are drawn for unshaded pie charts,
+and not drawn for shaded pie charts. (By default, pie charts are shaded.
+See <xref linkend="SetShading"/>.)
+    </para>
+    <para>
+Use <xref linkend="SetPieBorderColor"/> or <xref linkend="SetGridColor"/> to
+set the border color.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>History</title>
+    <para>
+This function was added in PHPlot-6.0.0. In prior versions, borders were
+always drawn for unshaded pie charts, and never drawn for shaded pie charts.
+    </para>
+  </refsect1>
+</refentry>
 
 <refentry id="SetDrawPlotAreaBackground">
   <refmeta>
@@ -3427,7 +3484,8 @@ to allow mixing GD and TrueType fonts in the same graph.
     <para>
 <function>SetGridColor</function> sets the color used for the X and Y
 axes, the plot border, and the legend border.
-It also sets the default color for pie chart data labels.
+It also sets the default color for pie chart data labels and pie chart
+segment borders.
     </para>
   </refsect1>
 
@@ -3456,8 +3514,9 @@ This doesn't actually set the color used by the grid; for that see
 <xref linkend="SetLightGridColor" />. We have no idea why this is so.
     </para>
     <para>
-For pie charts drawn with no shading, this also sets the color of the pie
-segment borders.
+The color used for pie chart segment borders is set with
+<xref linkend="SetPieBorderColor"/> (starting with PHPlot-6.0.0), with
+<function>SetGridColor</function> providing a default color.
     </para>
     <para>
 The color used for pie chart data labels is set with
@@ -5267,6 +5326,68 @@ default <literal>True</literal> is not backward compatible.
 However, there were additional changes made to pie chart sizing and label
 positioning in PHPlot-5.6.0, such that neither enabling nor disabling
 automatic sizing will produce identical results compared to previous releases.
+    </para>
+  </refsect1>
+</refentry>
+
+<refentry id="SetPieBorderColor">
+  <refmeta>
+    <refentrytitle>SetPieBorderColor</refentrytitle>
+  </refmeta>
+
+  <refnamediv>
+    <refname>SetPieBorderColor</refname>
+    <refpurpose>Set the color for pie chart segment borders</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <synopsis>$plot-&gt;SetPieBorderColor(<parameter>$color</parameter>)</synopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Description</title>
+    <para>
+<function>SetPieBorderColor</function> sets the color which is used for
+borders drawn around pie chart segments (if enabled).
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Parameters</title>
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>$color</replaceable></term>
+        <listitem>
+          <para>
+Color value to use.
+See <xref linkend="conc-colors" /> for more on color values.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Notes</title>
+    <para>
+If <function>SetPieBorderColor</function> is not used, pie chart segment
+borders (if enabled) are drawn using the color set with
+<xref linkend="SetGridColor"/>.
+If neither <function>SetPieBorderColor</function> nor
+<function>SetGridColor</function> is used, the default color is black.
+    </para>
+    <para>
+By default, pie chart segment borders are drawn for unshaded plots, and not
+for shaded plots. See <xref linkend="SetDrawPieBorders"/> for more information.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>History</title>
+    <para>
+This function was added in PHPlot-6.0.0. In earlier releases, pie chart
+segment borders always used the color set with <xref linkend="SetGridColor"/>,
+which also sets the color of other elements.
     </para>
   </refsect1>
 </refentry>
