@@ -1,6 +1,19 @@
 This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
+2012-09-12 (/branches/Rel6)
+    * Feature request #46 "Control pie chart borders":
+      Added a separate color control for pie chart segment borders (vs
+      over-used Grid color), and a flag to enable or disable the borders.
+      Borders now work with shaded pie charts too. The defaults are
+      compatible: no borders for shaded pie charts, borders using grid
+      color for unshaded pie charts.
+      + New function SetPieBorderColor($color)
+      + New function SetDrawPieBorders($draw)
+      + Added separate color index value for pie chart borders, defaulting
+        to the grid color index.
+      + Changed DrawPieChart() to use the new controls, including
+        new ability to have borders with shaded pie charts.
 
 2012-09-10 (/branches/Rel6)
     * Fixed bug #165 "Missing axis labels on some empty plots":
