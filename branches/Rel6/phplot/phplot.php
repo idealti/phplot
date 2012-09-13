@@ -94,6 +94,7 @@ class PHPlot
     protected $default_ttfont;
     protected $done = array();
     protected $draw_broken_lines = FALSE;
+    protected $draw_pie_borders;
     protected $draw_plot_area_background = FALSE;
     protected $draw_x_data_label_lines = FALSE;
     protected $draw_x_grid;
@@ -147,6 +148,7 @@ class PHPlot
     protected $ndx_i_border;
     protected $ndx_i_border_dark;
     protected $ndx_light_grid_color;
+    protected $ndx_pieborder_color;
     protected $ndx_pielabel_color;
     protected $ndx_plot_bg_color;
     protected $ndx_text_color;
@@ -169,6 +171,7 @@ class PHPlot
     protected $pie_label_source;
     public $pie_min_size_factor = 0.5;
     protected $pie_start_angle = 0;
+    protected $pieborder_color;
     protected $pielabel_color;
     protected $plot_area;
     protected $plot_area_height;
@@ -640,6 +643,14 @@ class PHPlot
     function SetPieLabelColor($which_color)
     {
         return (bool)($this->pielabel_color = $this->SetRGBColor($which_color));
+    }
+
+    /*
+     * Set the color for pie chart segment borders.
+     */
+    function SetPieBorderColor($which_color)
+    {
+        return (bool)($this->pieborder_color = $this->SetRGBColor($which_color));
     }
 
     /*
@@ -2443,6 +2454,15 @@ class PHPlot
     }
 
     /*
+     * Enable or disable drawing of borders around pie chart segments.
+     */
+    function SetDrawPieBorders($dpb)
+    {
+        $this->draw_pie_borders = (bool)$dpb;
+        return TRUE;
+    }
+
+    /*
      * Set the main title text for the plot.
      */
     function SetTitle($which_title)
@@ -2930,8 +2950,9 @@ class PHPlot
         $this->ndx_grid_color       = $this->GetColorIndex($this->grid_color);
         $this->ndx_light_grid_color = $this->GetColorIndex($this->light_grid_color);
         $this->ndx_tick_color       = $this->GetColorIndex($this->tick_color);
-        // Pie label color defaults to grid color, for historical reasons (PHPlot <= 5.6.1)
+        // Pie label and border colors default to grid color, for historical reasons (PHPlot <= 5.6.1)
         $this->ndx_pielabel_color   = $this->GetColorIndex($this->pielabel_color, $this->ndx_grid_color);
+        $this->ndx_pieborder_color  = $this->GetColorIndex($this->pieborder_color, $this->ndx_grid_color);
 
         // Maximum number of data & border colors to allocate:
         if ($this->GetCallback('data_color')) {
@@ -5880,6 +5901,9 @@ class PHPlot
             $labels_outside = $this->label_scale_position >= 0.5;  // Only defined if ($do_labels)
         }
 
+        // Draw segment borders? Default is True for unshaded, False for shaded
+        $do_borders = isset($this->draw_pie_borders) ? $this->draw_pie_borders : ($this->shading == 0);
+
         $max_data_colors = count($this->ndx_data_colors); // Number of colors available
 
         // Check shading. Diameter factor $diam_factor is (height / width)
@@ -6061,11 +6085,13 @@ class PHPlot
 
                     // Processing to do only for the last (if shaded) or only (if unshaded) loop:
                     if ($h == 0) {
-                        // For unshaded pie charts, draw the outline:
-                        if ($this->shading == 0)
+                        // Draw the pie segment outline (if enabled):
+                        if ($do_borders) {
                             ImageFilledArc($this->img, $xpos, $ypos, $pie_width, $pie_height,
-                                           $arc_end_angle, $arc_start_angle, $this->ndx_grid_color,
+                                           $arc_end_angle, $arc_start_angle, $this->ndx_pieborder_color,
                                            IMG_ARC_PIE | IMG_ARC_EDGED |IMG_ARC_NOFILL);
+                        }
+
                         // Draw the label:
                         if ($do_labels)
                             $this->DrawPieLabel($labels[$j], $xpos, $ypos, $start_angle, $arc_angle, $r);
