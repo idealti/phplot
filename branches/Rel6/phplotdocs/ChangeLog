@@ -4,6 +4,16 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-09/12 (/branches/Rel6)
+    * Changes for feature request #46 "Control pie chart borders":
+      + .ispell_words : Added new function names
+      + concepts.xml: Updated table of color elements, and added note on
+        pie segment border colors.
+      + functions.xml: Add links to to 2 new functions
+      + reference.xml: Documented new functions SetPieBorderColor()
+        and SetDrawPieBorders(). Updated SetGridColor().
+      + variables.list: Documented 3 new class variables.
+
 * 2012-08-27 (/branches/Rel6)
     * reference.xml: SetDefaultTTFont() argument is now optional, and added
       text here and in SetUseTTF() about resetting fonts to defaults.
