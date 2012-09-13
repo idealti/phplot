@@ -146,6 +146,7 @@ SetDefaultStyles
 SetDefaultTTFont
 SetDrawBrokenLines
 SetDrawDashedGrid
+SetDrawPieBorders
 SetDrawPlotAreaBackground
 SetDrawXAxis
 SetDrawXDataLabelLines
@@ -190,6 +191,7 @@ SetNumYTicks
 SetNumberFormat
 SetOutputFile
 SetPieAutoSize
+SetPieBorderColor
 SetPieDirection
 SetPieLabelColor
 SetPieLabelType
