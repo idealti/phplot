@@ -2095,14 +2095,15 @@ lowest priority.
         <entry>black</entry>
       </row>
       <row>
+        <entry>Pie segment borders</entry>
+        <entry><xref linkend="SetPieBorderColor"/>,
+               <xref linkend="SetGridColor"/></entry>
+        <entry>black</entry>
+      </row>
+      <row>
         <entry>Pie segment fill</entry>
         <entry><xref linkend="SetDataColors"/></entry>
         <entry>N/A</entry>
-      </row>
-      <row>
-        <entry>Pie segment outlines</entry>
-        <entry><xref linkend="SetGridColor"/></entry>
-        <entry>black</entry>
       </row>
       <row>
         <entry>Plot area background</entry>
@@ -2189,8 +2190,16 @@ lowest priority.
   </tgroup>
 </informaltable>
 </para>
-<para>
-  <note>
+<note>
+  <para>
+<xref linkend="SetPieBorderColor"/> was added in PHPlot-6.0.0. In prior
+releases, pie segment borders (which were available only on unshaded pie
+charts) used the color set with <xref linkend="SetGridColor"/>.
+The new function is backwards compatible, as the borders default to the grid
+color if <function>SetPieBorderColor</function> is not used.
+  </para>
+
+  <para>
 <xref linkend="SetDataLabelColor"/>,
 <xref linkend="SetDataValueLabelColor"/>,
 <xref linkend="SetPieLabelColor"/>, and
@@ -2220,8 +2229,9 @@ Except for data value labels, the defaults are backwards compatible. That
 is, if you use <function>SetGridColor()</function> and do not use the new
 <function>SetPieLabelColor()</function>, your pie chart labels will display
 in the same color with all releases.
-  </note>
-</para>
+  </para>
+
+</note>
 
 </sect2>
 
