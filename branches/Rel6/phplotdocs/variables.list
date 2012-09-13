@@ -45,6 +45,7 @@ default_dashed_style		SetDefaultDashedStyle	Formatted PHP code to build a dashed
 default_ttfont		SetDefaultTTFont GetDefaultTTFont	Default TrueType font file. (Through PHPlot-5.1.2, there was a static default 'benjamingothic.ttf'. After PHPlot-5.1.2, the default is dynamic.)
 done	array()	DrawBackground DrawImageBorder DrawTitle	Array of flags for elements that must be drawn at most once. Flag is set TRUE when drawn. Indexes are: background, border, title. (Replaced separate variables in PHPlot-5.3.1.)
 draw_broken_lines	FALSE	SetDrawBrokenLines	Flag: How to handle missing Y values
+draw_pie_borders		SetDrawPieBorders	Flag: Draw borders on pie chart segments (Added in PHPlot-6.0.0)
 draw_plot_area_background	FALSE	SetDrawPlotAreaBackground	Flag: Draw the background of the plot area
 draw_x_data_label_lines	FALSE	SetDrawXDataLabelLines	Flag: Draw X data label lines
 draw_x_grid		SetDrawXGrid	Flag: Draw X grid lines? (True, False, or NULL meaning the default behavior)
@@ -98,6 +99,7 @@ ndx_grid_color		SetColorIndexes	Color index for axes, plot area border, legend b
 ndx_i_border		SetColorIndexes	Color index for image border lines
 ndx_i_border_dark		SetColorIndexes	Color index for image border lines, darker shade
 ndx_light_grid_color		SetColorIndexes	Color index for grid lines and X data lines
+ndx_pieborder_color		SetColorIndexes	Color index for unshaded pie chart segment borders (Added in PHPlot-6.0.0)
 ndx_pielabel_color		SetColorIndexes	Color index for pie chart data labels (Added in PHPlot-5.7.0)
 ndx_plot_bg_color		SetColorIndexes	Color index of plot area background
 ndx_text_color		SetColorIndexes	Color index for labels and legend text
@@ -120,6 +122,7 @@ pie_full_size	FALSE	SetPieAutoSize	Flag: If true, do not include label sizes whe
 pie_label_source		SetPieLabelType	Source of label text for pie charts (percent, value, label, or index) (Added in PHPlot-5.6.0)
 pie_min_size_factor	0.5	DrawPieChart	Minimum amount of the plot area that will be reserved for the pie <link linkend="adv-tuning-pie">(See Tuning Parameters for more)</link> (Added in PHPlot-5.6.0)
 pie_start_angle	0	SetPieStartAngle	Starting angle in degrees for the first segment in a pie chart. (Added in PHPlot-6.0.0)
+pieborder_color		SetPieBorderColor	Color (R,G,B,A) to use for unshaded pie chart segment borders (Added in PHPlot-6.0.0)
 pielabel_color		SetPieLabelColor	Color (R,G,B,A) to use for pie chart data labels (Added in PHPlot-5.7.0)
 plot_area		CalcPlotAreaPixels	Array defining the calculated plot area. ([0],[1]) is the top left corner, ([2],[3]) is the bottom right corner.
 plot_area_height		CalcPlotAreaPixels	Height of the plot area
