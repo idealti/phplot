@@ -88,6 +88,7 @@ More information about using colors in PHPlot can be found in
   <listitem><para><xref linkend="SetLightGridColor" /></para></listitem>
   <listitem><para><xref linkend="SetLineStyles" /></para></listitem>
   <listitem><para><xref linkend="SetLineWidths" /></para></listitem>
+  <listitem><para><xref linkend="SetPieBorderColor" /></para></listitem>
   <listitem><para><xref linkend="SetPieLabelColor" /></para></listitem>
   <listitem><para><xref linkend="SetPlotBgColor" /></para></listitem>
   <listitem><para><xref linkend="SetRGBArray" /></para></listitem>
@@ -114,6 +115,7 @@ plots, and shading for 3D affects.
 <itemizedlist>
   <listitem><para><xref linkend="SetBgImage" /></para></listitem>
   <listitem><para><xref linkend="SetDrawBrokenLines" /></para></listitem>
+  <listitem><para><xref linkend="SetDrawPieBorders" /></para></listitem>
   <listitem><para><xref linkend="SetDrawPlotAreaBackground" /></para></listitem>
   <listitem><para><xref linkend="SetImageBorderType" /></para></listitem>
   <listitem><para><xref linkend="SetPieDirection" /></para></listitem>
