@@ -657,9 +657,8 @@ This was added in PHPlot-6.0.0.
 Adjusts the point_shapes and point_sizes arrays so they have the same size,
 and stores the size in a class variable. This handles processing deferred
 from <xref linkend="SetPointShapes"/> and <xref linkend="SetPointSizes"/>
-until graph drawing time. It must be called from internal functions that
-produce plots that use point shapes: currently <xref linkend="DrawDots"/> and
-<xref linkend="DrawDotsError"/>.
+until graph drawing time. It it is called by <xref linkend="DrawDots"/>
+before using point shapes.
 This was added in PHPlot-5.1.0.
     </para>
   </listitem>
@@ -862,8 +861,7 @@ using the given color.
 The $row and $column indicate which data point is being plotted.
 The $column parameter also selects the marker shape and size,
 using the arrays set up with SetPointSizes() and SetPointShapes().
-Called by those plotting routines that include dots:
-<xref linkend="DrawDotsError"/> and <xref linkend="DrawDots"/>.
+Called by <xref linkend="DrawDots"/> to plot point markers.
 Starting with PHPlot-5.4.0, DrawDot() simply converts the coordinates to device
 coordinates and then calls <xref linkend="DrawShape"/>. It has no knowledge of
 the available dot shapes.
@@ -882,18 +880,16 @@ The old $record argument is equivalent to the new $column argument.
   <term><anchor id="DrawDots" xreflabel="DrawDots"/>DrawDots($paired = False)</term>
   <listitem>
     <para>
-Draws a dot plot.
+Draws a points plot, or the points for a linepoints plot, including error plots.
 Called by <xref linkend="DrawGraph"/> when the plot type is 
 <literal>points</literal>, and by <xref linkend="DrawLinePoints"/> for the
 points portion of a <literal>linepoints</literal> plot.
-If the data type indicates an error bar plot,
-it calls <xref linkend="DrawDotsError"/> instead.
-(Through PHPlot-5.1.2, this was called directly from DrawGraph for both
-<literal>lines</literal> and <literal>linepoints</literal> plots,
-but not for error bar plots.)
-$paired is true for linepoints plots, to suppress drawing elements that
-would be duplicated by the 'lines' part of the plot.
-(This argument was added in PHPlot-5.1.3.)
+$paired is true for <literal>linepoints</literal> plots.
+When $paired is true, DrawDots() draws the points and error bars, and
+<xref linkend="DrawLines" /> draws the lines and data labels.
+(The $paired argument was added in PHPlot-5.1.3.)
+Starting with PHPlot-6.0.0, DrawDots() also handles error plots,
+and horizontal points and linepoints plots.
     </para>
   </listitem>
 </varlistentry>
@@ -902,15 +898,8 @@ would be duplicated by the 'lines' part of the plot.
   <term><anchor id="DrawDotsError" xreflabel="DrawDotsError"/>DrawDotsError($paired = False)</term>
   <listitem>
     <para>
-Draws a dot plot with error bars.
-Called by <xref linkend="DrawDots"/>
-(and indirectly from <xref linkend="DrawLinePoints"/>)
-when the data type indicates an error bar plot.
-(Through PHPlot-5.1.2 this was called directly by DrawGraph.)
-$paired is true for linepoints error plots, and defaults to false for
-points error plots. If true, it suppress drawing elements that
-would be duplicated by <xref linkend="DrawLinesError"/>.
-(This argument was added in PHPlot-5.1.3.)
+This function was removed in PHPlot-6.0.0 and merged into
+<xref linkend="DrawDots" />.
     </para>
   </listitem>
 </varlistentry>
@@ -997,19 +986,17 @@ plot type.
   <term><anchor id="DrawLines" xreflabel="DrawLines"/>DrawLines($paired = False)</term>
   <listitem>
     <para>
-Draws a line plot.
+Draws a line plot, or the lines part of a linepoints plot, including error
+plots.
 Called by <xref linkend="DrawGraph"/> when the plot type is
 <literal>lines</literal>, and by <xref linkend="DrawLinePoints"/> for the
 lines portion of a <literal>linepoints</literal> plot.
-If the data type indicates an error bar plot,
-it calls <xref linkend="DrawLinesError"/> instead.
-(Through PHPlot-5.1.2, this was called directly from DrawGraph for both
-<literal>lines</literal> and <literal>linepoints</literal> plots,
-but not for error bar plots.)
-$paired is true for <literal>linepoints</literal> plots,
-to suppress drawing elements that
-would be duplicated by the <literal>points</literal> part of the plot.
-(This argument was added in PHPlot-5.1.3.)
+$paired is true for <literal>linepoints</literal> plots.
+When $paired is true, DrawLines() draws the lines and data labels, and
+<xref linkend="DrawDots" /> draw the points and error bars.
+(The $paired argument was added in PHPlot-5.1.3.)
+Starting with PHPlot-6.0.0, DrawLines() also handles error plots,
+and horizontal lines and linepoints plots.
     </para>
   </listitem>
 </varlistentry>
@@ -1018,14 +1005,8 @@ would be duplicated by the <literal>points</literal> part of the plot.
   <term><anchor id="DrawLinesError" xreflabel="DrawLinesError"/>DrawLinesError($paired = False)</term>
   <listitem>
     <para>
-Draws a lines plot with error bars.
-Called by <xref linkend="DrawLines"/>
-(and indirectly from <xref linkend="DrawLinePoints"/>)
-when the data type indicates an error bar plot.
-(Through PHPlot-5.1.2 this was called directly by DrawGraph.)
-$paired is true for linepoints error plots, to suppress drawing elements that
-would be duplicated by <xref linkend="DrawDotsError"/>.
-(This argument was added in PHPlot-5.1.3.)
+This function was removed in PHPlot-6.0.0 and merged into
+<xref linkend="DrawLines" />.
     </para>
   </listitem>
 </varlistentry>
@@ -1252,10 +1233,8 @@ It is called by plot drawing routines for all plot types except
 <xref linkend="DrawArea"/>, 
 <xref linkend="DrawBars"/>,
 <xref linkend="DrawDots"/>, 
-<xref linkend="DrawDotsError"/>, 
 <xref linkend="DrawThinBarLines"/>, 
 <xref linkend="DrawLines"/>, 
-<xref linkend="DrawLinesError"/>, 
 <xref linkend="DrawSquared"/>, and
 <xref linkend="DrawStackedBars"/>.
     </para>
@@ -1335,34 +1314,52 @@ Called by <xref linkend="DrawGraph"/>.
 </varlistentry>
 
 <varlistentry>
-  <term><anchor id="DrawYDataLabel" xreflabel="DrawYDataLabel"/>DrawYDataLabel($ylab, $ypos, $row)</term>
+  <term><anchor id="DrawYDataLabel" xreflabel="DrawYDataLabel"/>DrawYDataLabel($ylab, $ypos, $row, $do_lines=FALSE)</term>
   <listitem>
     <para>
 Draws an axis data label for a Y value. The labels are along the Y axis or
 side of the plot, or both, depending on the value set with
 <xref linkend="SetYDataLabelPos"/>.
 The $row value indicates the row index in the data array for this label; it
-is used for custom label formatting. (Note: This function is similar to
-<xref linkend="DrawXDataLabel"/> except it does not draw data label
-lines, since no horizontal plot type currently supports data label lines.)
+is used for custom label formatting.
+If $do_lines is true, this calls <xref linkend="DrawYDataLine"/> to draw a
+line from the label to the point, if enabled and supported by the plot type.
 This function is used by horizontal plots, and was added in PHPlot-5.1.2.
 Called by horizontal plot drawing functions such as
 <xref linkend="DrawHorizBars"/>.
+The $do_lines argument was added in PHPlot-6.0.0 when horizontal plots
+supporting data label lines were first available.
     </para>
   </listitem>
 </varlistentry>
 
 <varlistentry>
-  <term><anchor id="DrawYErrorBar" xreflabel="DrawYErrorBar"/>DrawYErrorBar($x_world, $y_world, $error_height, $error_bar_type, $color)</term>
+  <term><anchor id="DrawYDataLine" xreflabel="DrawYDataLine"/>DrawYDataLine($ypos, $row)</term>
+  <listitem>
+    <para>
+Draws Y data lines, which are horizontal lines from the left or right side of
+the plot to the data points. This is enabled with
+<xref linkend="SetDrawYDataLabelLines"/>, and is only valid with horizontal
+plots which support Y data label lines. The lines are drawn from the
+position (left, right, or both) of the Y axis data labels, which are set with
+<xref linkend="SetYDataLabelPos"/>.
+Called by <xref linkend="DrawYDataLabel"/>.
+This was added in PHPlot-6.0.0.
+    </para>
+  </listitem>
+</varlistentry>
+
+<varlistentry>
+  <term><anchor id="DrawYErrorBar" xreflabel="DrawYErrorBar"/>DrawYErrorBar($x_world, $y_world, $error_height, $color)</term>
   <listitem>
     <para>
 Draws an error bar for the point at world coordinates ($x_world, $y_world).
 $error_height is the height (in world coordinates) of the error bar:
 positive for the upper range error, negative for the lower range error.
-The $error_bar_type is set to <literal>tee</literal> or <literal>line</literal>
-by <xref linkend="SetErrorBarShape"/>.
-Called by <xref linkend="DrawDotsError"/> and <xref linkend="DrawLinesError"/>, twice for each point on the
+Called by <xref linkend="DrawDots"/> and <xref linkend="DrawLines"/> when
+the data type indicates an error plot, twice for each point on the
 plot (upper range error and lower range error).
+(Before PHPlot-6.0.0, there was an additional argument $error_bar_type.)
     </para>
   </listitem>
 </varlistentry>
