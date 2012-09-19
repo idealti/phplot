@@ -1772,6 +1772,12 @@ The data array format type, which must be one of the following values:
                       a Y value, then one or more X values.
                       This is used for horizontal plots.</entry>
                   </row>
+                  <row>
+                    <entry>data-data-xyz</entry>
+                    <entry>Each data array entry is an array with a label,
+                      an X value, then one or more pairs of Y and Z values.
+                      This is used for plots that use (X,Y,Z) triplets.</entry>
+                  </row>
                 </tbody>
               </tgroup>
             </informaltable>
@@ -1836,6 +1842,8 @@ and 3 segments with relative weights of 10, 40, and 50 are defined.
   <refsect1>
     <title>History</title>
     <para>
+Data type <literal>data-data-xyz</literal> was added in PHPlot-5.5.0 for
+the <link linkend="plottype-bubbles">bubbles</link> plot type.
 Data type <literal>text-data-yx</literal> for horizontal plots was added
 in PHPlot-5.1.2.
 Data type <literal>data-data-yx</literal> for horizontal plots was added
@@ -2430,18 +2438,21 @@ This function was added in PHPlot-5.3.0.
   <refsect1>
     <title>Description</title>
     <para>
-<function>SetDrawXDataLabelLines</function> enables drawing of data label lines.
-Data label lines are vertical lines drawn from the X axis data label positions
-to the data points. In the usual case, with the X axis at the bottom of the
-plot and the data labels just below the X axis, the data label lines would be
-drawn up from the X axis to the data points. Depending on the data label
-locations set with <xref linkend="SetXDataLabelPos"/>, the lines would be
-drawn down or up (or both, or neither) from the data points to the bottom
-or top of the plot area.
+<function>SetDrawXDataLabelLines</function> enables drawing of data label lines
+for plot types that support them.
+Data label lines are vertical lines drawn from the data points to the edge
+or edges of the plot with the axis data labels.  In the usual case, with
+the X axis data labels at the bottom of the plot, the data label lines
+would be drawn from the data points to the bottom of the plot area.
+Depending on the data label locations set with
+<xref linkend="SetXDataLabelPos"/>, the lines would be drawn up, down, or in
+both directions from the data points to the top or bottom of the plot area.
     </para>
     <para>
-To use data label lines, you generally want to turn off ticks, tick labels,
+To use data label lines, you generally want to turn off X ticks, X tick labels,
 and the X grid lines.
+Your data array needs to provide data labels, which will be drawn by
+default at the bottom of the plot area.
     </para>
   </refsect1>
 
@@ -2462,7 +2473,7 @@ True to draw the data label lines, False to not draw the lines.
   <refsect1>
     <title>Notes</title>
     <para>
-Data label lines only work with these plot types: lines, points, linepoints,
+X data label lines only work with these plot types: lines, points, linepoints,
 and bubbles. Data label lines can only be drawn if X axis data labels are on.
     </para>
     <para>
@@ -2474,7 +2485,11 @@ start at the minimum Y value for each X value.
 By default, data label lines are not drawn.
     </para>
     <para>
-For an example of data label lines, see <xref linkend="ex-linepoints2"/>.
+For an example of X data label lines, see <xref linkend="ex-linepoints2"/>.
+    </para>
+    <para>
+This function is for vertical plot types. For the horizontal plot types,
+see <xref linkend="SetDrawYDataLabelLines"/>.
     </para>
   </refsect1>
 </refentry>
@@ -2596,6 +2611,89 @@ See <xref linkend="SetDrawXAxis"/> for sample code.
     <title>History</title>
     <para>
 This function was added in PHPlot-5.3.0.
+    </para>
+  </refsect1>
+</refentry>
+
+<refentry id="SetDrawYDataLabelLines">
+  <refmeta>
+    <refentrytitle>SetDrawYDataLabelLines</refentrytitle>
+  </refmeta>
+
+  <refnamediv>
+    <refname>SetDrawYDataLabelLines</refname>
+    <refpurpose>Draw data lines for horizontal plots</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <synopsis>$plot-&gt;SetDrawYDataLabelLines(<parameter>$dydl</parameter>)</synopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Description</title>
+    <para>
+<function>SetDrawYDataLabelLines</function> enables drawing of data label lines
+for horizontal plot types that support them.
+Data label lines are horizontal lines drawn from the data points to the
+edge or edges of the plot with the axis data labels.  In the usual case,
+with the Y axis data labels on the left side of the plot, the data label
+lines would be drawn from the data points to the left side of the plot area.
+Depending on the data label locations set with
+<xref linkend="SetYDataLabelPos"/>, the lines would be drawn left, right, or in
+both directions from the data points to the sides of the plot area.
+    </para>
+    <para>
+To use data label lines, you generally want to turn off Y ticks, Y tick labels,
+and the Y grid lines.
+Your data array needs to provide data labels, which will be drawn by
+default on the left side of the plot area.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Parameters</title>
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>$dydl</replaceable></term>
+        <listitem>
+          <para>
+True to draw the data label lines, False to not draw the lines.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Notes</title>
+    <para>
+Y data label lines only work with these plot types: lines, points, and
+linepoints, and only when using a data type that indicates a horizontal plot.
+Data label lines can only be drawn if Y axis data labels are on.
+    </para>
+    <para>
+If a graph contains multiple data sets, data label lines drawn from the left
+edge will end at the maximum X value for each Y value.  Data label lines drawn
+from the right edge will end at the minimum Y value for each X value.
+(Remember that the X and Y axes are in the same position for vertical and
+horizontal plots, but the roles of X and Y are reversed for horizontal plots.)
+    </para>
+    <para>
+By default, data label lines are not drawn.
+    </para>
+    <para>
+For an example of Y data label lines, see <xref linkend="ex-horizlinepts"/>.
+    </para>
+    <para>
+This function is for horizontal plot types. For the usual vertical plot
+types, see <xref linkend="SetDrawXDataLabelLines"/>.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>History</title>
+    <para>
+This function was added in PHPlot-6.0.0. In earlier releases, there was no
+support for data label lines in any horizontal plot type.
     </para>
   </refsect1>
 </refentry>
@@ -10114,13 +10212,35 @@ This only applies to vertical bar charts.
 Stacked bar charts are not allowed to have negative values.
     </para>
     <para>
+If Y data lines are enabled with <xref linkend="SetDrawYDataLabelLines"/>,
+then SetYDataLabelPos() also determines the direction of the lines which
+are drawn from the data points.
+    </para>
+    <para>
 The Y data label text angle is set with <xref linkend="SetYDataLabelAngle"/>.
 The Y data label text format can be controlled with
 <xref linkend="SetYDataLabelType"/> or <xref linkend="SetYLabelType"/>.
     </para>
+    <para>
+Y data value labels do work with error plots (plot types 'lines', 'points',
+and 'linepoints' and data type
+<link linkend="data-data-error">data-data-error</link>).
+The labels will identify the base Y values of the points.
+However, the default label position above the points will overlap the error
+bars. To prevent this, change the position angle as explained in
+<xref linkend="adv-tuning-labels"/>). For example:
+<programlisting><![CDATA[// Setup for error plot with data value labels
+$plot->SetDataType('data-data-error');
+$plot->SetYDataLabelPos('plotin');
+$plot->data_value_label_angle = 45; // Position the labels at 45 degrees
+]]></programlisting>
+    </para>
   </refsect1>
   <refsect1>
     <title>History</title>
+    <para>
+Data value labels were first available for error plots in PHPlot-6.0.0.
+    </para>
     <para>
 Through PHPlot-5.2.0, data value labels were only available for bars and
 stackedbars plot types.
