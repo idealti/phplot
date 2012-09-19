@@ -264,6 +264,7 @@ For more information, see <xref linkend="conc-labels"/>.
 <para>
 <itemizedlist>
   <listitem><para><xref linkend="SetDrawXDataLabelLines" /></para></listitem>
+  <listitem><para><xref linkend="SetDrawYDataLabelLines" /></para></listitem>
   <listitem><para><xref linkend="SetLabelScalePosition" /></para></listitem>
   <listitem><para><xref linkend="SetNumberFormat" /></para></listitem>
   <listitem><para><xref linkend="SetPieLabelType" /></para></listitem>
