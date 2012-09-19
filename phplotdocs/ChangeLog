@@ -4,7 +4,26 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
-* 2012-09/12 (/branches/Rel6)
+* 2012-09-18 (/branches/Rel6)
+    * Changes for feature request #47 "Extend horizontal plots to more types":
+      + developer.xml: Documented changes to internal functions: Removed
+        DrawDotsError() and DrawLinesError(); updated DrawDots() and
+        DrawLines() descriptions. Added argument to DrawYDataLabel().
+        Added DrawYDataLine().  Changed usage of DrawYErrorBar().
+      + concepts.xml: Updated plot type and data type sections to reflect
+        new horizontal lines, points, and linepoints plots.
+        Add information about data value labels for those plot types.
+      + reference.xml: Documented new function SetDrawYDataLabelLines(), and
+        updated text in SetDrawXDataLabelLines() to correspond.
+        Reference data value labels and data label lines in SetYDataLabelPos().
+        Fixed missing data type (data-data-xyz) in SetDataType().
+      + functions.xml: Added link to new function.
+      + variables.list: Documented new class variable $draw_y_data_label_lines
+      + examples/horizlinepts.php: New example, horizontal linepoints plot.
+      + examples.xml: New example of horizontal linepoints plot.
+      + Makefile: Added new file with example.
+
+* 2012-09-12 (/branches/Rel6)
     * Changes for feature request #46 "Control pie chart borders":
       + .ispell_words : Added new function names
       + concepts.xml: Updated table of color elements, and added note on
