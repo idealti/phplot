@@ -49,6 +49,7 @@ draw_pie_borders		SetDrawPieBorders	Flag: Draw borders on pie chart segments (Ad
 draw_plot_area_background	FALSE	SetDrawPlotAreaBackground	Flag: Draw the background of the plot area
 draw_x_data_label_lines	FALSE	SetDrawXDataLabelLines	Flag: Draw X data label lines
 draw_x_grid		SetDrawXGrid	Flag: Draw X grid lines? (True, False, or NULL meaning the default behavior)
+draw_y_data_label_lines	FALSE	SetDrawYDataLabelLines	Flag: Draw Y data label lines (Added in PHPlot-6.0.0)
 draw_y_grid		SetDrawYGrid	Flag: Draw Y grid lines? (True, False, or NULL meaning the default behavior)
 dvlabel_color		SetDataValueLabelColor	Color (R,G,B,A) to use for data value labels (Added in PHPlot-5.7.0)
 error_bar_colors		SetErrorBarColors	Array of colors (R,G,B,A) for error bars. See default_colors for initial value.
