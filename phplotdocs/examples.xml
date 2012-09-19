@@ -1893,4 +1893,63 @@ at 0 degrees.
 </sect1>
 
 <!-- =============================================== -->
+<pagebreak/>
+<sect1 id="ex-horizlinepts">
+<title>Example - Horizontal Linepoints Plot with Data Value Labels and Lines</title>
+<para>
+This is a horizontal 'linepoints' plot.
+In a horizontal plot, the Y (vertical) axis is for the independent values,
+and the X axis (horizontal) is for the dependent values, so PHPlot is
+graphing <mathphrase>X = F(Y)</mathphrase>.
+</para>
+
+<para>
+This plot has:
+  <itemizedlist>
+    <listitem>
+      <para>
+Y axis data labels, which show the values from the label positions in the data
+array along the Y axis
+(see <xref linkend="SetYDataLabelPos"/>, not used in the example below
+because the default is to plot labels along the Y axis if they are not
+empty)
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+X data value labels, which show the X value just above each data point
+(see <xref linkend="SetXDataLabelPos"/>)
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+Y data label lines, which connect the data points horizontally to the Y
+axis data labels (see <xref linkend="SetDrawYDataLabelLines" />)
+      </para>
+    </listitem>
+  </itemizedlist>
+</para>
+
+<para>
+Note: Horizontal linepoints plots were added in PHPlot-6.0.0.
+</para>
+
+<example id="example-horizlinepts">
+<?dbfo keep-together="auto"?>
+<title>Horizontal Linepoints Plot with Data Value Labels and Data Lines</title>
+<informalfigure>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="examples/horizlinepts.png" scale="58" format="PNG" />
+    </imageobject>
+    <textobject>
+      <phrase>Horizontal Linepoints Plot with Data Value Labels and Data Lines Example</phrase>
+    </textobject>
+  </mediaobject>
+</informalfigure>
+&horizlinepts;
+</example>
+</sect1>
+
+<!-- =============================================== -->
 </chapter>
