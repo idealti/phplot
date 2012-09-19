@@ -98,6 +98,7 @@ class PHPlot
     protected $draw_plot_area_background = FALSE;
     protected $draw_x_data_label_lines = FALSE;
     protected $draw_x_grid;
+    protected $draw_y_data_label_lines = FALSE;
     protected $draw_y_grid;
     protected $dvlabel_color;
     protected $error_bar_colors;
@@ -2454,6 +2455,15 @@ class PHPlot
     }
 
     /*
+     * Enable or disable drawing of Y Data Label Lines (horizontal plots only)
+     */
+    function SetDrawYDataLabelLines($dydl)
+    {
+        $this->draw_y_data_label_lines = (bool)$dydl;
+        return TRUE;
+    }
+
+    /*
      * Enable or disable drawing of borders around pie chart segments.
      */
     function SetDrawPieBorders($dpb)
@@ -2658,11 +2668,6 @@ class PHPlot
         } else {
             $this->point_counts = $ps;
         }
-
-        // Note: PHPlot used to check and adjust point_sizes to be an even number here,
-        // for all 'diamond' and 'triangle' shapes. The reason for this having been
-        // lost, and the current maintainer seeing no sense it doing this for only
-        // some shapes, the code has been removed. But see what DrawDot() does.
     }
 
     /*
@@ -5118,9 +5123,9 @@ class PHPlot
      *  $ylab : Label text
      *  $ypos : Y position for the label, in device coordinates
      *  $row : Row index. This is 0 for the first Y, 1 for the second, etc.
-     * Note: No horizontal plot type supports data label lines. (Compare with DrawXDataLabel())
+     *  $do_lines : True for plot types that support data label lines, False (the default) for others.
      */
-    protected function DrawYDataLabel($ylab, $ypos, $row)
+    protected function DrawYDataLabel($ylab, $ypos, $row, $do_lines=FALSE)
     {
         $ylab = $this->FormatLabel('yd', $ylab, $row);
 
@@ -5135,6 +5140,9 @@ class PHPlot
             $this->DrawText('y_label', $this->y_data_label_angle,
                             $this->plot_area[2] + $this->y_label_right_offset, $ypos,
                             $this->ndx_datalabel_color, $ylab, 'left', 'center');
+
+        if ($do_lines && $this->draw_y_data_label_lines)
+            $this->DrawYDataLine($ypos, $row);
         return TRUE;
     }
 
@@ -5170,6 +5178,38 @@ class PHPlot
         }
         return TRUE;
     }
+
+    /*
+     * Draws horizontal lines from data points left and/or right, depending on y_data_label_pos.
+     * This is only for horizontal plots, when SetDrawYDataLabelLines(True) is used.
+     *   $ypos : position in pixels of the line.
+     *   $row : index of the data row being drawn.
+     */
+    protected function DrawYDataLine($ypos, $row)
+    {
+        // Sets the line style for IMG_COLOR_STYLED lines (grid)
+        if ($this->dashed_grid) {
+            $this->SetDashedStyle($this->ndx_light_grid_color);
+            $style = IMG_COLOR_STYLED;
+        } else {
+            $style = $this->ndx_light_grid_color;
+        }
+
+        if ($this->y_data_label_pos == 'both') {
+            // Lines from the left side to the right side
+            ImageLine($this->img, $this->plot_area[0], $ypos, $this->plot_area[2], $ypos, $style);
+        } elseif ($this->y_data_label_pos == 'plotleft' && isset($this->data_max[$row])) {
+            // Lines from the left of the plot rightwards the max X value at this Y:
+            $xpos = $this->xtr($this->data_max[$row]);
+            ImageLine($this->img, $xpos, $ypos, $this->plot_area[0], $ypos, $style);
+        } elseif ($this->y_data_label_pos == 'plotright' && isset($this->data_min[$row])) {
+            // Lines from the right of the plot leftwards to the min X value at this Y:
+            $xpos = $this->xtr($this->data_min[$row]);
+            ImageLine($this->img, $this->plot_area[2], $ypos, $xpos, $ypos, $style);
+        }
+        return TRUE;
+    }
+
 
     /*
      * Format a pie chart label.
@@ -5831,9 +5871,9 @@ class PHPlot
     }
 
     /*
-     *  Draw an Error Bar set. Used by DrawDotsError and DrawLinesError
+     *  Draw an Error Bar. Used by DrawDots and DrawLines
      */
-    protected function DrawYErrorBar($x_world, $y_world, $error_height, $error_bar_type, $color)
+    protected function DrawYErrorBar($x_world, $y_world, $error_height, $color)
     {
         $x1 = $this->xtr($x_world);
         $y1 = $this->ytr($y_world);
@@ -5841,7 +5881,7 @@ class PHPlot
 
         ImageSetThickness($this->img, $this->error_bar_line_width);
         ImageLine($this->img, $x1, $y1 , $x1, $y2, $color);
-        if ($error_bar_type == 'tee') {
+        if ($this->error_bar_shape == 'tee') {
             ImageLine($this->img, $x1-$this->error_bar_size, $y2, $x1+$this->error_bar_size, $y2, $color);
         }
         ImageSetThickness($this->img, 1);
@@ -6108,70 +6148,16 @@ class PHPlot
     }
 
     /*
-     * Draw the points and errors bars for an error plot of types points and linepoints
-     * Supports only data-data-error format, with each row of the form
-     *   array("title", x, y1, error1+, error1-, y2, error2+, error2-, ...)
-     * This is called from DrawDots, with data type already checked.
-     *   $paired is true for linepoints error plots, to make sure elements are
-     *       only drawn once.  If true, data labels are drawn by DrawLinesError, and error
-     *       bars are drawn by DrawDotsError. (This choice is for backwards compatibility.)
-     */
-    protected function DrawDotsError($paired = FALSE)
-    {
-        // Adjust the point shapes and point sizes arrays:
-        $this->CheckPointParams();
-
-        $gcvars = array(); // For GetDataErrorColors, which initializes and uses this.
-        // Special flag for data color callback to indicate the 'points' part of 'linepoints':
-        $alt_flag = $paired ? 1 : 0;
-
-        for ($row = 0; $row < $this->num_data_rows; $row++) {
-            $record = 1;                                // Skip record #0 (title)
-
-            $x_now = $this->data[$row][$record++];  // Read it, advance record index
-
-            $x_now_pixels = $this->xtr($x_now);             // Absolute coordinates.
-
-            // Draw X Data labels?
-            if ($this->x_data_label_pos != 'none' && !$paired)
-                $this->DrawXDataLabel($this->data[$row][0], $x_now_pixels, $row, TRUE);
-
-            // Now go for Y, E+, E-
-            for ($idx = 0; $record < $this->num_recs[$row]; $idx++) {
-                if (is_numeric($y_now = $this->data[$row][$record++])) {       // Allow for missing Y data
-
-                    // Select the colors:
-                    $this->GetDataErrorColors($row, $idx, $gcvars, $data_color, $error_color, $alt_flag);
-
-                    // Draw the shape:
-                    $this->DrawDot($row, $idx, $x_now, $y_now, $data_color);
-
-                    // Error +
-                    $val = $this->data[$row][$record++];
-                    $this->DrawYErrorBar($x_now, $y_now, $val, $this->error_bar_shape, $error_color);
-                    // Error -
-                    $val = $this->data[$row][$record++];
-                    $this->DrawYErrorBar($x_now, $y_now, -$val, $this->error_bar_shape, $error_color);
-                } else {
-                    $record += 2;  // Skip over error value positions for missing Y
-                }
-            }
-        }
-        return TRUE;
-    }
-
-    /*
-     * Draw a points plot, or the points for a linepoints plot
-     * Data format can be text-data (label, y1, y2, ...) or data-data (label, x, y1, y2, ...)
-     * Points plot with error bars (data-data-error format) is redirected to DrawDotsError.
-     *   $paired is true for linepoints plots, to make sure elements are only drawn once.
+     * Draw a points plot, or the points for a linepoints plot, including error plots.
+     * This supports both vertical and horizontal* plots. "iv" is used for the independent variable (X for
+     * vertical plots, Y for horizontal) and "dv" is used for the dependent variable (Y or X respectively).
+     *   $paired is true for linepoints plots, to make sure elements are only drawn once. See DrawLinePoints
+     *     *Note: No current support for horizontal error plots.
      */
     protected function DrawDots($paired = FALSE)
     {
-        if (!$this->CheckDataType('text-data, data-data, data-data-error'))
+        if (!$this->CheckDataType('text-data, data-data, text-data-yx, data-data-yx, data-data-error'))
             return FALSE;
-        if ($this->datatype_error_bars)
-            return $this->DrawDotsError($paired); // Redirect for points+errorbars plot
 
         // Adjust the point shapes and point sizes arrays:
         $this->CheckPointParams();
@@ -6180,35 +6166,66 @@ class PHPlot
         // Special flag for data color callback to indicate the 'points' part of 'linepoints':
         $alt_flag = $paired ? 1 : 0;
 
-        // Data Value Labels? (Skip if doing the points from a linepoints plot)
-        $do_dvls = !$paired && $this->CheckDataValueLabels($this->y_data_label_pos, $dvl);
+        // Data labels, Data Value Labels? (Skip if doing the points from a linepoints plot)
+        if ($this->datatype_swapped_xy) {
+            // Horizontal plots can have X Data Value Labels, Y Axis Data Labels
+            $do_x_axis_labels = FALSE;
+            $do_x_valu_labels = !$paired && $this->CheckDataValueLabels($this->x_data_label_pos, $dvl);
+            $do_y_axis_labels = !$paired && $this->y_data_label_pos != 'none';
+            $do_y_valu_labels = FALSE;
+        } else {
+            // Vertical plots can have X Axis Data Labels, Y Data Value Labels
+            $do_x_axis_labels = !$paired && $this->x_data_label_pos != 'none';
+            $do_x_valu_labels = FALSE;
+            $do_y_axis_labels = FALSE;
+            $do_y_valu_labels = !$paired && $this->CheckDataValueLabels($this->y_data_label_pos, $dvl);
+        }
 
         for ($row = 0; $row < $this->num_data_rows; $row++) {
             $rec = 1;                    // Skip record #0 (data label)
 
-            if ($this->datatype_implied)                    // Implied X values?
-                $x_now = 0.5 + $row;                        // Place text-data at X = 0.5, 1.5, 2.5, etc...
+            if ($this->datatype_implied)                // Implied independent variable values?
+                $iv = 0.5 + $row;                       // Place text-data at 0.5, 1.5, 2.5, etc...
             else
-                $x_now = $this->data[$row][$rec++];         // Read it, advance record index
+                $iv = $this->data[$row][$rec++];        // Read it, advance record index
 
-            $x_now_pixels = $this->xtr($x_now);
+            // Axis data label?
+            if ($do_x_axis_labels)
+                $this->DrawXDataLabel($this->data[$row][0], $this->xtr($iv), $row, TRUE);
+            elseif ($do_y_axis_labels)
+                $this->DrawYDataLabel($this->data[$row][0], $this->ytr($iv), $row, TRUE);
 
-            // Draw X Data labels?
-            if (!$paired && $this->x_data_label_pos != 'none')
-                $this->DrawXDataLabel($this->data[$row][0], $x_now_pixels, $row, TRUE);
+            // Proceed with dependent values
+            for ($idx = 0; $rec < $this->num_recs[$row]; $idx++) {
+                if (is_numeric($dv = $this->data[$row][$rec++])) {      // Allow for missing data
 
-            // Proceed with Y values
-            for ($idx = 0;$rec < $this->num_recs[$row]; $rec++, $idx++) {
-                if (is_numeric($y_now = $this->data[$row][$rec])) {         // Allow for missing Y data
+                    // Select the color(s):
+                    if ($this->datatype_error_bars) {
+                        $this->GetDataErrorColors($row, $idx, $gcvars, $data_color, $error_color, $alt_flag);
+                    } else {
+                        $this->GetDataColor($row, $idx, $gcvars, $data_color, $alt_flag);
+                    }
 
-                    // Select the color:
-                    $this->GetDataColor($row, $idx, $gcvars, $data_color, $alt_flag);
                     // Draw the marker:
-                    $this->DrawDot($row, $idx, $x_now, $y_now, $data_color);
+                    if ($this->datatype_swapped_xy) {
+                        $this->DrawDot($row, $idx, $dv, $iv, $data_color);
+                    } else {
+                        $this->DrawDot($row, $idx, $iv, $dv, $data_color);
+                    }
 
                     // Draw data value labels?
-                    if ($do_dvls)
-                        $this->DrawDataValueLabel('y', $row, $idx, $x_now, $y_now, $y_now, $dvl);
+                    if ($do_y_valu_labels) // Vertical plot
+                        $this->DrawDataValueLabel('y', $row, $idx, $iv, $dv, $dv, $dvl);
+                    elseif ($do_x_valu_labels) // Horizontal plot
+                        $this->DrawDataValueLabel('x', $row, $idx, $dv, $iv, $dv, $dvl);
+
+                    // Draw error bars (currently for vertical plots only):
+                    if ($this->datatype_error_bars) {
+                        $this->DrawYErrorBar($iv, $dv, $this->data[$row][$rec++], $error_color);
+                        $this->DrawYErrorBar($iv, $dv, -$this->data[$row][$rec++], $error_color);
+                    }
+                } elseif ($this->datatype_error_bars) {
+                    $rec += 2; // Skip over error bar positions for case of missing dependent variable
                 }
             }
         }
@@ -6371,17 +6388,16 @@ class PHPlot
     }
 
     /*
-     * Draw a line plot, or the lines part of a linepoints plot
-     * Data format can be text-data (label, y1, y2, ...) or data-data (label, x, y1, y2, ...)
-     * Line plot with error bars (data-data-error format) is redirected to DrawLinesError.
-     *   $paired is true for linepoints plots, to make sure elements are only drawn once.
+     * Draw a line plot, or the lines part of a linepoints plot, including error plots.
+     * This supports both vertical and horizontal* plots. "iv" is used for the independent variable (X for
+     * vertical plots, Y for horizontal) and "dv" is used for the dependent variable (Y or X respectively).
+     *   $paired is true for linepoints plots, to make sure elements are only drawn once. See DrawLinePoints
+     *     *Note: No current support for horizontal error plots.
      */
     protected function DrawLines($paired = FALSE)
     {
-        if (!$this->CheckDataType('text-data, data-data, data-data-error'))
+        if (!$this->CheckDataType('text-data, data-data, text-data-yx, data-data-yx, data-data-error'))
             return FALSE;
-        if ($this->datatype_error_bars)
-            return $this->DrawLinesError($paired); // Redirect for lines+errorbar plot
 
         // Flag array telling if the current point is valid, one element per plot line.
         // If start_lines[i] is true, then (lastx[i], lasty[i]) is the previous point.
@@ -6390,152 +6406,120 @@ class PHPlot
 
         $gcvars = array(); // For GetDataColor, which initializes and uses this.
 
-        // Data Value Labels?
-        $do_dvls = $this->CheckDataValueLabels($this->y_data_label_pos, $dvl);
+        // Data labels, Data Value Labels?
+        if ($this->datatype_swapped_xy) {
+            // Horizontal plots can have X Data Value Labels, Y Axis Data Labels
+            $do_x_axis_labels = FALSE;
+            $do_x_valu_labels = $this->CheckDataValueLabels($this->x_data_label_pos, $dvl);
+            $do_y_axis_labels = $this->y_data_label_pos != 'none';
+            $do_y_valu_labels = FALSE;
+        } else {
+            // Vertical plots can have X Axis Data Labels, Y Data Value Labels
+            $do_x_axis_labels = $this->x_data_label_pos != 'none';
+            $do_x_valu_labels = FALSE;
+            $do_y_axis_labels = FALSE;
+            $do_y_valu_labels = $this->CheckDataValueLabels($this->y_data_label_pos, $dvl);
+        }
 
         for ($row = 0; $row < $this->num_data_rows; $row++) {
-            $record = 1;                                    // Skip record #0 (data label)
+            $rec = 1;                                   // Skip record #0 (data label)
 
-            if ($this->datatype_implied)                    // Implied X values?
-                $x_now = 0.5 + $row;                        // Place text-data at X = 0.5, 1.5, 2.5, etc...
+            if ($this->datatype_implied)                // Implied X values?
+                $iv = 0.5 + $row;                       // Place text-data at X = 0.5, 1.5, 2.5, etc...
             else
-                $x_now = $this->data[$row][$record++];      // Read it, advance record index
+                $iv = $this->data[$row][$rec++];        // Get actual X value from array
 
-            $x_now_pixels = $this->xtr($x_now);             // Absolute coordinates
+            // Convert independent variable to device coordinates
+            if ($this->datatype_swapped_xy) {
+                $y_now_pixels = $this->ytr($iv);
+            } else {
+                $x_now_pixels = $this->xtr($iv);
+            }
 
-            if ($this->x_data_label_pos != 'none')          // Draw X Data labels?
+            // Axis data label?
+            if ($do_x_axis_labels)
                 $this->DrawXDataLabel($this->data[$row][0], $x_now_pixels, $row, TRUE);
+            elseif ($do_y_axis_labels)
+                $this->DrawYDataLabel($this->data[$row][0], $y_now_pixels, $row, TRUE);
 
-            for ($idx = 0; $record < $this->num_recs[$row]; $record++, $idx++) {
-                if (($line_style = $this->line_styles[$idx]) == 'none')
-                    continue; //Allow suppressing entire line, useful with linepoints
-                if (is_numeric($y_now = $this->data[$row][$record])) {      //Allow for missing Y data
-                    $y_now_pixels = $this->ytr($y_now);
+            // Proceed with dependent values
+            for ($idx = 0; $rec < $this->num_recs[$row]; $idx++) {
+                $line_style = $this->line_styles[$idx];
+
+                // Skip point if data value is missing. Also skip if the whole line is suppressed
+                // with style='none' (useful with linepoints plots)
+                if (is_numeric($dv = $this->data[$row][$rec++]) && $line_style != 'none') {
+
+                    // Convert dependent variable to device coordinates
+                    if ($this->datatype_swapped_xy) {
+                        $x_now_pixels = $this->xtr($dv);
+                    } else {
+                        $y_now_pixels = $this->ytr($dv);
+                    }
+
+                    // Select the color(s):
+                    if ($this->datatype_error_bars) {
+                        $this->GetDataErrorColors($row, $idx, $gcvars, $data_color, $error_color);
+                    } else {
+                        $this->GetDataColor($row, $idx, $gcvars, $data_color);
+                    }
 
                     if ($start_lines[$idx]) {
                         // Set line width, revert it to normal at the end
                         ImageSetThickness($this->img, $this->line_widths[$idx]);
 
-                        // Select the color:
-                        $this->GetDataColor($row, $idx, $gcvars, $data_color);
-
                         if ($line_style == 'dashed') {
                             $this->SetDashedStyle($data_color);
                             $data_color = IMG_COLOR_STYLED;
                         }
+
+                        // Draw the line segment:
                         ImageLine($this->img, $x_now_pixels, $y_now_pixels,
                                   $lastx[$idx], $lasty[$idx], $data_color);
                     }
 
                     // Draw data value labels?
-                    if ($do_dvls)
-                        $this->DrawDataValueLabel('y', $row, $idx, $x_now, $y_now, $y_now, $dvl);
+                    if ($do_y_valu_labels) // Vertical plot
+                        $this->DrawDataValueLabel('y', $row, $idx, $iv, $dv, $dv, $dvl);
+                    elseif ($do_x_valu_labels) // Horizontal plot
+                        $this->DrawDataValueLabel('x', $row, $idx, $dv, $iv, $dv, $dvl);
 
-                    $lasty[$idx] = $y_now_pixels;
+                    // Draw error bars (currently for vertical plots only):
+                    if ($this->datatype_error_bars) {
+                        if ($paired) {
+                            $rec += 2; // Skip error bars - done in the 'points' part of 'linepoints'.
+                        } else {
+                            $this->DrawYErrorBar($iv, $dv, $this->data[$row][$rec++], $error_color);
+                            $this->DrawYErrorBar($iv, $dv, -$this->data[$row][$rec++], $error_color);
+                        }
+                    }
+
                     $lastx[$idx] = $x_now_pixels;
+                    $lasty[$idx] = $y_now_pixels;
                     $start_lines[$idx] = TRUE;
-                } elseif ($this->draw_broken_lines) {  // Y data missing, leave a gap.
-                    $start_lines[$idx] = FALSE;
+                } else {       // Missing point value or line style suppression
+                    if ($this->datatype_error_bars)
+                        $rec += 2;  // Skip over error value positions for missing value
+                    if ($this->draw_broken_lines)
+                        $start_lines[$idx] = FALSE;
                 }
-            }   // end for
-        }   // end for
+            }
+        }
 
         ImageSetThickness($this->img, 1);       // Revert to original state for lines to be drawn later.
         return TRUE;
     }
 
     /*
-     * Draw lines with error bars for an error plot of types lines and linepoints
-     * Supports only data-data-error format, with each row of the form
-     *   array("title", x, y1, error1+, error1-, y2, error2+, error2-, ...)
-     * This is called from DrawLines, with data type already checked.
-     *   $paired is true for linepoints error plots, to make sure elements are
-     *       only drawn once.  If true, data labels are drawn by DrawLinesError, and error
-     *       bars are drawn by DrawDotsError. (This choice is for backwards compatibility.)
-     */
-    protected function DrawLinesError($paired = FALSE)
-    {
-        if ($this->data_columns > 0)
-            $start_lines = array_fill(0, $this->data_columns, FALSE);
-
-        $gcvars = array(); // For GetDataErrorColors, which initializes and uses this.
-
-        for ($row = 0; $row < $this->num_data_rows; $row++) {
-            $record = 1;                                    // Skip record #0 (data label)
-
-            $x_now = $this->data[$row][$record++];          // Read X value, advance record index
-
-            $x_now_pixels = $this->xtr($x_now);             // Absolute coordinates.
-
-            if ($this->x_data_label_pos != 'none')          // Draw X Data labels?
-                $this->DrawXDataLabel($this->data[$row][0], $x_now_pixels, $row, TRUE);
-
-            // Now go for Y, E+, E-
-            for ($idx = 0; $record < $this->num_recs[$row]; $idx++) {
-                if (($line_style = $this->line_styles[$idx]) == 'none')
-                    continue; //Allow suppressing entire line, useful with linepoints
-                if (is_numeric($y_now = $this->data[$row][$record++])) {       // Allow for missing Y data
-
-                    // Select the colors:
-                    $this->GetDataErrorColors($row, $idx, $gcvars, $data_color, $error_color);
-
-                    // Y
-                    $y_now_pixels = $this->ytr($y_now);
-
-                    if ($start_lines[$idx]) {
-                        ImageSetThickness($this->img, $this->line_widths[$idx]);
-
-                        if ($line_style == 'dashed') {
-                            $this->SetDashedStyle($data_color);
-                            $data_color = IMG_COLOR_STYLED;
-                        }
-                        ImageLine($this->img, $x_now_pixels, $y_now_pixels,
-                                  $lastx[$idx], $lasty[$idx], $data_color);
-                    }
-
-                    if ($paired) {
-                        $record += 2; // Skip error bars - done in the 'points' part of 'linepoints'.
-                    } else {
-                        // Error+
-                        $val = $this->data[$row][$record++];
-                        $this->DrawYErrorBar($x_now, $y_now, $val, $this->error_bar_shape, $error_color);
-
-                        // Error-
-                        $val = $this->data[$row][$record++];
-                        $this->DrawYErrorBar($x_now, $y_now, -$val, $this->error_bar_shape, $error_color);
-                    }
-
-                    // Update indexes:
-                    $start_lines[$idx] = TRUE;   // Tells us if we already drew the first column of points,
-                                             // thus having $lastx and $lasty ready for the next column.
-                    $lastx[$idx] = $x_now_pixels;
-                    $lasty[$idx] = $y_now_pixels;
-
-                } else {
-                    $record += 2;  // Skip over error value positions for missing Y
-                    if ($this->draw_broken_lines) {
-                        $start_lines[$idx] = FALSE;
-                    }
-                }
-            }   // end for
-        }   // end for
-
-        ImageSetThickness($this->img, 1);   // Revert to original state for lines to be drawn later.
-        return TRUE;
-    }
-
-    /*
      * Draw a Lines+Points plot (linepoints).
      * This just uses DrawLines and DrawDots. They handle the error-bar case themselves.
+     * Note: When the argument to DrawLines and DrawDots is TRUE:
+     *    DrawLines draws the lines, not the error bars (even if applicable), and the data labels
+     *    DrawDots draws the points, the error bars (if applicable), and not the data labels
      */
     protected function DrawLinePoints()
     {
-        // This check is redundant, as DrawLines and DrawDots do it, but left here as insurance.
-        if (!$this->CheckDataType('text-data, data-data, data-data-error'))
-            return FALSE;
-        $this->DrawLines(TRUE);
-        $this->DrawDots(TRUE);
-        return TRUE;
+        return $this->DrawLines(TRUE) && $this->DrawDots(TRUE);
     }
 
     /*
