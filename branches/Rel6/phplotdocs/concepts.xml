@@ -372,6 +372,15 @@ To set the data type, use <xref linkend="SetDataType" />.
 </para>
 
 <para>
+Not all plot types work with all data types. In some cases, the data type
+doesn't make sense for that plot type, or perhaps it just isn't
+implemented. See <xref linkend="conc-plottypes" /> for a list of available
+plot types and which data types are available for each.
+<xref linkend="conc-plottype-datatype" /> contains a summary table of
+supported plot type / data type combinations.
+</para>
+
+<para>
 The following data types are available in PHPlot:
 
 <variablelist>
@@ -384,7 +393,6 @@ Each record contains a label, followed by one or more Y values:
 <literal>array('label', y1, y2, ...)</literal>.
 The corresponding X value for all Y values in a record is implicit.
 PHPlot assigns x=0.5 to the first data record, x=1.5 to the second, etc.
-This data type works with all plot types.
       </para>
     </listitem>
   </varlistentry>
@@ -396,7 +404,6 @@ This data type works with all plot types.
 Each record contains a label, an X value, then one or more Y values:
 <literal>array('label', x, y1, y2, ...)</literal>.
 This is the same as 'text-data' except the X values are explicitly given.
-This data type works with all plot types except bars and stackedbars.
       </para>
       <para>
 Note that with data type 'data-data', it is possible to create a data array
@@ -418,7 +425,8 @@ Each record contains a label, an X value, then sets of 3 values for each Y
 point: the Y value, error in the positive direction, and error in the
 negative direction:
 <literal>array('label', x, y1, e1+, e1-, y2, e2+, e2-, ...)</literal>.
-This data type works with plot types lines, points, and linepoints only.
+This data type is used to make error plots - a plot showing values and
+error ranges at each point.
       </para>
       <para>
 Note that both errors (e+ and e-) are given as positive numbers. They
@@ -447,8 +455,7 @@ Each record contains a label, followed by one or more X values:
 <literal>array('label', x1, x2, ...)</literal>.
 The corresponding Y value for all X values in a record is implicit.
 PHPlot assigns y=0.5 to the first data record, y=1.5 to the second, etc.
-This data type is for horizontal plots, and works with bar, stackedbar,
-and thinbarline plot types.
+This data type is for horizontal plots.
       </para>
     </listitem>
   </varlistentry>
@@ -460,8 +467,7 @@ and thinbarline plot types.
 Each record contains a label, a Y value, then one or more X values:
 <literal>array('label', y, x1, x2, ...)</literal>.
 This is the same as 'text-data-yx' except the Y values are explicitly given.
-This data type is for horizontal plots, and only works with the thinbarline
-plot type.
+This data type is for horizontal plots.
       </para>
     </listitem>
   </varlistentry>
@@ -478,7 +484,6 @@ triplets. Multiple data sets can also be represented, with each row in the
 array containing an X value and the corresponding Y and Z values.
 An array with this data type can have duplicate X values, and X values need
 not be in order.
-This data type only works with the 'bubbles' plot type.
       </para>
     </listitem>
   </varlistentry>
@@ -864,7 +869,7 @@ The border color (if shading is off) can be set with
 </para>
 <para>
 An empty string (or any non-numeric value) for the dependent variable
-(Y, for vertical plots) indicates a missing point.
+(Y for vertical plots, X for horizontal plots) indicates a missing point.
 No bar will be drawn at missing point positions.
 </para>
 <para>
@@ -1027,10 +1032,17 @@ This plot type works with data types <xref linkend="text-data"/>
 and <xref linkend="data-data"/>.
 For 'text-data', the data X values are assumed to be at 0.5+N for N=0,1,2...
 It also works with <xref linkend="data-data-error"/> for error bars.
+These produce the usual vertical plots.
 </para>
 <para>
-An empty string (or any non-numeric value) for a Y value
-indicates a missing point.
+This plot type also works with data types <xref linkend="text-data-yx"/>
+and <xref linkend="data-data-yx"/> to produce horizontal plots.
+For 'text-data-yx', the data Y values are assumed to be at 0.5+N for N=0,1,2...
+(Horizontal linepoints plots were added in PHPlot-6.0.0.)
+</para>
+<para>
+An empty string (or any non-numeric value) for the dependent variable
+(Y for vertical plots, X for horizontal plots) indicates a missing point.
 PHPlot can either skip the line segments around missing points, or connect
 the adjacent points. See <xref linkend="SetDrawBrokenLines"/> for details.
 </para>
@@ -1059,8 +1071,8 @@ upper and lower 'tee' is set with <xref linkend="SetErrorBarSize" />.
 Error bar line width is set with <xref linkend="SetErrorBarLineWidth" />.
 </para>
 <para>
-An example of this plot type can be seen in
-<xref linkend="ex-linepoints1" />.
+Example of this plot type can be seen in
+<xref linkend="ex-linepoints1" /> and <xref linkend="ex-horizlinepts" />.
 </para>
 </sect2>
 
@@ -1074,10 +1086,17 @@ This plot type works with data types <xref linkend="text-data"/>
 and <xref linkend="data-data"/>.
 For 'text-data', the data X values are assumed to be at 0.5+N for N=0,1,2...
 It also works with <xref linkend="data-data-error"/> for error bars.
+These produce the usual vertical plots.
 </para>
 <para>
-An empty string (or any non-numeric value) for a Y value
-indicates a missing point.
+This plot type also works with data types <xref linkend="text-data-yx"/>
+and <xref linkend="data-data-yx"/> to produce horizontal plots.
+For 'text-data-yx', the data Y values are assumed to be at 0.5+N for N=0,1,2...
+(Horizontal line plots were added in PHPlot-6.0.0.)
+</para>
+<para>
+An empty string (or any non-numeric value) for the dependent variable
+(Y for vertical plots, X for horizontal plots) indicates a missing point.
 PHPlot can either skip the line segments around missing points, or connect
 the adjacent points. See <xref linkend="SetDrawBrokenLines"/> for details.
 </para>
@@ -1289,6 +1308,13 @@ This plot type works with data types <xref linkend="text-data"/>
 and <xref linkend="data-data"/>.
 For 'text-data', the data X values are assumed to be at 0.5+N for N=0,1,2...
 It also works with <xref linkend="data-data-error"/> for error bars.
+These produce the usual vertical plots.
+</para>
+<para>
+This plot type also works with data types <xref linkend="text-data-yx"/>
+and <xref linkend="data-data-yx"/> to produce horizontal plots.
+For 'text-data-yx', the data Y values are assumed to be at 0.5+N for N=0,1,2...
+(Horizontal points plots were added in PHPlot-6.0.0.)
 </para>
 <para>
 Marker colors for each line are set with <xref linkend="SetDataColors" />.
@@ -1304,8 +1330,8 @@ upper and lower 'tee' is set with <xref linkend="SetErrorBarSize" />.
 Error bar line width is set with <xref linkend="SetErrorBarLineWidth" />.
 </para>
 <para>
-An empty string (or any non-numeric value) for a Y value
-indicates a missing point.
+An empty string (or any non-numeric value) for the dependent variable
+(Y for vertical plots, X for horizontal plots) indicates a missing point.
 No point marker will be drawn at missing point positions.
 </para>
 <para>
@@ -1481,7 +1507,7 @@ The width of the plot lines can be controlled with <xref linkend="SetLineWidths"
 </para>
 <para>
 An empty string (or any non-numeric value) for the dependent variable
-(Y, for vertical plots) indicates a missing point.
+(Y for vertical plots, X for horizontal plots) indicates a missing point.
 No line will be drawn at missing point positions.
 </para>
 <para>
@@ -1584,8 +1610,8 @@ types.
         <entry>Yes</entry>
         <entry>Yes</entry>
         <entry> </entry>
-        <entry> </entry>
-        <entry> </entry>
+        <entry>Yes</entry>
+        <entry>Yes</entry>
         <entry> </entry>
       </row>
       <row>
@@ -1594,8 +1620,8 @@ types.
         <entry>Yes</entry>
         <entry>Yes</entry>
         <entry> </entry>
-        <entry> </entry>
-        <entry> </entry>
+        <entry>Yes</entry>
+        <entry>Yes</entry>
         <entry> </entry>
       </row>
       <row>
@@ -1624,8 +1650,8 @@ types.
         <entry>Yes</entry>
         <entry>Yes</entry>
         <entry> </entry>
-        <entry> </entry>
-        <entry> </entry>
+        <entry>Yes</entry>
+        <entry>Yes</entry>
         <entry> </entry>
       </row>
       <row>
@@ -2453,15 +2479,20 @@ Use <xref linkend="SetXDataLabelPos" /> to enable X data value labels.
 </para>
 
 <para>
-For vertical plots of types lines, linepoints, points, and squared,
-Y data value labels indicate the value of each point and are displayed
+Y data value labels are also available for vertical plots of types
+lines, linepoints, points, and squared (starting in PHPlot-5.3.0).
+X data value labels are available for horizontal plots of types
+lines, linepoints, and points (starting in PHPlot-6.0.0).
+The data value labels indicate the value of each point and are displayed
 (by default) above each point.
+Use <xref linkend="SetYDataLabelPos" /> to enable Y data value labels for
+these vertical plots, and <xref linkend="SetXDataLabelPos" /> to enable X
+data value labels for these horizontal plots.
 PHPlot does not attempt to prevent interference between the labels and
 other plot elements.
-Use <xref linkend="SetYDataLabelPos" /> to enable Y data value labels.
 To change the position of the labels, see <xref linkend="adv-tuning-labels"/>.
-Note: data value labels for these plot types was added in PHPlot-5.3.0.
 </para>
+
 <para>
 Data value labels are not available with other plot types.
 </para>
@@ -2490,6 +2521,8 @@ with Y data value labels.
 <xref linkend="example-horizbar" /> shows a horizontal bar chart
 with X data value labels.
 <xref linkend="example-horizstackedbar" /> shows a horizontal stacked bar chart
+with X data value labels.
+<xref linkend="example-horizlinepts" /> shows a horizontal linepoints plot
 with X data value labels.
 </para>
 
