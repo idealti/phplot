@@ -1,6 +1,30 @@
 This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
+
+2012-09-18 (/branches/Rel6)
+    * Feature request #47 "Extend horizontal plots to more types":
+
+      Implemented horizontal form of lines, points, and linepoints plots
+      (using data types data-data-yx and text-data-yx). Merged error plot
+      cases into drawing functions for lines and points.  As a side effect,
+      data value labels now work with error plots.  (Note: Horizontal error
+      plots are not available, but could be added without much work.)
+      + Rewrote internal DrawDots() to draw error bars and horizontal plots
+        too.  Removed internal DrawDotsError() which is now unused.
+      + Rewrite internal DrawLines() to draw error bars and horizontal plots
+        too.  Removed internal DrawLinesError() which is now unused.
+      + Changed usage of internal DrawYErrorBar(): removed error_bar_type
+        argument because this is always the class variable error_bar_shape.
+
+      Implemented Y data label lines, for horizontal plots.
+      + New public function SetDrawYDataLabelLines()
+      + New internal function DrawYDataLine()
+      + Added argument to internal DrawYDataLabel() for plot types that
+        support data label lines, and call DrawYDataLine() if enabled.
+      + Changed DrawDots() and DrawLines() to request data label lines
+        for horizontal plots too.
+
 2012-09-12 (/branches/Rel6)
     * Feature request #46 "Control pie chart borders":
       Added a separate color control for pie chart segment borders (vs
