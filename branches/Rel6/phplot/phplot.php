@@ -4279,19 +4279,11 @@ class PHPlot
     /*
      * Check and set label parameters. This handles deferred processing for label
      * positioning and other label-related parameters.
-     *   Copy label_format from 'x' to 'xd', and 'y' to 'yd', if not already set.
      *   Set defaults for label angles.
      *   Apply defaults to X and Y tick and data label positions.
      */
     protected function CheckLabels()
     {
-        // The X and Y data labels are formatted the same as X and Y tick labels,
-        // unless overridden. Check and apply defaults for FormatLabel here:
-        if (empty($this->label_format['xd']) && !empty($this->label_format['x']))
-            $this->label_format['xd'] = $this->label_format['x'];
-        if (empty($this->label_format['yd']) && !empty($this->label_format['y']))
-            $this->label_format['yd'] = $this->label_format['y'];
-
         // Default for X data label angle is a special case (different from Y).
         if ($this->x_data_label_angle_u === '')
             $this->x_data_label_angle = $this->x_label_angle; // Not set with SetXDataLabelAngle()
@@ -4376,7 +4368,8 @@ class PHPlot
     /*
      * Formats a tick, data, or pie chart label.
      *   $which_pos : 'x', 'xd', 'y', 'yd', or 'p' selects formatting controls.
-     *        x, y are for tick labels; xd, yd are for data labels. p is for pie chart labels.
+     *        x, y are for labels; xd, yd are for data labels. p is for pie chart labels.
+     *        If no format type was set for xd or yd, then the corresponding x or y type is used.
      *   $which_lab : String to format as a label.
      *   ... : Additional arguments to pass to a custom format function.
      * Credits: Time formatting suggested by Marlin Viss
@@ -4388,7 +4381,11 @@ class PHPlot
      */
     protected function FormatLabel($which_pos, $which_lab) // Variable additional arguments
     {
-        // Assign a reference shortcut to the label format controls.
+        // Assign a reference shortcut to the label format controls, default xd,yd to x,y.
+        if ($which_pos == 'xd' && empty($this->label_format['xd']))
+            $which_pos = 'x';
+        elseif ($which_pos == 'yd' && empty($this->label_format['yd']))
+            $which_pos = 'y';
         $format = &$this->label_format[$which_pos];
 
         // Don't format empty strings (especially as time or numbers), or if no type was set.
