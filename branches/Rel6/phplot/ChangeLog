@@ -2,6 +2,15 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2012-09-23 (/branches/Rel6)
+    * Bug #164 (old #3557510) "Calculated defaults applied to subsequent
+      plots":
+      Fixed for X and Y data label formats.
+      + CheckLabels(): Don't copy X or Y entries to XD or YD as defaults,
+        because these will stick for additional plots.
+      + FormatLabel(): Use the X or Y entries when XD or YD are needed
+        but found to be empty.
+
 2012-09-18 (/branches/Rel6)
     * Feature request #47 "Extend horizontal plots to more types":
 
