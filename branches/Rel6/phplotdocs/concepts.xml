@@ -2191,6 +2191,11 @@ lowest priority.
         <entry>black</entry>
       </row>
       <row>
+        <entry>Y data lines</entry>
+        <entry><xref linkend="SetLightGridColor"/></entry>
+        <entry>gray</entry>
+      </row>
+      <row>
         <entry>Y grid lines</entry>
         <entry><xref linkend="SetLightGridColor"/></entry>
         <entry>gray</entry>
