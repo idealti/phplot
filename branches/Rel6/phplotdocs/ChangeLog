@@ -4,6 +4,9 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-09-21 (/branches/Rel6)
+    * concepts.xml: Added missing "Y data lines" in color elements table.
+
 * 2012-09-18 (/branches/Rel6)
     * Changes for feature request #47 "Extend horizontal plots to more types":
       + developer.xml: Documented changes to internal functions: Removed
