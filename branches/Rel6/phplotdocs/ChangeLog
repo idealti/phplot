@@ -4,6 +4,10 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-10-16 (/branches/Rel6)
+    * concepts.xml: Expanded explanation of out-of-order and duplicate value
+      data points in data arrays, and moved this into a new subsection.
+
 * 2012-09-21 (/branches/Rel6)
     * concepts.xml: Added missing "Y data lines" in color elements table.
 
