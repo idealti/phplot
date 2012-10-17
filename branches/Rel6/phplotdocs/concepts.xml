@@ -405,15 +405,6 @@ Each record contains a label, an X value, then one or more Y values:
 <literal>array('label', x, y1, y2, ...)</literal>.
 This is the same as 'text-data' except the X values are explicitly given.
       </para>
-      <para>
-Note that with data type 'data-data', it is possible to create a data array
-with duplicate X values, or X values out of order. Depending on the plot
-type, this may or may not make sense. For example, with a point plot (which
-puts a marker at each data point), the data array can legitimately contain
-duplicate and out-of-order X values. With a line plot (which connects
-adjacent points in the data array with a line), it probably makes no sense
-to have out-of-order or duplicate X values in the data array.
-      </para>
     </listitem>
   </varlistentry>
 
@@ -482,8 +473,6 @@ and Z values:
 A single data set in an array using this data type contains (x, y, z)
 triplets. Multiple data sets can also be represented, with each row in the
 array containing an X value and the corresponding Y and Z values.
-An array with this data type can have duplicate X values, and X values need
-not be in order.
       </para>
     </listitem>
   </varlistentry>
@@ -586,6 +575,67 @@ $plot->SetDataValues($data);
 ]]></programlisting>
 This uses field-name indexes in the array representing each row, but as noted above PHPlot
 will convert the data array to use numeric indexes.
+</para>
+</sect2>
+
+<sect2 id="conc-datatypes-order">
+<title>Duplicate and Out-of-order Points</title>
+<para>
+With data types 'data-data' and 'data-data-error', the independent variable
+X is explicitly given for each data point.
+With data type 'data-data-yx', the independent variable
+Y is explicitly given for each data point.
+With data type 'data-data-xyz', the independent variables X and Y
+are explicitly given for each data point.
+With each of these data types, it is possible to create a data array
+with duplicate values for the independent variable(s), or points which are
+out of order. For example, with data type 'data-data',
+this array has 2 points at X=4, and the 4th row (X=2) is out of order:
+<programlisting><![CDATA[// Data type data-data with out-of-order points
+$data = array(     // X  Y
+            array('', 1, 10),
+            array('', 3, 30),
+            array('', 4, 40),
+            array('', 2, 20),
+            array('', 4, 50),
+        );
+]]></programlisting>
+PHPlot will plot the data points as specified in the array, in row order.
+Depending on the plot type, this may or may not make sense.
+</para>
+
+<para>
+With a <link linkend="plottype-points">points</link> plot
+(which puts a marker at each data point),
+the data array can legitimately contain duplicate or out-of-order
+independent variable values (usually X) as shown above.
+A <link linkend="plottype-bubbles">bubbles</link> plot using the 'data-data-xyz'
+data type can also contain duplicate or out-of-order points by specifying X
+and Y values in any order.
+(However, two bubbles with the same X and Y will overlap, and one might be
+covered and invisible.)
+</para>
+
+<para>
+With plot types
+<link linkend="plottype-ohlc">ohlc</link>,
+<link linkend="plottype-candlesticks">candlesticks</link>,
+<link linkend="plottype-candlesticks2">candlesticks2</link>, and
+<link linkend="plottype-thinbarline">thinbarline</link>,
+out-of-order points are OK but duplicate independent variable values
+usually will not produce useful results.
+</para>
+
+<para>
+On the other hand, with a <link linkend="plottype-lines">lines</link> plot
+(which draws lines between the points in the order defined by the data array
+rows), it probably makes no sense to have out-of-order or duplicate
+independent variable values in the data array.
+The same is true for plot types
+<link linkend="plottype-linepoints">linepoints</link>,
+<link linkend="plottype-area">area</link>,
+<link linkend="plottype-stackedarea">stackedarea</link>, and
+<link linkend="plottype-squared">squared</link>.
 </para>
 </sect2>
 
