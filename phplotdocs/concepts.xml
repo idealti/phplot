@@ -2038,10 +2038,11 @@ will be in the same color. If you change the data colors list with
 list for the error bars.
 </para>
 <para>
-For bar charts and stackedbar charts, if shading is off, the color of the
-bar borders can be set with <xref linkend="SetDataBorderColors"/>. By
-default, unshaded bar charts use a black outline around the bars for all
-data sets.
+In bar charts and stackedbar charts, the bars will have borders if shading is
+off, or if <xref linkend="SetDrawDataBorders"/><literal>(True)</literal> is
+used.  The colors used for the bar borders can be set with
+<xref linkend="SetDataBorderColors"/>.
+By default, a black outline is used for all data sets, if borders are on.
 </para>
 <para>
 Note: PHPlot through version 5.0.7 used 8 colors in the default Data Colors
@@ -2140,13 +2141,14 @@ lowest priority.
         <entry>white</entry>
       </row>
       <row>
-        <entry>Legend color box fill or point shape</entry>
+        <entry>Legend color box fill or shape marker</entry>
         <entry><xref linkend="SetDataColors"/></entry>
         <entry>N/A</entry>
       </row>
       <row>
         <entry>Legend color box outline</entry>
-        <entry><xref linkend="SetTextColor"/></entry>
+        <entry><xref linkend="SetTextColor"/>, or
+               <xref linkend="SetDataBorderColors"/></entry>
         <entry>black</entry>
       </row>
       <row>
@@ -2310,6 +2312,13 @@ Except for data value labels, the defaults are backwards compatible. That
 is, if you use <function>SetGridColor()</function> and do not use the new
 <function>SetPieLabelColor()</function>, your pie chart labels will display
 in the same color with all releases.
+  </para>
+
+  <para>
+The legend color box borders use the color set with
+<xref linkend="SetTextColor"/> by default. Starting with PHPlot-6.0.0,
+you can use the colors set with <xref linkend="SetDataBorderColors"/>
+instead. See <xref linkend="SetLegendColorboxBorders"/>.
   </para>
 
 </note>
@@ -3007,8 +3016,10 @@ or <xref linkend="SetLegendPosition"/>.
     <listitem>
       <para>
 You can use <xref linkend="SetLegendStyle"/>,
-<xref linkend="SetLegendUseShapes"/>, and
-<xref linkend="SetLegendReverse"/> to change the appearance of the legend.
+<xref linkend="SetLegendUseShapes"/>,
+<xref linkend="SetLegendReverse"/>, and
+<xref linkend="SetLegendColorboxBorders"/>
+ to change the appearance of the legend.
       </para>
     </listitem>
   </itemizedlist>
