@@ -5,6 +5,11 @@ manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
 * 2012-12-24 (/branches/Rel6)
+    * concepts.xml: Fix description of color and line width usage for
+       candlesticks and candlesticks2 plots. (Line widths are not used
+       when drawing filled rectangles.)
+
+
     * Changes for feature requests #50 "Control legend colorbox borders"
       and #51 "Lines instead of colorboxes in legend":
 
