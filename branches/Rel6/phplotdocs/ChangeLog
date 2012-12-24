@@ -4,6 +4,43 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-12-24 (/branches/Rel6)
+    * Changes for feature requests #50 "Control legend colorbox borders"
+      and #51 "Lines instead of colorboxes in legend":
+
+      + .ispell_words: Added new method names.
+      + variables.list: Listed new variables, update descriptions.
+      + examples.xml: Added part 3 to Legend with Point Shapes example.
+      + examples/legendshape.php: Updated script for plot type variation.
+      + examples/legendshape2.php: New script for example of line markers.
+      + Makefile: List files for addition to example.
+      + advanced.xml: Updated for new feature: line markers in legend.
+        Removed outdated note requiring PHP-5.3 or higher.
+      + concepts.xml: Updated for new features:  bar chart data border
+        control, legend line markers, legend color box border control.
+      + developer.xml: Updated legend layout figure description to account
+        for new line markers. Changed usage and description of DrawBar(),
+        GetBarColors(), SetDashedStyle(). Documented new index to $plots[]
+        (also reformatted the table).
+      + functions.xml: Added links to 2 new functions.
+      + reference.xml:
+        SetDataBorderColors(): Updated description of shading vs data borders.
+        SetDrawDataBorders(): Documented new function.
+        SetLegend(), SetLegendStyle(): Updated for new line markers.
+        SetLegendColorboxBorders): Documented new function.
+        SetLegendUseShapes(): Updated plot type/marker type information.
+
+    * images/gdinfo.png: Replaced with updated image.
+    * install.xml: Changed example filename for phplot-6.
+    * README: Updated tool versions.
+    * developer.xml: Moved "Class Constants" text into the previous chapter as
+      a new section, instead of being a separate chapter. (DocBook was making a
+      bad "previous" link from next page, and this change avoids the error.)
+
+* 2012-12-17 (/branches/Rel6)
+    * images/gdinfo.png: Replaced with updated image, showing recent versions
+      of libraries used by GD.
+
 * 2012-10-16 (/branches/Rel6)
     * concepts.xml: Expanded explanation of out-of-order and duplicate value
       data points in data arrays, and moved this into a new subsection.
