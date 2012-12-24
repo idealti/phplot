@@ -1,6 +1,65 @@
 This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
+2012-12-23 (/branches/Rel6)
+
+    * Feature request #50 "Control legend colorbox borders":
+
+      + Added new method SetLegendColorboxBorders($mode) to control the color
+        and presence of legend color box borders. The default behavior is
+        backward compatible (color box borders use Text color).
+        + Added new class variable: legend_colorbox_borders.
+        + Changed DrawLegend() to add new controls for color box borders.
+
+      + Added new method SetDrawDataBorders() to enable or disable data
+        borders on bars and stackedbars plots. This makes it possible to have
+        the same appearance for the legend color boxes and the data bars, for
+        both shaded and unshaded plots. The default behavior is backward
+        compatible (borders for unshaded, no borders if shaded).
+        + Added new class variable: draw_data_borders
+        + Changed usage of internal GetBarColors() to return both shade and
+          border colors (they were never both needed before).
+        + Change usage of internal DrawBars() to take both shade and border
+          colors, and to control border drawing using the new flag.
+        + Changed 4 bar-chart drawing functions to get both shade and border
+          color and pass both to DrawBar().
+
+    * Feature request #51 "Lines instead of colorboxes in legend":
+
+      Extended the use of SetLegendUseShapes() to apply to more plot types.
+      For lines and squared plots, this will replace the color boxes in the
+      legend with short line segments, with color, style, and width. The new
+      behavior is backward compatible, as SetLegendUseShapes(True) only
+      worked with points and linepoints plots before.
+
+      + Added a new optional key to the internal static $plots array called
+        'legend_alt_marker' to indicate the type of alternate marker that
+        can be used in the legend for this plot type, if any.
+
+      + Changed description of SetLegendUseShapes(), which applies to more
+        plot types now.
+
+      + Changed return variables from internal GetLegendSizeParams() to
+        replace do_colorbox with the more general colorbox_mode. Also, this
+        function implements the 4x scale-up on the color box width for 'line'
+        mode.
+
+      + Changed usage of internal SetDashedStyle() to streamline all the
+        places where line styles are available.
+
+      + Changed functions using styled lines per new SetDashedStyle() usage:
+        Draw[XY]Ticks(), Draw[XY]DataLine(), DrawLines(), DrawSquared().
+
+      + Changed DrawLegend() code for shape vs color box. Don't use
+        point_counts to determine if point shapes should be used - use the
+        new key in $plots[].  Implement line shape markers, including color,
+        width and style.
+
+    * Unrelated fix, found when testing above changes:
+      + Added a work-around in DrawBar() when drawing a bar with height 0.
+        The GD function for drawing unfilled rectangles puts "whiskers" at the
+        ends when height is 0 (see PHP bug #53154), so draw a line instead.
+
 
 2012-09-23 (/branches/Rel6)
     * Bug #164 (old #3557510) "Calculated defaults applied to subsequent
@@ -184,7 +243,7 @@ The project home page is http://sourceforge.net/projects/phplot/
           $draw_x_data_label_lines, $grid_at_foreground,
           $group_frac_width, $is_inline, $legend, $output_file, $use_ttf,
           $x_axis_position, $x_label_angle, $y_axis_position,
-          $y_data_label_angle, $y_label_angle 
+          $y_data_label_angle, $y_label_angle
 
       Except for the minor differences noted below, there are no changes
       in behavior (provided one does not access the internal variables):
