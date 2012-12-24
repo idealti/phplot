@@ -115,6 +115,7 @@ plots, and shading for 3D affects.
 <itemizedlist>
   <listitem><para><xref linkend="SetBgImage" /></para></listitem>
   <listitem><para><xref linkend="SetDrawBrokenLines" /></para></listitem>
+  <listitem><para><xref linkend="SetDrawDataBorders" /></para></listitem>
   <listitem><para><xref linkend="SetDrawPieBorders" /></para></listitem>
   <listitem><para><xref linkend="SetDrawPlotAreaBackground" /></para></listitem>
   <listitem><para><xref linkend="SetImageBorderType" /></para></listitem>
@@ -203,6 +204,7 @@ and <xref linkend="SetFont" /> to set the legend text font.
 <itemizedlist>
   <listitem><para><xref linkend="GetLegendSize" /></para></listitem>
   <listitem><para><xref linkend="SetLegend" /></para></listitem>
+  <listitem><para><xref linkend="SetLegendColorboxBorders" /></para></listitem>
   <listitem><para><xref linkend="SetLegendPixels" /></para></listitem>
   <listitem><para><xref linkend="SetLegendPosition" /></para></listitem>
   <listitem><para><xref linkend="SetLegendReverse" /></para></listitem>
