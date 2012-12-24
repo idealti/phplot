@@ -94,6 +94,7 @@ class PHPlot
     protected $default_ttfont;
     protected $done = array();
     protected $draw_broken_lines = FALSE;
+    protected $draw_data_borders;
     protected $draw_pie_borders;
     protected $draw_plot_area_background = FALSE;
     protected $draw_x_data_label_lines = FALSE;
@@ -123,6 +124,7 @@ class PHPlot
     protected $legend;
     protected $legend_colorbox_align = 'right';
     public $legend_colorbox_width = 1;
+    protected $legend_colorbox_borders = 'textcolor';
     protected $legend_pos;
     protected $legend_reverse_order = FALSE;
     protected $legend_text_align = 'right';
@@ -209,9 +211,11 @@ class PHPlot
         ),
         'linepoints' => array(
             'draw_method' => 'DrawLinePoints',
+            'legend_alt_marker' => 'shape',
         ),
         'lines' => array(
             'draw_method' => 'DrawLines',
+            'legend_alt_marker' => 'line',
         ),
         'ohlc' => array(
             'draw_method' => 'DrawOHLC',
@@ -224,9 +228,11 @@ class PHPlot
         ),
         'points' => array(
             'draw_method' => 'DrawDots',
+            'legend_alt_marker' => 'shape',
         ),
         'squared' => array(
             'draw_method' => 'DrawSquared',
+            'legend_alt_marker' => 'line',
         ),
         'stackedarea' => array(
             'draw_method' => 'DrawArea',
@@ -947,14 +953,19 @@ class PHPlot
     }
 
     /*
-     * Sets the style before drawing a dashed line. Defaults to $this->default_dashed_style
-     *    $which_ndxcol : Color index to be used.
+     * Sets the style before drawing a dashed line. See SetDefaultDashedStyle() for explanation.
+     *    $which_ndxcol : Color index to be used. (This name is known to SetDefaultDashedStyle)
+     *    $use_style : Optional flag to enable dashed lines.
+     * Returns a color to use for drawing: either $which_ndxcol or IMG_COLOR_STYLED.
      */
-    protected function SetDashedStyle($which_ndxcol)
+    protected function SetDashedStyle($which_ndxcol, $use_style = TRUE)
     {
-        // See SetDefaultDashedStyle() to understand this.
-        eval ("\$style = $this->default_dashed_style;");
-        return imagesetstyle($this->img, $style);
+        if ($use_style) {
+            eval ("\$style = $this->default_dashed_style;"); // See SetDefaultDashedStyle() above
+            imagesetstyle($this->img, $style);
+            return IMG_COLOR_STYLED; // Use this value as the color for drawing
+        }
+        return $which_ndxcol; // Styles are off; use original color for drawing
     }
 
     /*
@@ -2469,6 +2480,15 @@ class PHPlot
     function SetDrawPieBorders($dpb)
     {
         $this->draw_pie_borders = (bool)$dpb;
+        return TRUE;
+    }
+
+    /*
+     * Enable or disable drawing of data borders, for bars and stackedbars.
+     */
+    function SetDrawDataBorders($ddb)
+    {
+        $this->draw_data_borders = (bool)$ddb;
         return TRUE;
     }
 
@@ -4941,13 +4961,8 @@ class PHPlot
      */
     protected function DrawXTicks()
     {
-        // Sets the line style for IMG_COLOR_STYLED lines (grid)
-        if ($this->dashed_grid) {
-            $this->SetDashedStyle($this->ndx_light_grid_color);
-            $style = IMG_COLOR_STYLED;
-        } else {
-            $style = $this->ndx_light_grid_color;
-        }
+        // Set color for solid, or flag for dashed line:
+        $style = $this->SetDashedStyle($this->ndx_light_grid_color, $this->dashed_grid);
 
         // Draw grids lines?
         $draw_grid = $this->GetGridSetting('x');
@@ -4977,13 +4992,8 @@ class PHPlot
      */
     protected function DrawYTicks()
     {
-        // Sets the line style for IMG_COLOR_STYLED lines (grid)
-        if ($this->dashed_grid) {
-            $this->SetDashedStyle($this->ndx_light_grid_color);
-            $style = IMG_COLOR_STYLED;
-        } else {
-            $style = $this->ndx_light_grid_color;
-        }
+        // Set color for solid, or flag for dashed line:
+        $style = $this->SetDashedStyle($this->ndx_light_grid_color, $this->dashed_grid);
 
         // Draw grids lines?
         $draw_grid = $this->GetGridSetting('y');
@@ -5153,13 +5163,8 @@ class PHPlot
      */
     protected function DrawXDataLine($xpos, $row)
     {
-        // Sets the line style for IMG_COLOR_STYLED lines (grid)
-        if ($this->dashed_grid) {
-            $this->SetDashedStyle($this->ndx_light_grid_color);
-            $style = IMG_COLOR_STYLED;
-        } else {
-            $style = $this->ndx_light_grid_color;
-        }
+        // Set color for solid, or flag for dashed line:
+        $style = $this->SetDashedStyle($this->ndx_light_grid_color, $this->dashed_grid);
 
         if ($this->x_data_label_pos == 'both') {
             // Lines from the bottom up
@@ -5184,13 +5189,8 @@ class PHPlot
      */
     protected function DrawYDataLine($ypos, $row)
     {
-        // Sets the line style for IMG_COLOR_STYLED lines (grid)
-        if ($this->dashed_grid) {
-            $this->SetDashedStyle($this->ndx_light_grid_color);
-            $style = IMG_COLOR_STYLED;
-        } else {
-            $style = $this->ndx_light_grid_color;
-        }
+        // Set color for solid, or flag for dashed line:
+        $style = $this->SetDashedStyle($this->ndx_light_grid_color, $this->dashed_grid);
 
         if ($this->y_data_label_pos == 'both') {
             // Lines from the left side to the right side
@@ -5357,12 +5357,13 @@ class PHPlot
         else
             $this->legend_colorbox_align = $this->CheckOption($colorbox_align, 'left, right, none',
                                                               __FUNCTION__);
-        return ((boolean)$this->legend_text_align && (boolean)$this->legend_colorbox_align);
+        return ($this->legend_text_align && $this->legend_colorbox_align);
     }
 
     /*
-     * Use color boxes or point shapes (for points and linepoints plots only) in the legend.
-     *   $use_shapes : True to use point shapes, false to use color boxes.
+     * Use color boxes or alternative shapes in the legend.
+     * For points and linepoints plots you get point shapes; for line-type plots you get line segments.
+     *   $use_shapes : True to use shapes or lines, false to use color boxes.
      */
     function SetLegendUseShapes($use_shapes)
     {
@@ -5381,6 +5382,17 @@ class PHPlot
     }
 
     /*
+     * Control the borders around the color-boxes in the legend: Off, On using TextColor, or
+     * on using the corresponding DataBorder color.
+     */
+    function SetLegendColorboxBorders($cbbmode = 'textcolor')
+    {
+        $this->legend_colorbox_borders = $this->CheckOption($cbbmode, 'none, textcolor, databordercolor',
+                                                            __FUNCTION__);
+        return (boolean)$this->legend_colorbox_borders;
+    }
+
+    /*
      * Get legend sizing parameters. Must not be called if $this->legend is empty.
      * This is used internally by DrawLegend(), and also by the public GetLegendSize().
      * It returns information based on any SetLegend*() calls already made. It does not use
@@ -5390,7 +5402,7 @@ class PHPlot
      *    'char_w', 'char_h' : Width and height of 'E' in legend text font. (Used to size color boxes)
      *    'v_margin' : Inside margin for legend
      *    'dot_height' : Height of color boxes (even if not drawn), for line spacing.
-     *    'colorbox_width' : Width of color boxes.
+     *    'colorbox_mode', 'colorbox_width' : Colorbox/shape mode and width factor.
      */
     protected function GetLegendSizeParams()
     {
@@ -5408,17 +5420,29 @@ class PHPlot
         $char_h = $font['height'];
         $line_spacing = $this->GetLineSpacing($font);
 
-        $draw_colorbox = ($this->legend_colorbox_align != 'none');
+        // Get color-box mode. Note GetLegendSizeParams can be called from GetLegendSize, and not all
+        // settings are defined then, but the colorbox_mode won't be used then so it need not be valid.
+        if ($this->legend_colorbox_align == 'none') {
+            $colorbox_mode = False; // Color boxes are off
+        } elseif (!$this->legend_use_shapes || empty(self::$plots[$this->plot_type]['legend_alt_marker'])) {
+            $colorbox_mode = 'box'; // Not using shapes, or plot type defines no shape, so use boxes.
+        } else {
+            $colorbox_mode = self::$plots[$this->plot_type]['legend_alt_marker']; // Shape from plot type
+        }
 
         // Sizing parameters:
         $v_margin = $char_h / 2;                 // Between vertical borders and labels
         $dot_height = $char_h + $line_spacing;   // Height of the color boxes (even if not drawn)
         $colorbox_width = $char_w * $this->legend_colorbox_width; // Color box width, with adjustment
 
+        // The 'line' style marker needs a wider colorbox than shape or box.
+        if ($colorbox_mode == 'line')
+            $colorbox_width *= 4;
+
         // Calculate overall legend box width and height.
         // Width is e.g.: "| space colorbox space text space |" where each space adds $char_w,
         // and colorbox (if drawn) adds $char_w * its width adjustment.
-        if ($draw_colorbox) {
+        if ($colorbox_mode) {
             $width = $max_width + 3 * $char_w + $colorbox_width;
         } else {
             $width = $max_width + 2 * $char_w;
@@ -5426,7 +5450,7 @@ class PHPlot
         $height = $dot_height * count($this->legend) + 2 * $v_margin;
 
         return compact('width', 'height', 'char_w', 'char_h', 'v_margin',
-                       'draw_colorbox', 'dot_height', 'colorbox_width');
+                       'colorbox_mode', 'dot_height', 'colorbox_width');
     }
 
     /*
@@ -5508,11 +5532,8 @@ class PHPlot
         ImageRectangle($this->img, $box_start_x, $box_start_y, $box_end_x, $box_end_y,
                        $this->ndx_grid_color);
 
-        $color_index = 0;
-        $max_color_index = count($this->ndx_data_colors) - 1;
-
         // Calculate color box and text horizontal positions.
-        if (!$draw_colorbox) {
+        if (!$colorbox_mode) {
             if ($this->legend_text_align == 'left')
                 $x_pos = $box_start_x + $char_w;
             else
@@ -5546,40 +5567,65 @@ class PHPlot
         }
         $yc = (int)($y_pos - $dot_height / 2);
         $xc = (int)($dot_left_x + $colorbox_width / 2);   // Horizontal center for point shape if drawn
-        $shape_index = 0;  // Shape number index, if drawing point shapes
 
-        // Option to use point shapes rather than solid boxes. Disallow this if the shapes array
-        // has not been initialized (see CheckPointParams). Only works with 'points' or 'linepoints' plots.
-        $use_shapes = $this->legend_use_shapes && !empty($this->point_counts);
+        // Colorbox color index, shape index, and line width/style index variables.
+        // Note the arrays these are used to index have been padded to data_columns entries. The legend
+        // can contain more than data_columns entries, though, but it only makes sense to be able
+        // to index additional entries for the data color, due to the data_color callback.
+        if ($colorbox_mode) {
+            $color_index = 0;
+            $max_color_index = count($this->ndx_data_colors) - 1;
+            $lws_index = 0; // Line Width and Style index
+            $shape_index = 0;
+        }
 
         foreach ($this->legend as $leg) {
             // Draw text with requested alignment:
             $this->DrawText('legend', 0, $x_pos, $yc, $this->ndx_text_color, $leg,
                             $this->legend_text_align, 'center');
-            if ($draw_colorbox) {
+            if ($colorbox_mode) {
                 $y1 = $y_pos - $dot_height + 1;
                 $y2 = $y_pos - 1;
-                if ($use_shapes) {
-                    // Draw a point shape in the data color
-                    // If plot area background is on, use that as the shape background:
-                    if ($this->draw_plot_area_background) {
-                        ImageFilledRectangle($this->img, $dot_left_x, $y1, $dot_right_x, $y2,
-                                             $this->ndx_plot_bg_color);
-                    }
+
+                // If plot area background is on, draw a background for any non-box shapes:
+                if ($this->draw_plot_area_background && $colorbox_mode != 'box') {
+                    ImageFilledRectangle($this->img, $dot_left_x, $y1, $dot_right_x, $y2,
+                                         $this->ndx_plot_bg_color);
+                }
+
+                switch ($colorbox_mode) {
+                case 'shape':
                     // Draw the shape. DrawShape() takes shape_index modulo number of defined shapes.
                     $this->DrawShape($xc, $yc, $shape_index++, $this->ndx_data_colors[$color_index]);
-                } else {
+                    break;
+
+                case 'line':
+                    // Draw a short line segment with proper color, width, and style
+                    imagesetthickness($this->img, $this->line_widths[$lws_index]);
+                    $style = $this->SetDashedStyle($this->ndx_data_colors[$color_index], 
+                                                   $this->line_styles[$lws_index] == 'dashed');
+                    imageline($this->img, $dot_left_x, $yc, $dot_right_x, $yc, $style);
+                    imagesetthickness($this->img, 1);
+                    if (++$lws_index >= $this->data_columns) $lws_index = 0; // Wrap around
+                    break;
+
+                default:
                     // Draw color boxes:
                     ImageFilledRectangle($this->img, $dot_left_x, $y1, $dot_right_x, $y2,
                                          $this->ndx_data_colors[$color_index]);
-                   // Draw a rectangle around the box
-                   ImageRectangle($this->img, $dot_left_x, $y1, $dot_right_x, $y2, $this->ndx_text_color);
+                   // Draw a rectangle around the box, if enabled.
+                   if ($this->legend_colorbox_borders != 'none') {
+                       if ($this->legend_colorbox_borders == 'databordercolor')
+                           $color = $this->ndx_data_border_colors[$color_index];
+                       else
+                           $color = $this->ndx_text_color;
+                       ImageRectangle($this->img, $dot_left_x, $y1, $dot_right_x, $y2, $color);
+                   }
                 }
+                if (++$color_index > $max_color_index) $color_index = 0;
             }
             $y_pos += $delta_y;
             $yc += $delta_y;
-            if (++$color_index > $max_color_index)
-                $color_index = 0;
         }
         return TRUE;
     }
@@ -5648,23 +5694,28 @@ class PHPlot
     }
 
     /*
-     * Get colors to use for a bar chart. There is a data color, and either a border color
-     * or a shading color (data dark color).
+     * Get colors to use for a bar chart. There is a data color, a border color, and a shading color.
      *   $row, $idx : Index arguments for the current bar.
      *   &$vars : Variable storage. Caller makes an empty array, and this function uses it.
      *   &$data_color : Returned result - Color index for the data (bar fill).
-     *   &$alt_color : Returned result - Color index for the shading or outline.
+     *   &$shade_color : Returned result - Color index for the shading (darker shade of data color).
+     *         This is NULL on return if shading is off.
+     *   &$border_color : Returned result - Color index for the borders (bar outlines).
+     *         This is NULL on return if the data borders are not enabled.
      */
-    protected function GetBarColors($row, $idx, &$vars, &$data_color, &$alt_color)
+    protected function GetBarColors($row, $idx, &$vars, &$data_color, &$shade_color, &$border_color)
     {
-        // Initialize or extract variables:
+        // Initialize or extract this functions persistant state variables:
         if (empty($vars)) {
-            if ($this->shading > 0)    // This plot needs dark colors if shading is on.
-                $this->NeedDataDarkColors();
+            if (($shaded = ($this->shading > 0)))
+                $this->NeedDataDarkColors();  // Plot needs dark colors for shading
             $custom_color = (bool)$this->GetCallback('data_color');
             $num_data_colors = count($this->ndx_data_colors);
             $num_border_colors = count($this->ndx_data_border_colors);
-            $vars = compact('custom_color', 'num_data_colors', 'num_border_colors');
+            // Are borders enabled? Default is true for unshaded plots, false for shaded.
+            $borders = isset($this->draw_data_borders) ? $this->draw_data_borders : !$shaded;
+
+            $vars = compact('borders', 'custom_color', 'num_data_colors', 'num_border_colors', 'shaded');
         } else {
             extract($vars);
         }
@@ -5678,11 +5729,8 @@ class PHPlot
             $i_data = $i_border = $idx;
         }
         $data_color = $this->ndx_data_colors[$i_data];
-        if ($this->shading > 0) {
-            $alt_color = $this->ndx_data_dark_colors[$i_data];
-        } else {
-            $alt_color = $this->ndx_data_border_colors[$i_border];
-        }
+        $shade_color = $shaded ? $this->ndx_data_dark_colors[$i_data] : NULL;
+        $border_color = $borders ? $this->ndx_data_border_colors[$i_border] : NULL;
     }
 
     /*
@@ -5823,14 +5871,14 @@ class PHPlot
      *   $x1, $y1 : One corner of the bar.
      *   $x2, $y2 : Other corner of the bar.
      *   $data_color : Color index to use for the bar fill.
-     *   $alt_color : Color index to use for the shading (if shading is on), else for the border.
-     *      Note the same color is NOT used for shading and border - just the same argument.
+     *   $shade_color : Color index to use for the shading (if shading is on, else NULL.
+     *   $border_color : Color index to use for the bar outlines (borders), if enabled, else NULL.
      *      See GetBarColors() for where these arguments come from.
      *   $shade_top : Shade the top? (Suppressed for downward stack segments except first.)
      *   $shade_side : Shade the right side? (Suppressed for leftward stack segments except first.)
      *      Only one of $shade_top or $shade_side can be FALSE. Both default to TRUE.
      */
-    protected function DrawBar($row, $column, $x1, $y1, $x2, $y2, $data_color, $alt_color,
+    protected function DrawBar($row, $column, $x1, $y1, $x2, $y2, $data_color, $shade_color, $border_color,
             $shade_top = TRUE, $shade_side = TRUE)
     {
         // Sort the points so x1,y1 is upper left and x2,y2 is lower right. This
@@ -5845,23 +5893,27 @@ class PHPlot
         // Draw the bar
         ImageFilledRectangle($this->img, $x1, $y1, $x2, $y2, $data_color);
 
-        // Draw a shade, or a border.
-        if (($shade = $this->shading) > 0) {
+        // Draw a shade, if shading is on.
+        if (isset($shade_color)) {
+            $shade = $this->shading;
             if ($shade_top && $shade_side) {
-                $npts = 6;
-                $pts = array($x1, $y1, $x1 + $shade, $y1 - $shade, $x2 + $shade, $y1 - $shade,
+                $pts = array($x1, $y1,  $x1 + $shade, $y1 - $shade, $x2 + $shade, $y1 - $shade,
                              $x2 + $shade, $y2 - $shade, $x2, $y2, $x2, $y1);
-            } else {
-                $npts = 4;
-                if ($shade_top) { // Suppress side shading
-                    $pts = array($x1, $y1, $x1 + $shade, $y1 - $shade, $x2 + $shade, $y1 - $shade, $x2, $y1);
-                } else { // Suppress top shading
-                    $pts = array($x2, $y2, $x2, $y1, $x2 + $shade, $y1 - $shade, $x2 + $shade, $y2 - $shade);
-                }
+            } elseif ($shade_top) {   // Suppress side shading
+                $pts = array($x1, $y1, $x1 + $shade, $y1 - $shade, $x2 + $shade, $y1 - $shade, $x2, $y1);
+            } else { // Suppress top shading (Note shade_top==FALSE && shade_side==FALSE is not allowed)
+                $pts = array($x2, $y2, $x2, $y1, $x2 + $shade, $y1 - $shade, $x2 + $shade, $y2 - $shade);
             }
-            ImageFilledPolygon($this->img, $pts, $npts, $alt_color);
-        } else {
-            ImageRectangle($this->img, $x1, $y1, $x2,$y2, $alt_color);
+            ImageFilledPolygon($this->img, $pts, count($pts) / 2, $shade_color);
+        }
+
+        // Draw a border around the bar, if enabled.
+        if (isset($border_color)) {
+            // Avoid a PHP/GD bug with zero-height ImageRectangle resulting in "T"-shaped ends.
+            if ($y1 == $y2)
+                imageline($this->img, $x1, $y1, $x2, $y2, $border_color);
+            else
+                imagerectangle($this->img, $x1, $y1, $x2, $y2, $border_color);
         }
         $this->DoCallback('data_points', 'rect', $row, $column, $x1, $y1, $x2, $y2);
         return TRUE;
@@ -6465,14 +6517,12 @@ class PHPlot
                         // Set line width, revert it to normal at the end
                         ImageSetThickness($this->img, $this->line_widths[$idx]);
 
-                        if ($line_style == 'dashed') {
-                            $this->SetDashedStyle($data_color);
-                            $data_color = IMG_COLOR_STYLED;
-                        }
+                        // Select solid color or dashed line
+                        $style = $this->SetDashedStyle($data_color, $line_style == 'dashed');
 
                         // Draw the line segment:
                         ImageLine($this->img, $x_now_pixels, $y_now_pixels,
-                                  $lastx[$idx], $lasty[$idx], $data_color);
+                                  $lastx[$idx], $lasty[$idx], $style);
                     }
 
                     // Draw data value labels?
@@ -6564,14 +6614,14 @@ class PHPlot
                         // Select the color:
                         $this->GetDataColor($row, $idx, $gcvars, $data_color);
 
-                        if ($this->line_styles[$idx] == 'dashed') {
-                            $this->SetDashedStyle($data_color);
-                            $data_color = IMG_COLOR_STYLED;
-                        }
+                        // Select solid color or dashed line
+                        $style = $this->SetDashedStyle($data_color, $this->line_styles[$idx] == 'dashed');
+
+                        // Draw the step
                         ImageLine($this->img, $lastx[$idx], $lasty[$idx],
-                                  $x_now_pixels, $lasty[$idx], $data_color);
+                                  $x_now_pixels, $lasty[$idx], $style);
                         ImageLine($this->img, $x_now_pixels, $lasty[$idx],
-                                  $x_now_pixels, $y_now_pixels, $data_color);
+                                  $x_now_pixels, $y_now_pixels, $style);
                     }
 
                     // Draw data value labels?
@@ -6635,10 +6685,10 @@ class PHPlot
                     }
 
                     // Select the colors:
-                    $this->GetBarColors($row, $idx, $gcvars, $data_color, $alt_color);
+                    $this->GetBarColors($row, $idx, $gcvars, $data_color, $shade_color, $border_color);
 
                     // Draw the bar, and the shade or border:
-                    $this->DrawBar($row, $idx, $x1, $y1, $x2, $y2, $data_color, $alt_color);
+                    $this->DrawBar($row, $idx, $x1, $y1, $x2, $y2, $data_color, $shade_color, $border_color);
 
                     // Draw optional data value label above or below the bar:
                     if ($this->y_data_label_pos == 'plotin') {
@@ -6701,10 +6751,10 @@ class PHPlot
                     }
 
                     // Select the colors:
-                    $this->GetBarColors($row, $idx, $gcvars, $data_color, $alt_color);
+                    $this->GetBarColors($row, $idx, $gcvars, $data_color, $shade_color, $border_color);
 
                     // Draw the bar, and the shade or border:
-                    $this->DrawBar($row, $idx, $x1, $y1, $x2, $y2, $data_color, $alt_color);
+                    $this->DrawBar($row, $idx, $x1, $y1, $x2, $y2, $data_color, $shade_color, $border_color);
 
                     // Draw optional data value label to the right or left of the bar:
                     if ($this->x_data_label_pos == 'plotin') {
@@ -6790,10 +6840,11 @@ class PHPlot
                         $y2 = $this->ytr($wy2); // $y2 is innermost (closest to axis).
 
                         // Select the colors:
-                        $this->GetBarColors($row, $idx, $gcvars, $data_color, $alt_color);
+                        $this->GetBarColors($row, $idx, $gcvars, $data_color, $shade_color, $border_color);
 
                         // Draw the bar, and the shade or border:
-                        $this->DrawBar($row, $idx, $x1, $y1, $x2, $y2, $data_color, $alt_color,
+                        $this->DrawBar($row, $idx, $x1, $y1, $x2, $y2,
+                            $data_color, $shade_color, $border_color,
                             // Only shade the top for upward bars, or the first segment of downward bars:
                             $upward || $first, TRUE);
 
@@ -6897,12 +6948,14 @@ class PHPlot
                         $x2 = $this->xtr($wx2); // $x2 is innermost (closest to axis).
 
                         // Select the colors:
-                        $this->GetBarColors($row, $idx, $gcvars, $data_color, $alt_color);
+                        $this->GetBarColors($row, $idx, $gcvars, $data_color, $shade_color, $border_color);
 
                         // Draw the bar, and the shade or border:
-                        $this->DrawBar($row, $idx, $x1, $y1, $x2, $y2, $data_color, $alt_color,
+                        $this->DrawBar($row, $idx, $x1, $y1, $x2, $y2,
+                            $data_color, $shade_color, $border_color,
                             // Only shade the side for rightward bars, or the first segment of leftward bars:
                             TRUE, $rightward || $first);
+
                         // Draw optional data label for this bar segment just inside the end.
                         // Text value is the current X, but position is the cumulative X.
                         // The label is only drawn if it fits in the segment width |x2-x1|.
