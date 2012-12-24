@@ -122,7 +122,8 @@ overlap the title or fall off the edge of the image.
 <chapter id="dev-legend">
 <title>PHPlot Legend Layout</title>
 <para>
-This figure illustrates the layout of the legend, as drawn by DrawLegend().
+This figure illustrates the layout of the legend, as drawn by
+<xref linkend="DrawLegend"/>.
 Two of six possible arrangements of the color boxes and text are shown.
 See <xref linkend="SetLegendStyle"/> for more information.
 </para>
@@ -141,6 +142,15 @@ But the point shape itself is always drawn at the same size as in
 the plot, regardless of the width adjustment factor.  If the plot area has
 a color background, the width adjustment will stretch the box in that color
 which is drawn behind the point shape.
+</para>
+
+<para>
+If line markers are used in the legend instead of color boxes (see
+<xref linkend="SetLegendUseShapes"/>, added in PHPlot-6.0.0 for line plots),
+the width of the area reserved for color boxes is scaled by 4
+(along with any 'tuning' adjustment).
+This leaves enough room to draw a line segment that can be identified
+visually by color and width.
 </para>
 
 <para>
@@ -746,15 +756,16 @@ forces the background to be drawn, even if it was already drawn.
 </varlistentry>
 
 <varlistentry>
-  <term><anchor id="DrawBar" xreflabel="DrawBar"/>DrawBar($row, $column, $x1, $y1, $x2, $y2, $data_color, $alt_color, $shade_top = TRUE, $shade_side = TRUE)</term>
+  <term><anchor id="DrawBar" xreflabel="DrawBar"/>DrawBar($row, $column, $x1, $y1, $x2, $y2, $data_color, $shade_color, $border_color, $shade_top = TRUE, $shade_side = TRUE)</term>
   <listitem>
     <para>
 Draws a single bar (or bar segment), with either shading or border.
 The $row and $column indicate which data point is being plotted.
-Four corner coordinates and 2 color indexes are provided.
-The first color $data_color is the bar fill color.
-The second color $alt_color is either the shading color or the border color,
-depending on whether shading is on or not (see <xref linkend="GetBarColors"/>).
+Four corner coordinates and 3 color indexes are provided.
+The first color $data_color is the bar fill color,
+the second color $shade_color is the shading color, and the third
+color $border_color is used for bar borders.
+(These three come from <xref linkend="GetBarColors"/>.)
 The last two arguments are flags used to suppress the top or side shading
 for certain cases of stacked bar segments.
 Called by <xref linkend="DrawBars"/> and <xref linkend="DrawHorizBars"/>
@@ -769,6 +780,12 @@ a new callback which provides access to drawing coordinates.
 In previous releases, the usage was
 <function>DrawBar($x1, $y1, $x2, $y2, $data_color, $alt_color,
 $shade_top = TRUE, $shade_side = TRUE)</function>.
+    </para>
+    <para>
+In PHPlot-6.0.0, a single $alt_color argument was split into separate
+$shade_color and $border_color arguments. This corresponds to the change
+in <xref linkend="GetBarColors"/>, and allows for bar charts with
+independent control over shading and borders.
     </para>
   </listitem>
 </varlistentry>
@@ -960,7 +977,7 @@ forces the border to be drawn, even if it was already drawn.
   <listitem>
     <para>
 Draws the plot legend. This includes the box, text labels, and color boxes
-or point shapes.
+or shapes.
 Called by <xref linkend="DrawGraph"/>,
 but only if legend text has been set using <xref linkend="SetLegend"/>.
     </para>
@@ -1470,7 +1487,8 @@ This was added in PHPlot-5.6.0.
 </varlistentry>
 
 <varlistentry>
-  <term><anchor id="GetBarColors" xreflabel="GetBarColors"/>GetBarColors($row, $idx, &amp;$vars, &amp;$data_color, &amp;$alt_color)</term>
+  <term><anchor id="GetBarColors"
+xreflabel="GetBarColors"/>GetBarColors($row, $idx, &amp;$vars, &amp;$data_color, &amp;$shade_color, &amp;$border_color)</term>
   <listitem>
     <para>
 Gets the color indexes to be used for a bar plot.
@@ -1480,10 +1498,11 @@ $row and $idx are the indexes for the current bar or bar segment.
 $vars is an array argument that maintains information across calls - the
 caller allocates an empty array, and this function updates it.
 The color index for bar filling is returned in $data_color.
-$alt_color is the color index to use for shading (if shading is on), else
-the color index to use for the bar border (if shading is off). (This dual
-use argument corresponds to the usage of <xref linkend="DrawBar"/>.)
+$shade_color is the color index to use for shading (if shading is on).
+$border_color is the color index to use for the bar border (if on).
 This was added in PHPlot-5.2.0, moving common code into a function.
+In PHPlot-6.0.0, a single $alt_color argument was split into separate
+$shade_color and $border_color arguments.
     </para>
   </listitem>
 </varlistentry>
@@ -1974,24 +1993,44 @@ This was added in PHPlot-5.2.0.
 </varlistentry>
 
 <varlistentry>
-  <term><anchor id="SetDashedStyle" xreflabel="SetDashedStyle"/>SetDashedStyle($which_ndxcol)</term>
+  <term><anchor id="SetDashedStyle" xreflabel="SetDashedStyle"/>SetDashedStyle($which_ndxcol, $use_style = TRUE)</term>
   <listitem>
     <para>
-Sets the GD line style to select a dashed line, in preparation for drawing
-a dashed line.  To understand how this works, it helps to look at the
-documentation for the PHP GD function ImageSetStyle() and also refer to
+Sets the GD line style to select a dashed line, if line styles are enabled,
+in preparation for drawing a dashed line. $which_ndxcol is the color index
+to use for the line, and $use_style is a flag indicating if a styled line
+is to be drawn. Returns a GD color index to use for drawing. If
+$use_styles is false, indicating solid lines, the return value is
+$which_ndxcol. If $use_styles is true or omitted, the return value is a
+GD constant used to indicate drawing a styled line, and $which_ndxcol is
+used to set up the line style. The return value is then used by the caller
+as the color argument in drawing functions such as
+<function>imageline</function>.
+    </para>
+    <para>
+To understand how this function works, see the documentation for the
+PHP GD function <function>ImageSetStyle()</function> and also refer to
 <xref linkend="SetDefaultDashedStyle"/>. GD expects a line style to be
 specified as an array of pixel values, which is awkward to deal with.
 PHPlot uses a shorthand notation with integer values indicating pairs of
 the number of color, then transparent pixels.
-SetDefaultDashedStyle creates a string of PHP code to generate an array
-of pixel values the way GD wants them, but defers filling in the
-exact color to use. SetDashedStyle evaluates this string with
-$which_ndx_color set to the color to use for the current line.
-The result is an array of pixel values for GD's ImageSetStyle.
-Called by <xref linkend="DrawXTicks"/> and <xref linkend="DrawYTicks"/>
-if a dashed grid is selected, as well as other line drawing functions
-such as <xref linkend="DrawLines"/> if dashed lines are used.
+<function>SetDefaultDashedStyle</function> creates a string of PHP code to
+generate an array of pixel values the way GD wants them, but defers filling
+in the exact color to use. <function>SetDashedStyle</function> evaluates this
+string with <varname>$which_ndxcol</varname> set to the color to use for
+the current line.
+The result is an array of pixel values for <function>ImageSetStyle</function>.
+    </para>
+    <para>
+Called by all functions that need to draw lines that can have a line style
+applied, including <xref linkend="DrawXTicks"/> and <xref linkend="DrawYTicks"/>
+(for drawing the grid lines, not the ticks), and <xref linkend="DrawLines"/>
+for drawing line plots.
+    </para>
+    <para>
+The $use_style argument and return value were added in PHPlot-6.0.0.
+Before that, <function>SetDashedStyle</function> unconditionally set up the
+line style, and returned a boolean value.
     </para>
   </listitem>
 </varlistentry>
@@ -2235,7 +2274,8 @@ This was added in PHPlot-5.8.0.
 <title>PHPlot Class Member Variables</title>
 <abstract><title></title>
   <para>
-This chapter provides information about the PHPlot class member variables.
+This chapter provides information about the PHPlot class member variables
+and constants.
   </para>
 </abstract>
 
@@ -2543,48 +2583,74 @@ The keys and values of the second-level arrays are:
     <tbody>
       <row>
         <entry>draw_method</entry>
-        <entry>Name of the PHPlot class method (function) to call to draw the
-            'insides' of the plot.  This is the only required entry.
-            The function is responsible for drawing everything inside the
-            plot area. (That is, everything except the plot titles, axis lines,
-            tick marks and tick labels, grid lines, and legend.)</entry>
+        <entry>
+Name of the PHPlot class method (function) to call to draw the 'insides' of
+the plot.  This is the only required entry.  The function is responsible for
+drawing everything inside the plot area. (That is, everything except the plot
+titles, axis lines, tick marks and tick labels, grid lines, and legend.)
+        </entry>
       </row>
+
       <row>
         <entry>draw_arg</entry>
-        <entry>Optional argument(s) for the drawing method named by draw_method.
-            If present, this must be an array. Each element of the array
-            is passed to the draw_method function as a separate argument.
-            If this is not specified, the drawing method is called with no
-            arguments.
-            This is generally used to 'overload' drawing methods so they
-            handle multiple similar plot types.</entry>
+        <entry>
+Optional argument(s) for the drawing method named by draw_method.  If present,
+this must be an array. Each element of the array is passed to the draw_method
+function as a separate argument.  If this is not specified, the drawing method
+is called with no arguments.  This is generally used to 'overload' drawing
+methods so they handle multiple similar plot types.
+        </entry>
       </row>
+
       <row>
         <entry>draw_axes</entry>
-        <entry>A flag to indicate if the X axis and Y axis should be drawn.
-            The default is TRUE. This is set to FALSE for pie charts.</entry>
+        <entry>
+A flag to indicate if the X axis and Y axis should be drawn.
+The default is TRUE. This is set to FALSE for pie charts.
+        </entry>
       </row>
+
       <row>
         <entry>abs_vals</entry>
-        <entry>Special data processing flag. If TRUE, this tells
-            <xref linkend="FindDataLimits"/> that the plot type will take
-            the absolute value of all dependent variable values in the
-            data array. FindDataLimits needs this information so it knows
-            how to find the minimum and maximum values in the data array.
-            The default if omitted is FALSE.
-            </entry>
+        <entry>
+Special data processing flag. If TRUE, this tells
+<xref linkend="FindDataLimits"/> that the plot type will take the absolute
+value of all dependent variable values in the data array. FindDataLimits needs
+this information so it knows how to find the minimum and maximum values in
+the data array.  The default if omitted is FALSE.
+        </entry>
       </row>
+
       <row>
         <entry>sum_vals</entry>
-        <entry>Special data processing flag. If TRUE, this tells
-            <xref linkend="FindDataLimits"/> that the plot type will sum
-            up the dependent variable values in each row of the data array.
-            FindDataLimits needs this information so it knows how to find the
-            minimum and maximum values in the data array.
-            The default if omitted is FALSE.
-            If both abs_vals and sum_vals are TRUE, this means the plot type
-            sums up the absolute values from the data array.
-            (The stackedarea plot type does this.)</entry>
+        <entry>
+Special data processing flag. If TRUE, this tells
+<xref linkend="FindDataLimits"/> that the plot type will sum up the dependent
+variable values in each row of the data array.  FindDataLimits needs this
+information so it knows how to find the minimum and maximum values in the data
+array.  The default if omitted is FALSE.
+If both abs_vals and sum_vals are TRUE, this means the plot type
+sums up the absolute values from the data array.
+(The stackedarea plot type does this.)
+        </entry>
+      </row>
+
+      <row>
+        <entry>legend_alt_marker</entry>
+        <entry>
+Optional alternate marker mode for legends.
+See <xref linkend="SetLegendUseShapes"/>, which selects either the primary
+mode (color boxes) or the alternate mode.
+
+Use 'box' for rectangular color boxes. This is the default if the
+<literal>legend_alt_marker</literal> key is omitted from the array.
+Effectively, this means there is no alternate marker
+mode for these plot types, because color boxes are the primary mode.
+Use 'shape' for point shape markers, which applies to points and similar plots
+types which use point shapes.
+Use 'line' for short line segments, which applies to line and similar plot
+types.
+        </entry>
       </row>
     </tbody>
   </tgroup>
@@ -2641,16 +2707,19 @@ The array keys correspond to the arguments to
 </informaltable>
 </para>
 </sect2>
-
 </sect1>
 
-</chapter>
-
-<chapter id="dev-const">
+<!-- Note: This used to be another Chapter, since the previous chapter
+     is about variables, not constants. But that seemed to confuse
+     Docbook and it made a bad 'prev' link in the next page (Appendix 1)
+     which skipped over the Constants chapter.  Making it a section of the
+     previous chapter instead works around the problem.
+-->
+<sect1 id="dev-const">
 <title>PHPlot Class Constants</title>
 <abstract><title></title>
   <para>
-This chapter provides information about constants defined in the PHPlot class.
+This section provides information about constants defined in the PHPlot class.
 As these are PHP constants, they are accessed without a leading $ and
 cannot be expanded inside string values.
   </para>
@@ -2669,6 +2738,8 @@ The <varname>version</varname> constant contains the PHPlot code version.
 </varlistentry>
 </variablelist>
 </para>
+</sect1>
+
 </chapter>
 
 </part>
