@@ -118,6 +118,7 @@ EXAMPLES_PHP=\
   examples/imagemappie.php \
   examples/legendshape.php \
   examples/legendshape1.php \
+  examples/legendshape2.php \
   examples/linepoints1.php \
   examples/linepoints2.php \
   examples/lines1.php \
@@ -179,6 +180,7 @@ EXAMPLES_IMAGES=\
   examples/horizthinbarline.png \
   examples/legendshape.png \
   examples/legendshape1.png \
+  examples/legendshape2.png \
   examples/linepoints1.png \
   examples/linepoints2.png \
   examples/lines1.png \
