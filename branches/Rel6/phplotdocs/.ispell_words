@@ -146,6 +146,7 @@ SetDefaultStyles
 SetDefaultTTFont
 SetDrawBrokenLines
 SetDrawDashedGrid
+SetDrawDataBorders
 SetDrawPieBorders
 SetDrawPlotAreaBackground
 SetDrawXAxis
@@ -175,6 +176,7 @@ SetLabelColor
 SetLabelScalePosition
 SetLabelType
 SetLegend
+SetLegendColorboxBorders
 SetLegendPixels
 SetLegendPosition
 SetLegendReverse
