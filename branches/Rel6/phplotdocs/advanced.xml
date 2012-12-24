@@ -1728,15 +1728,27 @@ A value of 2.0 makes the color boxes twice as wide, and 0.5 makes them half
 the character width.
 (This was added in PHPlot-5.3.0.)
         </para>
+
         <para>
 If point shapes are used in the legend instead of color boxes
-(see <xref linkend="SetLegendUseShapes"/>),
+(see <xref linkend="SetLegendUseShapes"/> - for points plots and similar),
 then <literal>legend_colorbox_width</literal> still adjusts the horizontal
 space allocated for the point shape. The point shape itself is not scaled,
 but is always drawn at the same size as in the plot itself. If the plot
 area has a color background, the width adjustment will stretch the
 box in that color which is drawn behind the point shape.
         </para>
+
+        <para>
+If line markers are used in the legend of instead of color boxes (see
+<xref linkend="SetLegendUseShapes"/> - with line plots and similar),
+then <literal>legend_colorbox_width</literal> scales the horizontal
+space allocated for the line marker, but there is an additional factor
+of 4 applied by PHPlot.
+This leaves enough room to draw a line segment that can be identified
+visually by color and width.
+        </para>
+
       </listitem>
     </varlistentry>
   </variablelist>
@@ -2558,13 +2570,6 @@ real-time data, to replay historical data, or for graphical display of
 any data where adding a time dimension improves the presentation.
 This feature was added in PHPlot-5.8.0.
 </para>
-
-<note>
-  <para>
-Some of the PHP functions described here may require PHP-5.3 or higher.
-(PHPlot versions after 5.7.0 do not support PHP versions before 5.3 anyway.)
-  </para>
-</note>
 
 <para>
 This feature is intended for use when you want to update a plot one or more
