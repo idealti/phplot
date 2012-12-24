@@ -1423,9 +1423,9 @@ as of PHPlot-5.0.5 and are no longer considered experimental.
     <para>
 <function>SetDataBorderColors</function> sets the colors used for the
 borders of the bars and stacked bars for plot types 'bars' and
-'stackedbars'. The borders are only drawn if shading is turned off
-with <xref linkend="SetShading" />; the default is to draw bars with
-a drop-shadow for a 3-D look and no borders.
+'stackedbars'. By default, the borders are only drawn if shading is turned off
+with <xref linkend="SetShading" />.
+Shaded bar and stackedbar plots do not use data borders by default.
     </para>
   </refsect1>
 
@@ -1453,18 +1453,21 @@ If an array is used for <parameter>$border</parameter>, it
 must use zero-based sequential integer indexes.
     </para>
     <para>
-If this function is never called, and <xref linkend="SetShading" /> is called
-to turn shading off, a default color map is used which sets all data borders
-to black.
+If this function is never called, a default color map is used which sets all
+data borders to black.
     </para>
     <para>
-This is only used for plot types 'bars' and 'stackedbars', and only if shading
-is turned off.
+Data border colors are only used used for plot types 'bars' and 'stackedbars'.
+By default, unshaded plots (<xref linkend="SetShading"/><literal>(0)</literal>)
+have data borders, and shaded plots have a 3D-look and no data borders.
+If you want unshaded plots with no data borders, use
+<xref linkend="SetDrawDataBorders"/><literal>(FALSE)</literal> to disable
+the borders.  You can enable data borders on shaded plots with
+<xref linkend="SetDrawDataBorders"/><literal>(TRUE)</literal>.
     </para>
     <para>
-If you want flat (unshaded), borderless bars, call SetShading(0) to turn
-off the shading, and call SetDataBorderColors with the same color (or color
-array) that you use with <xref linkend="SetDataColors" />.
+The data border colors can also be used to outline the color boxes in a
+legend. See <xref linkend="SetLegendColorboxBorders"/> for this option.
     </para>
     <para>
 If <parameter>$border</parameter> is not an array, but a single color
@@ -1488,6 +1491,13 @@ This is used internal to PHPlot for one-time initialization.
 A data colors callback, as described in
 <xref linkend="adv-datacolor-callback" />,
 also controls selection of the color for data borders (if used).
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>History</title>
+    <para>
+Before PHPlot-6.0.0, unshaded bar and stackedbar plots always had data borders, 
+and shaded bar and stackedbar plots never had data borders.
     </para>
   </refsect1>
 </refentry>
@@ -2228,6 +2238,65 @@ True to use dashed lines, False to use solid lines.
         </listitem>
       </varlistentry>
     </variablelist>
+  </refsect1>
+</refentry>
+
+<refentry id="SetDrawDataBorders">
+  <refmeta>
+    <refentrytitle>SetDrawDataBorders</refentrytitle>
+  </refmeta>
+
+  <refnamediv>
+    <refname>SetDrawDataBorders</refname>
+    <refpurpose>Enable or disable drawing of data borders on bar and stackedbar plots</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <synopsis>$plot-&gt;SetDrawDataBorders(<parameter>$draw</parameter>)</synopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Description</title>
+    <para>
+<function>SetDrawDataBorders</function> enables or disables drawing of the
+data borders on <link linkend="plottype-bars">bars</link> and
+<link linkend="plottype-stackedbars">stackedbars</link> plots.
+These are the borders around the individual bars or bar segments in the plot.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Parameters</title>
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>$draw</replaceable></term>
+        <listitem>
+          <para>
+True to draw the data borders, False to not draw them.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Notes</title>
+    <para>
+By default, data borders are drawn for unshaded plots, and not drawn for
+shaded plots. (By default, bar and stackedbar plots are shaded.
+See <xref linkend="SetShading"/>.)
+    </para>
+    <para>
+Use <xref linkend="SetDataBorderColors"/> to set the border colors.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>History</title>
+    <para>
+This function was added in PHPlot-6.0.0. In prior versions, borders were
+always drawn for unshaded bar and stacked bar plots, and never drawn for
+shaded plots.
+    </para>
   </refsect1>
 </refentry>
 
@@ -3987,7 +4056,7 @@ A legend is often needed when a plot contains more than one data set,
 to identify the purpose of the different data sets being plotted.
 The legend text consists of multiple lines, with each line identifying one
 data set on the plot.
-PHPlot adds an identifying color box or point shape next to each line in the
+PHPlot adds an identifying color box or shape marker next to each line in the
 legend.
     </para>
   </refsect1>
@@ -4022,9 +4091,9 @@ the data sets in the data array).
     </para>
     <para>
 Legend text lines are displayed in order from top to bottom in the legend.
-Each line has a color box or point shape with the corresponding color from
+Each line has a color box or shape maker with the corresponding color from
 the data colors array.
-The colors used in the legend color boxes or point shapes are independent of
+The colors used in the legend color boxes or shape markers are independent of
 any custom data color callback
 (see <xref linkend="adv-datacolor-callback"/>).
     </para>
@@ -4036,12 +4105,12 @@ pass an empty array or NULL as <varname>$leg</varname>.
 To control the legend position on the plot,
 use <xref linkend="SetLegendPixels"/>, <xref linkend="SetLegendWorld"/>,
 or the more general <xref linkend="SetLegendPosition"/>.
-You can control the text and color box or point shape alignment within the
+You can control the text and color box or shape marker alignment within the
 legend using <xref linkend="SetLegendStyle"/>.
     </para>
     <para>
-Use <xref linkend="SetLegendUseShapes"/> to select color boxes or point
-shapes in the legend.
+Use <xref linkend="SetLegendUseShapes"/> to select color boxes or shape
+markers in the legend.
     </para>
   </refsect1>
   <refsect1>
@@ -4049,6 +4118,99 @@ shapes in the legend.
     <para>
 Accepting NULL as a valid argument value was added in PHPlot-5.3.1.
 Through PHPlot-5.3.0, passing NULL would cause an error.
+    </para>
+  </refsect1>
+</refentry>
+
+<refentry id="SetLegendColorboxBorders">
+  <refmeta>
+    <refentrytitle>SetLegendColorboxBorders</refentrytitle>
+  </refmeta>
+
+  <refnamediv>
+    <refname>SetLegendColorboxBorders</refname>
+    <refpurpose>Control the borders around color boxes in the legend</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <synopsis>$plot-&gt;SetLegendColorboxBorders(<optional><parameter>$cbbmode</parameter></optional>)</synopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Description</title>
+    <para>
+<function>SetLegendColorboxBorders</function> controls the appearance of the
+borders around the color boxes in the legend. The borders can be off, on
+using the Text color, or on using the set of Data Border colors.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Parameters</title>
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>$cbbmode</replaceable></term>
+        <listitem>
+          <para>
+Optional string indicating the color mode for the legend color boxes.
+If supplied, it must be one of the following values:
+            <informaltable>
+             <?dbfo table-width="40%"?> <!-- Table width hint for PDF only -->
+              <tgroup cols="2">
+                <?dbhtml table-summary="SetLegendColorboxBorders parameter values"?>
+                <colspec colname="c1" colwidth="40*" />
+                <colspec colname="c2" colwidth="60*" />
+                <thead>
+                  <row>
+                    <entry>Mode</entry>
+                    <entry>Description</entry>
+                  </row>
+                </thead>
+                <tbody>
+                  <row>
+                    <entry>none</entry>
+                    <entry>No color box borders are drawn</entry>
+                  </row>
+                  <row>
+                    <entry>textcolor</entry>
+                    <entry>Use the Textcolor for all legend color boxes</entry>
+                  </row>
+                  <row>
+                    <entry>databordercolor</entry>
+                    <entry>Use successive entries from the Data Border
+                        Colors array for each legend color box</entry>
+                  </row>
+                </tbody>
+              </tgroup>
+            </informaltable>
+If omitted, <literal>textcolor</literal> is used.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Notes</title>
+    <para>
+By default, the color boxes are drawn using the text color set with
+<xref linkend="SetTextColor"/>, which defaults to black.
+    </para>
+    <para>
+If the color box border mode is <literal>databordercolor</literal>,
+then the colors set with <xref linkend="SetDataBorderColors"/> are used.
+(These are the same colors used as borders for the bars in a bar chart.)
+The top line (or bottom line, if <xref linkend="SetLegendReverse"/>(True) is
+used) in the legend will have a color box using the first data color
+(see <xref linkend="SetDataColors"/>) and a border using the first data border
+color, etc.
+    </para>
+  </refsect1>
+  <refsect1>
+    <title>History</title>
+    <para>
+This function was added in PHPlot-6.0.0. In earlier releases, the legend
+color boxes always had a border using the text color.
     </para>
   </refsect1>
 </refentry>
@@ -4329,7 +4491,7 @@ No other legend positioning methods were available in earlier releases.
 in the legend.
 A legend is drawn if <xref linkend="SetLegend" /> is used.
 The legend contains of a series of text strings, and optionally color boxes
-or point shapes, identifying the data sets (for example, plot lines).
+or shape markers, identifying the data sets (for example, plot lines).
 The legend line identifying the first data set is normally drawn at the top
 of the legend, with the rest of the lines in order below it.
 <function>SetLegendReverse</function> can be used to reverse that order, so
@@ -4398,12 +4560,12 @@ This function was added to PHPlot-5.5.0.
     <para>
 <function>SetLegendStyle</function> controls the appearance of the legend,
 which is drawn if <xref linkend="SetLegend" /> is used.  The legend
-contains of a series of text strings and either color boxes or point
-shapes, identifying the plot lines.  SetLegendStyle sets the alignment of
-the text strings and color boxes or point shapes.  First the color boxes or
-point shapes are aligned within the legend box, left or right, and then the
+contains of a series of text strings and either color boxes or shape markers,
+identifying the plot lines.  SetLegendStyle sets the alignment of
+the text strings and color boxes or shapes markers.  First the color boxes or
+shapes markers are aligned within the legend box, left or right, and then the
 text strings are aligned within the remaining space, left or right.
-SetLegendStyle can also turn off the color boxes or point shapes.
+SetLegendStyle can also turn off the color boxes or shape markers.
     </para>
   </refsect1>
 
@@ -4416,9 +4578,9 @@ SetLegendStyle can also turn off the color boxes or point shapes.
           <para>
 A string indicating the alignment of the text strings: 'left' or 'right'.
 If 'left', the text strings are left-aligned between the legend box edge
-and the color boxes or point shapes.
+and the color boxes or shape markers.
 If 'right', the text strings are right-aligned between the legend box edge
-and the color boxes or point shapes.
+and the color boxes or shape markers.
           </para>
         </listitem>
       </varlistentry>
@@ -4426,11 +4588,11 @@ and the color boxes or point shapes.
         <term><replaceable>$colorbox_align</replaceable></term>
         <listitem>
           <para>
-Optional string indicating the alignment of the color boxes or point shapes:
+Optional string indicating the alignment of the color boxes or shape markers:
 'left', 'right', or 'none'.
 If 'left', they are drawn along the left side of the legend box.
 If 'right', they are drawn along the right side of the legend box.
-If 'none', no color boxes or point shapes are drawn.
+If 'none', no color boxes or shape markers are drawn.
 If this parameter is omitted, the same alignment as $text_align is used.
           </para>
         </listitem>
@@ -4441,9 +4603,9 @@ If this parameter is omitted, the same alignment as $text_align is used.
   <refsect1>
     <title>Notes</title>
     <para>
-By default, the color boxes or point shapes are lined up along the right side
+By default, the color boxes or shape markers are lined up along the right side
 of the legend box, and the text strings are right-aligned just left of the
-color boxes or point shapes
+color boxes or shape markers.
 The following figure shows the four possible alignment choices.
       <informalfigure>
         <mediaobject>
@@ -4451,7 +4613,7 @@ The following figure shows the four possible alignment choices.
             <imagedata fileref="images/legendstyle.png" scale="58" format="PNG" />
           </imageobject>
           <textobject>
-            <phrase>Four possible text/color-box alignment choices</phrase>
+            <phrase>Four possible text/color box alignment choices</phrase>
           </textobject>
         </mediaobject>
       </informalfigure>
@@ -4466,6 +4628,12 @@ identifying the plot lines.
   </refsect1>
   <refsect1>
     <title>History</title>
+    <para>
+In PHPlot-6.0, the term 'point shapes' was replaced with 'shape markers',
+since PHPlot can now produce markers for line plots as well. (There was no
+change to the behavior of <function>SetLegendStyle</function> - only the
+description changed.)
+    </para>
     <para>
 The option to use point shapes instead of color boxes in the legend
 was added in PHPlot-5.4.0.  See <xref linkend="SetLegendUseShapes"/>.
@@ -4490,7 +4658,7 @@ This function was added to PHPlot-5.0.4.
 
   <refnamediv>
     <refname>SetLegendUseShapes</refname>
-    <refpurpose>Use color boxes or point shapes in the legend</refpurpose>
+    <refpurpose>Use color boxes or shape markers in the legend</refpurpose>
   </refnamediv>
 
   <refsynopsisdiv>
@@ -4501,7 +4669,7 @@ This function was added to PHPlot-5.0.4.
     <title>Description</title>
     <para>
 <function>SetLegendUseShapes</function> sets the legend to use either color
-boxes or point shapes to show which legend line goes with which data set.
+boxes or shapes marker to show which legend line goes with which data set.
     </para>
   </refsect1>
 
@@ -4512,7 +4680,7 @@ boxes or point shapes to show which legend line goes with which data set.
         <term><replaceable>$use_shapes</replaceable></term>
         <listitem>
           <para>
-A boolean value: true to use point shapes, false to use color boxes.
+A boolean value: true to use shape markers, false to use color boxes.
           </para>
         </listitem>
       </varlistentry>
@@ -4525,21 +4693,49 @@ A boolean value: true to use point shapes, false to use color boxes.
 By default, the legend is drawn with color boxes.
     </para>
     <para>
-Use of point shapes in the legend is only available with plot types that use
-point markers: <link linkend="plottype-points">points</link> and
-<link linkend="plottype-linepoints">linepoints</link>.
-<function>SetLegendUseShapes</function> is ignored with other plot types.
+Use of <literal>SetLegendUseShapes(True)</literal> instructs PHPlot to use
+an alternate marker in the legend. The marker depends on the
+<link linkend="conc-plottypes">plot type</link> used in the plot.
+      <itemizedlist>
+        <listitem>
+          <para>
+For <link linkend="plottype-points">points</link> and
+<link linkend="plottype-linepoints">linepoints</link> plots,
+the alternate marker is the point shape used to identify the data set in
+the plot.
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+For <link linkend="plottype-lines">lines</link> and
+<link linkend="plottype-squared">squared</link> plots,
+the alternate marker is a short horizontal line segment matching the
+corresponding data set line in the plot.
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+For all other plot types, no alternate marker is defined, and
+<function>SetLegendUseShapes</function> is ignored.
+          </para>
+        </listitem>
+      </itemizedlist>
     </para>
+
     <para>
-When point shape markers are enabled using
+When shape markers are enabled using
 <function>SetLegendUseShapes(True)</function>,
 PHPlot will first draw a solid box with the same color as the plot area
 background (if plot area background color is enabled with
 <xref linkend="SetPlotBgColor"/> and
 <xref linkend="SetDrawPlotAreaBackground"/>).
-Then it will draw the point shape which corresponds to the legend text line,
-overlaying the background box.
-The point shape will have the same color and size as the
+Then it will draw the shape marker, overlaying the background box.
+    </para>
+
+    <para>
+Point shape markers will have the same color and size as the
 point shape used in the plot for the corresponding data set.
 Note that PHPlot will not adjust the legend box size or line spacing based on
 the point shape sizes set with <xref linkend="SetPointSizes"/>.
@@ -4549,13 +4745,30 @@ point shapes by adjusting the line spacing parameter (using
 <xref linkend="SetLineSpacing"/>, <xref linkend="SetFont"/>,
 or related font control functions.
     </para>
+
     <para>
-For examples of legends with color boxes and point shapes,
+Line segment markers will have the same color, line width, and style as the
+lines used in the corresponding data set.
+The area reserved in the legend for color boxes or shape markers is
+automatically made 4 times wider when line segment markers are used,
+in order to improve visibility.
+    </para>
+
+    <para>
+For examples of legends with color boxes and shape markers,
 see <xref linkend="ex-legendshape"/>.
     </para>
   </refsect1>
   <refsect1>
     <title>History</title>
+    <para>
+PHPlot-6.0.0 added a third type of shape marker for legends: line segments,
+and <function>SetLegendUseShapes</function> now applies to more plot types.
+Before PHPlot-6.0.0, only color boxes and point shape markers
+were available, and <function>SetLegendUseShapes</function>
+was ignored with plot types other than <literal>points</literal> and
+<literal>linepoints</literal>.
+    </para>
     <para>
 This function was added to PHPlot-5.4.0.
 Before that, only color boxes were available in legends.
