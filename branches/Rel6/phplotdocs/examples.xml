@@ -1132,18 +1132,22 @@ See <xref linkend="adv-multiplot" /> for more information.
 <!-- =============================================== -->
 <pagebreak/>
 <sect1 id="ex-legendshape">
-<title>Example - Legend with Point Shapes</title>
+<title>Example - Legend with Shape Markers</title>
 <para>
 This example shows the standard legend appearance, followed by the same
-plot with point shapes in the legend instead of color boxes.
+plot with point shape markers in the legend instead of color boxes,
+and again using a line plot with line markers.
 Using point shapes in the legend was added in PHPlot-5.4.0.
-This feature is useful if you need to be able to interpret the legend
-without color, for example with monochrome printing, or for accessibility
-reasons. See <xref linkend="conc-legend"/> for more on the plot legend.
+These are useful if you need to be able to interpret the legend without color,
+for example with monochrome printing, or for accessibility reasons.
+Using line markers in the legend was added in PHPlot-6.0.0.
+When used with varying line widths, this can reduce the dependency on color
+to identify the plotted lines.
+See <xref linkend="conc-legend"/> for more on the plot legend.
 </para>
 <example id="example-legendshape">
 <?dbfo keep-together="auto"?>
-<title>Legend with Color Boxes or Point Shapes</title>
+<title>Legend with Color Boxes or Shape Markers</title>
 <para>
 First, here is the standard legend with color boxes.
 </para>
@@ -1161,6 +1165,7 @@ First, here is the standard legend with color boxes.
 <para>
 Changing the call to <xref linkend="SetLegendUseShapes"/> results in a
 legend using point shapes instead of color boxes.
+(This requires PHPlot-5.4.0 or later.)
 </para>
 <informalfigure>
   <mediaobject>
@@ -1173,6 +1178,22 @@ legend using point shapes instead of color boxes.
   </mediaobject>
 </informalfigure>
 &legendshape1;
+<para>
+With a line plot, the shape markers are line segments rather than point
+markers.
+(This requires PHPlot-6.0.0 or later.)
+</para>
+<informalfigure>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="examples/legendshape2.png" scale="58" format="PNG" />
+    </imageobject>
+    <textobject>
+      <phrase>Legend with Line Markers</phrase>
+    </textobject>
+  </mediaobject>
+</informalfigure>
+&legendshape2;
 </example>
 </sect1>
 
