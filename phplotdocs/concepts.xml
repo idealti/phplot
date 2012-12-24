@@ -1009,7 +1009,7 @@ A missing point is indicated by using four empty strings
 (Missing points were not allowed for this plot type in PHPlot-5.4.0 and earlier.)
 </para>
 <para>
-This plot type uses 4 colors from the data colors array.
+This plot type uses 4 colors from the data colors array, index 0 through 3.
 If the security closed lower than it opened for that time period,
 then color 0 is used for the candlestick body, and color 2 is used
 for the upper and lower wicks.
@@ -1019,8 +1019,11 @@ for the upper and lower wicks.
 </para>
 <para>
 <xref linkend="SetLineWidths"/> can be used to set line widths.
-Index 0 will be used to draw the candlestick bodies, and index 1 will
-be used to draw the wicks.
+Index 0 will be used to draw the candlestick bodies, however this only
+applies to outlined candlestick bodies (drawn when the security closes up).
+The line width is not used for filled candlestick bodies (drawn when the
+security closes down).
+Line width index 1 will be used to draw the wicks.
 </para>
 <para>
 An example of this plot type can be seen in
@@ -1040,12 +1043,23 @@ The candlesticks2 plot type is the same as the
 <link linkend="plottype-candlesticks">candlesticks</link> plot type,
 except the candlestick bodies are always drawn filled, regardless of whether
 the security closes up or down.
-Color usage and line width usage are the same.
 </para>
 <para>
-Be sure to set the data colors with <xref linkend="SetDataColors"/> for this
-plot type. Unlike candlesticks, candlesticks2 plots use only color to
+Color usage is the same as with candlesticks plots, with the first 4 data
+colors used (index 0 through 3).
+If the security closed down, color 0 is used for the body, and color 2 is used
+for the wicks. If the security closed up or the same, color 1 is used for the
+body, and color 3 is used for the wicks.
+Be sure to set data colors 0 and 2 with <xref linkend="SetDataColors"/>
+for this plot type. Unlike candlesticks, candlesticks2 plots use only color to
 show the difference between a security closing up or closing down.
+The default colors in these slots (sky blue and orange) are probably not
+appropriate.
+</para>
+<para>
+Line width usage is similar to candlesticks plots, except that the
+candlestick bodies are always filled so line width index 0 (body outline
+line width) is never used. Line width index 1 is used for the wicks.
 </para>
 <para>
 This plot type works with data types <xref linkend="text-data"/>
