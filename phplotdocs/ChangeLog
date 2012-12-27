@@ -4,6 +4,17 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-12-26 (/branches/Rel6)
+    * concepts.xml: Added a thumbnail image for each plot type in the Plot
+      Types table. (This has been on hold for a while. I wanted the
+      pictures in the sections below the table, with the text flowing
+      around the images, but that does not work in PDF - something is
+      missing Apache fop, maybe. So I put them in the table instead.)
+    * images/thumbnail-*.png : 14 new images for plot types table.
+    * etc/thumbnail.php, etc/README : Script to make thumbnail images.
+    * Makefile : List 14 new static image files.
+
+
 * 2012-12-24 (/branches/Rel6)
     * concepts.xml: Fix description of color and line width usage for
        candlesticks and candlesticks2 plots. (Line widths are not used
