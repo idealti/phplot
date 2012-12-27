@@ -5,6 +5,9 @@ manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
 * 2012-12-26 (/branches/Rel6)
+    * reference.xml: Added cross-reference from SetPieLabelType() to
+      SetLabelScalePosition(), especially for turning the labels off.
+
     * concepts.xml: Added a thumbnail image for each plot type in the Plot
       Types table. (This has been on hold for a while. I wanted the
       pictures in the sections below the table, with the text flowing
