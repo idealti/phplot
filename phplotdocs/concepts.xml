@@ -772,84 +772,240 @@ graphical representation of the data values. To select the plot type,
 use <xref linkend="SetPlotType" />.
 The following plot types are available:
 <informaltable>
-  <tgroup cols="2">
+  <tgroup cols="3">
     <?dbhtml table-summary="Available plot types"?>
-    <colspec colname="c1" colwidth="20*" />
-    <colspec colname="c2" colwidth="80*" />
+    <colspec colname="c1" colwidth="15*" align="center"/>
+    <colspec colname="c2" colwidth="15*" align="center"/>
+    <colspec colname="c3" colwidth="70*" />
     <thead>
       <row>
-        <entry>Plot Type</entry>
+        <entry namest="c1" nameend="c2">Plot Type</entry>
         <entry>Description</entry>
       </row>
     </thead>
     <tbody>
+
       <row>
+        <entry>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="images/thumbnail-area.png" scale="100" format="PNG" />
+            </imageobject>
+            <textobject>
+              <phrase>area plot thumbnail</phrase>
+            </textobject>
+          </inlinemediaobject>
+        </entry>
         <entry><link linkend="plottype-area">area</link></entry>
         <entry>Filled areas between lines. Also known as <emphasis>cumulative
             line plot</emphasis> or <emphasis>component line plot</emphasis>.
             </entry>
       </row>
+
       <row>
+        <entry>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="images/thumbnail-bars.png" scale="100" format="PNG" />
+            </imageobject>
+            <textobject>
+              <phrase>bars plot thumbnail</phrase>
+            </textobject>
+          </inlinemediaobject>
+        </entry>
         <entry><link linkend="plottype-bars">bars</link></entry>
         <entry>Filled bars with optional 3-D look. Multiple datasets are offset.</entry>
       </row>
+
       <row>
+        <entry>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="images/thumbnail-bubbles.png" scale="100" format="PNG" />
+            </imageobject>
+            <textobject>
+              <phrase>bubbles plot thumbnail</phrase>
+            </textobject>
+          </inlinemediaobject>
+        </entry>
         <entry><link linkend="plottype-bubbles">bubbles</link></entry>
         <entry>A scatter-point plot using bubbles (filled circles), with the
             bubble size proportional to a Z value.
             </entry>
       </row>
+
       <row>
+        <entry>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="images/thumbnail-candlesticks.png" scale="100" format="PNG" />
+            </imageobject>
+            <textobject>
+              <phrase>candlesticks plot thumbnail</phrase>
+            </textobject>
+          </inlinemediaobject>
+        </entry>
         <entry><link linkend="plottype-candlesticks">candlesticks</link></entry>
         <entry>An Open/High/Low/Close (OHLC) financial plot using filled
             and unfilled candlesticks.</entry>
       </row>
+
       <row>
+        <entry>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="images/thumbnail-candlesticks2.png" scale="100" format="PNG" />
+            </imageobject>
+            <textobject>
+              <phrase>candlesticks2 plot thumbnail</phrase>
+            </textobject>
+          </inlinemediaobject>
+        </entry>
         <entry><link linkend="plottype-candlesticks2">candlesticks2</link></entry>
         <entry>An Open/High/Low/Close (OHLC) financial plot using filled
             candlesticks.</entry>
       </row>
+
       <row>
+        <entry>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="images/thumbnail-linepoints.png" scale="100" format="PNG" />
+            </imageobject>
+            <textobject>
+              <phrase>linepoints plot thumbnail</phrase>
+            </textobject>
+          </inlinemediaobject>
+        </entry>
         <entry><link linkend="plottype-linepoints">linepoints</link></entry>
         <entry>Lines between points, with a marker at each point, and optional
             error bars.</entry>
       </row>
+
       <row>
+        <entry>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="images/thumbnail-lines.png" scale="100" format="PNG" />
+            </imageobject>
+            <textobject>
+              <phrase>lines plot thumbnail</phrase>
+            </textobject>
+          </inlinemediaobject>
+        </entry>
         <entry><link linkend="plottype-lines">lines</link></entry>
         <entry>Straight lines between data points, with optional error bars.</entry>
       </row>
+
       <row>
+        <entry>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="images/thumbnail-ohlc.png" scale="100" format="PNG" />
+            </imageobject>
+            <textobject>
+              <phrase>ohlc plot thumbnail</phrase>
+            </textobject>
+          </inlinemediaobject>
+        </entry>
         <entry><link linkend="plottype-ohlc">ohlc</link></entry>
         <entry>A basic Open/High/Low/Close (OHLC) financial plot using lines
             and ticks.</entry>
       </row>
+
       <row>
+        <entry>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="images/thumbnail-pie.png" scale="100" format="PNG" />
+            </imageobject>
+            <textobject>
+              <phrase>pie plot thumbnail</phrase>
+            </textobject>
+          </inlinemediaobject>
+        </entry>
         <entry><link linkend="plottype-pie">pie</link></entry>
         <entry>Pie chart with or without 3-D affects.</entry>
       </row>
+
       <row>
+        <entry>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="images/thumbnail-points.png" scale="100" format="PNG" />
+            </imageobject>
+            <textobject>
+              <phrase>points plot thumbnail</phrase>
+            </textobject>
+          </inlinemediaobject>
+        </entry>
         <entry><link linkend="plottype-points">points</link></entry>
         <entry>Draws a marker at each data point, with optional error bars.</entry>
       </row>
+
       <row>
+        <entry>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="images/thumbnail-squared.png" scale="100" format="PNG" />
+            </imageobject>
+            <textobject>
+              <phrase>squared plot thumbnail</phrase>
+            </textobject>
+          </inlinemediaobject>
+        </entry>
         <entry><link linkend="plottype-squared">squared</link></entry>
         <entry>Stepped lines</entry>
       </row>
+
       <row>
+        <entry>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="images/thumbnail-stackedarea.png" scale="100" format="PNG" />
+            </imageobject>
+            <textobject>
+              <phrase>stackedarea plot thumbnail</phrase>
+            </textobject>
+          </inlinemediaobject>
+        </entry>
         <entry><link linkend="plottype-stackedarea">stackedarea</link></entry>
         <entry>Filled areas between lines, with multiple data sets accumulated.</entry>
       </row>
+
       <row>
+        <entry>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="images/thumbnail-stackedbars.png" scale="100" format="PNG" />
+            </imageobject>
+            <textobject>
+              <phrase>stackedbars plot thumbnail</phrase>
+            </textobject>
+          </inlinemediaobject>
+        </entry>
         <entry><link linkend="plottype-stackedbars">stackedbars</link></entry>
         <entry>Filled bars with optional 3-D look. Multiple data sets
             are accumulated and the sum is graphed.</entry>
       </row>
+
       <row>
+        <entry>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="images/thumbnail-thinbarline.png" scale="100" format="PNG" />
+            </imageobject>
+            <textobject>
+              <phrase>thinbarline plot thumbnail</phrase>
+            </textobject>
+          </inlinemediaobject>
+        </entry>
         <entry><link linkend="plottype-thinbarline">thinbarline</link></entry>
         <entry>Vertical lines from the X axis to the value, or horizontal lines
             from the Y axis to the value. Also known as <emphasis>impulse</emphasis>.
             </entry>
       </row>
+
     </tbody>
   </tgroup>
 </informaltable>
