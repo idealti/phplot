@@ -6091,6 +6091,13 @@ to explode() to limit the number of fields returned. This will ensure that
 the complete label is extracted as a single field.  See the last example below.
     </para>
 
+    <para>
+To adjust the position of the pie chart labels, see
+<xref linkend="SetLabelScalePosition"/>.
+To turn the labels off completely, use
+<literal>SetLabelScalePosition(False)</literal>.
+    </para>
+
   </refsect1>
 
   <refsect1>
