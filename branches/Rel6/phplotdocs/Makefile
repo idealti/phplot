@@ -81,6 +81,20 @@ STATIC_IMAGES=\
   images/shape-trianglemid.png \
   images/shape-up.png \
   images/shape-yield.png \
+  images/thumbnail-area.png \
+  images/thumbnail-bars.png \
+  images/thumbnail-bubbles.png \
+  images/thumbnail-candlesticks.png \
+  images/thumbnail-candlesticks2.png \
+  images/thumbnail-linepoints.png \
+  images/thumbnail-lines.png \
+  images/thumbnail-ohlc.png \
+  images/thumbnail-pie.png \
+  images/thumbnail-points.png \
+  images/thumbnail-squared.png \
+  images/thumbnail-stackedarea.png \
+  images/thumbnail-stackedbars.png \
+  images/thumbnail-thinbarline.png \
   images/ticksize.png \
   images/truecolor-formats.png \
   images/typical-grid.png \
