@@ -36,6 +36,7 @@
 class PHPlot
 {
     const version = '6.0.0-Pre-release $Revision$';
+    const version_id = 60000;
 
     // All class variables are declared here, and initialized (if applicable).
     // Starting with PHPlot-6.0, most variables are 'protected' class.
