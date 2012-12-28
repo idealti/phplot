@@ -4,6 +4,9 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2012-12-27 (/branches/Rel6)
+    * developer.xml: Document new class constant version_id.
+
 * 2012-12-26 (/branches/Rel6)
     * reference.xml: Added cross-reference from SetPieLabelType() to
       SetLabelScalePosition(), especially for turning the labels off.
