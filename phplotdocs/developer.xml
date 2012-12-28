@@ -2731,11 +2731,26 @@ cannot be expanded inside string values.
   <term><anchor id="const_version" xreflabel="PHPlot::version"/>PHPlot::version</term>
   <listitem>
     <para>
-The <varname>version</varname> constant contains the PHPlot code version.
+The <varname>version</varname> constant contains the PHPlot code version as
+a string, for example <literal>"5.4.0"</literal>.
 (This was added in PHPlot-5.4.0.)
     </para>
   </listitem>
 </varlistentry>
+
+<varlistentry>
+  <term><anchor id="const_version_id" xreflabel="PHPlot::version_id"/>PHPlot::version_id</term>
+  <listitem>
+    <para>
+The <varname>version_id</varname> constant contains the PHPlot code version as
+an integer, using the conventional forumula 10000*major_version +
+100*minor_version + patch_version.
+This was added in PHPlot-6.0.0 (with value 60000) to make it
+possible for the test suite to check for a minimum version.
+    </para>
+  </listitem>
+</varlistentry>
+
 </variablelist>
 </para>
 </sect1>
