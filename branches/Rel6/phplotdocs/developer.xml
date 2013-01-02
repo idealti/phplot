@@ -2553,13 +2553,23 @@ keys and values:
 <title>plots[]</title>
 <para>
 The <varname>plots[]</varname> array contains information about known plot
-types. Essentially, it tells <xref linkend="FindDataLimits"/> and
-<xref linkend="DrawGraph"/> how to produce the main portion of the plot.
-This was added in PHPlot-5.3.0.
-This is a static member variable in the PHPlot class, so it must be
-accessed as <varname>PHPlot::$plots</varname> and not through an instance
-of the class. It has protected visibility, so is not accessible from
-outside the class or derived classes.
+types. It is used by <xref linkend="FindDataLimits"/>,
+<xref linkend="DrawGraph"/>, and other class functions to prepare for and
+draw the main portion of the plot.
+The goal is to contain the information about each available plot type
+in a single place - this array. The actual names of the plot types (for
+example 'bars' or 'linepoints') appear only in this array. To simplify
+somewhat, adding a new plot type to PHPlot involves adding a new element to
+the <varname>plots[]</varname> array, and adding a new function to PHPlot
+which draws the 'insides' of the plot.
+</para>
+
+<para>
+This array was added in PHPlot-5.3.0.
+It is a protected static member variable in the PHPlot class, so it must be
+accessed as <varname>self::$plots</varname> from inside the class (or a
+derived class), and not through an instance of the class.
+Is not accessible from outside the class or derived classes.
 </para>
 
 <para>
@@ -2603,10 +2613,13 @@ methods so they handle multiple similar plot types.
       </row>
 
       <row>
-        <entry>draw_axes</entry>
+        <entry>suppress_axes</entry>
         <entry>
-A flag to indicate if the X axis and Y axis should be drawn.
-The default is TRUE. This is set to FALSE for pie charts.
+A flag indicating that the X axis and Y axis should not be drawn.
+The default if omitted is FALSE, meaning the axis lines are drawn.
+This is set to TRUE for pie charts.
+(Before PHPlot-6.0.0 this was called <literal>draw_axes</literal>, with
+default TRUE, and FALSE for pie charts.)
         </entry>
       </row>
 
