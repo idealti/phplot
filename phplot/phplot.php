@@ -7,7 +7,7 @@
  * Visit http://sourceforge.net/projects/phplot/
  * for PHPlot documentation, downloads, and discussions.
  * ---------------------------------------------------------------------
- * Copyright (C) 1998-2012 Afan Ottenheimer
+ * Copyright (C) 1998-2013 Afan Ottenheimer
  *
  * This is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -224,7 +224,7 @@ class PHPlot
         ),
         'pie' => array(
             'draw_method' => 'DrawPieChart',
-            'draw_axes' => FALSE,
+            'suppress_axes' => TRUE,
             'abs_vals' => TRUE,
         ),
         'points' => array(
@@ -7190,10 +7190,11 @@ class PHPlot
         if (!$this->CheckDataArray())
             return FALSE; // Error message already reported.
 
-        // Set defaults then import plot type configuration:
-        $draw_axes = TRUE;
-        $draw_arg = array(); // Default is: no arguments to the drawing function
-        extract(self::$plots[$this->plot_type]);
+        // Load some configuration values from the array of plot types:
+        $pt = &self::$plots[$this->plot_type]; // Use reference for shortcut
+        $draw_method = $pt['draw_method'];
+        $draw_arg = isset($pt['draw_arg']) ? $pt['draw_arg'] : array();
+        $draw_axes = empty($pt['suppress_axes']);
 
         // Allocate colors for the plot:
         $this->SetColorIndexes();
