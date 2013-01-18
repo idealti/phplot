@@ -176,11 +176,13 @@ SetLabelColor
 SetLabelScalePosition
 SetLabelType
 SetLegend
+SetLegendBgColor
 SetLegendColorboxBorders
 SetLegendPixels
 SetLegendPosition
 SetLegendReverse
 SetLegendStyle
+SetLegendTextColor
 SetLegendUseShapes
 SetLegendWorld
 SetLightGridColor
