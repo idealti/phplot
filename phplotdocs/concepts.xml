@@ -2258,7 +2258,8 @@ transparency.
 The following table shows the function(s) used to set the color of each
 element on a plot, and the default color if no functions are used to change it.
 Where multiple function names are shown, they are listed from highest to
-lowest priority.
+lowest priority. (That is, if the first function is not used, the color is set
+with the second function, etc.)
 <informaltable>
   <tgroup cols="3">
     <?dbhtml table-summary="Functions to set color of plot elements"?>
@@ -2274,7 +2275,7 @@ lowest priority.
     </thead>
     <tbody>
       <row>
-        <entry>Bar chart bar outlines</entry>
+        <entry>Bar chart bar borders</entry>
         <entry><xref linkend="SetDataBorderColors"/></entry>
         <entry>black</entry>
       </row>
@@ -2307,7 +2308,8 @@ lowest priority.
       </row>
       <row>
         <entry>Legend background</entry>
-        <entry><xref linkend="SetBackgroundColor"/></entry>
+        <entry><xref linkend="SetLegendBgColor"/>,
+               <xref linkend="SetBackgroundColor"/></entry>
         <entry>white</entry>
       </row>
       <row>
@@ -2316,19 +2318,20 @@ lowest priority.
         <entry>N/A</entry>
       </row>
       <row>
-        <entry>Legend color box outline</entry>
-        <entry><xref linkend="SetTextColor"/>, or
-               <xref linkend="SetDataBorderColors"/></entry>
+        <entry>Legend color box borders</entry>
+        <entry><xref linkend="SetTextColor"/> or
+               <xref linkend="SetDataBorderColors"/> (see notes)</entry>
         <entry>black</entry>
       </row>
       <row>
-        <entry>Legend outline</entry>
+        <entry>Legend border</entry>
         <entry><xref linkend="SetGridColor"/></entry>
         <entry>black</entry>
       </row>
       <row>
         <entry>Legend text</entry>
-        <entry><xref linkend="SetTextColor"/></entry>
+        <entry><xref linkend="SetLegendTextColor"/>,
+               <xref linkend="SetTextColor"/></entry>
         <entry>black</entry>
       </row>
       <row>
@@ -2443,55 +2446,80 @@ lowest priority.
   </tgroup>
 </informaltable>
 </para>
-<note>
-  <para>
+
+<para>
+The following notes apply to the table of plot element colors above:
+  <itemizedlist>
+    <listitem>
+      <para>
 <xref linkend="SetPieBorderColor"/> was added in PHPlot-6.0.0. In prior
 releases, pie segment borders (which were available only on unshaded pie
 charts) used the color set with <xref linkend="SetGridColor"/>.
 The new function is backwards compatible, as the borders default to the grid
 color if <function>SetPieBorderColor</function> is not used.
-  </para>
+      </para>
+    </listitem>
 
-  <para>
+    <listitem>
+      <para>
 <xref linkend="SetDataLabelColor"/>,
 <xref linkend="SetDataValueLabelColor"/>,
 <xref linkend="SetPieLabelColor"/>, and
 <xref linkend="SetTickLabelColor"/> were added in PHPlot-5.7.0.
 Through PHPlot-5.6.0:
-    <itemizedlist>
-      <listitem>
-        <para>
-          Tick labels and axis data labels all used the color set with
-          <xref linkend="SetTextColor"/>.
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          Data value labels (incorrectly) used the title color set with
-          <xref linkend="SetTitleColor"/>.
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          Pie chart labels used the grid color set with
-          <xref linkend="SetGridColor"/>.
-        </para>
-      </listitem>
-    </itemizedlist>
+        <itemizedlist>
+          <listitem>
+            <para>
+Tick labels and axis data labels all used the color set with
+<xref linkend="SetTextColor"/>.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+Data value labels (incorrectly) used the title color set with
+<xref linkend="SetTitleColor"/>.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+Pie chart labels used the grid color set with <xref linkend="SetGridColor"/>.
+            </para>
+          </listitem>
+        </itemizedlist>
 Except for data value labels, the defaults are backwards compatible. That
 is, if you use <function>SetGridColor()</function> and do not use the new
 <function>SetPieLabelColor()</function>, your pie chart labels will display
 in the same color with all releases.
-  </para>
+      </para>
+    </listitem>
 
-  <para>
+    <listitem>
+      <para>
+The legend background uses the overall image background color set with
+<xref linkend="SetBackgroundColor"/> by default.
+Starting with PHPlot-6.0.0, you can set the legend background color
+separately with <xref linkend="SetLegendBgColor"/>.
+      </para>
+    </listitem>
+
+    <listitem>
+      <para>
 The legend color box borders use the color set with
 <xref linkend="SetTextColor"/> by default. Starting with PHPlot-6.0.0,
 you can use the colors set with <xref linkend="SetDataBorderColors"/>
 instead. See <xref linkend="SetLegendColorboxBorders"/>.
-  </para>
+      </para>
+    </listitem>
 
-</note>
+    <listitem>
+      <para>
+Legend text uses the general text color set with <xref linkend="SetTextColor"/>
+by default.  Starting with PHPlot-6.0.0, you can set the legend text color
+separately with <xref linkend="SetLegendTextColor"/>.
+      </para>
+    </listitem>
+  </itemizedlist>
+</para>
 
 </sect2>
 
@@ -3163,7 +3191,7 @@ Here is a sample plot with the titles called out.
 <para>
 PHPlot can draw a legend on the plot. This is normally used with multiple
 data sets, to identify the data sets by color.
-A legend can also be used with pie charts to identify the sections.
+A legend can also be used with pie charts to identify the segments.
 For a list of functions used to control the legend,
 see <xref linkend="ref-legend"/>.
 </para>
@@ -3185,13 +3213,27 @@ or <xref linkend="SetLegendPosition"/>.
     </listitem>
     <listitem>
       <para>
-You can use <xref linkend="SetLegendStyle"/>,
-<xref linkend="SetLegendUseShapes"/>,
-<xref linkend="SetLegendReverse"/>, and
-<xref linkend="SetLegendColorboxBorders"/>
- to change the appearance of the legend.
+You can change the legend text color with <xref linkend="SetTextColor"/> or
+<xref linkend="SetLegendTextColor"/>, and the
+background color with <xref linkend="SetLegendBgColor"/>.
+You can control the color box border colors with
+<xref linkend="SetLegendColorboxBorders"/>.
+The colors of the color boxes or shape markers automatically match the
+colors of the plotted data sets, and you cannot control those colors
+separately from the data colors.
+See also <xref linkend="conc-colors-elements"/>.
       </para>
     </listitem>
+    <listitem>
+      <para>
+Other aspects of the legend appearance can also be changed.
+Use <xref linkend="SetLegendStyle"/> to control the text and color box
+alignment, <xref linkend="SetLegendUseShapes"/> to select color boxes or
+shape markers, and <xref linkend="SetLegendReverse"/> if you want the
+entries in the legend ordered from bottom to top.
+      </para>
+    </listitem>
+
   </itemizedlist>
 </para>
 
