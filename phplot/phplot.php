@@ -123,12 +123,14 @@ class PHPlot
     protected $label_format = array('x' => array(), 'xd' => array(), 'y' => array(), 'yd' => array());
     protected $label_scale_position = 0.5;
     protected $legend;
+    protected $legend_bg_color;
     protected $legend_colorbox_align = 'right';
     public $legend_colorbox_width = 1;
     protected $legend_colorbox_borders = 'textcolor';
     protected $legend_pos;
     protected $legend_reverse_order = FALSE;
     protected $legend_text_align = 'right';
+    protected $legend_text_color;
     protected $legend_use_shapes = FALSE;
     protected $light_grid_color;
     protected $line_spacing = 4;
@@ -151,6 +153,8 @@ class PHPlot
     protected $ndx_grid_color;
     protected $ndx_i_border;
     protected $ndx_i_border_dark;
+    protected $ndx_legend_bg_color;
+    protected $ndx_legend_text_color;
     protected $ndx_light_grid_color;
     protected $ndx_pieborder_color;
     protected $ndx_pielabel_color;
@@ -702,6 +706,22 @@ class PHPlot
     {
         $this->transparent_color = empty($which_color) ? NULL : $this->SetRGBColor($which_color);
         return ($this->transparent_color !== FALSE); // True unless SetRGBColor() returned an error
+    }
+
+    /*
+     * Set the color used for the legend background. This will default to the image background color.
+     */
+    function SetLegendBgColor($which_color)
+    {
+        return (bool)($this->legend_bg_color = $this->SetRGBColor($which_color));
+    }
+
+    /*
+     * Set the color used for the legend text. This will default to the general text color.
+     */
+    function SetLegendTextColor($which_color)
+    {
+        return (bool)($this->legend_text_color = $this->SetRGBColor($which_color));
     }
 
     /*
@@ -2992,6 +3012,10 @@ class PHPlot
         // Allocate main data colors. For other colors used for data, see the functions which follow.
         $this->ndx_data_colors = $this->GetColorIndexArray($this->data_colors, $n_data);
         $this->ndx_data_border_colors = $this->GetColorIndexArray($this->data_border_colors, $n_border);
+
+        // Legend colors: background defaults to image background, text defaults to general text color.
+        $this->ndx_legend_bg_color = $this->GetColorIndex($this->legend_bg_color, $this->ndx_bg_color);
+        $this->ndx_legend_text_color = $this->GetColorIndex($this->legend_text_color, $this->ndx_text_color);
 
         // Set up a color as transparent, if SetTransparentColor was used.
         if (!empty($this->transparent_color)) {
@@ -5529,7 +5553,7 @@ class PHPlot
 
         // Draw outer box
         ImageFilledRectangle($this->img, $box_start_x, $box_start_y, $box_end_x, $box_end_y,
-                             $this->ndx_bg_color);
+                             $this->ndx_legend_bg_color);
         ImageRectangle($this->img, $box_start_x, $box_start_y, $box_end_x, $box_end_y,
                        $this->ndx_grid_color);
 
@@ -5582,7 +5606,7 @@ class PHPlot
 
         foreach ($this->legend as $leg) {
             // Draw text with requested alignment:
-            $this->DrawText('legend', 0, $x_pos, $yc, $this->ndx_text_color, $leg,
+            $this->DrawText('legend', 0, $x_pos, $yc, $this->ndx_legend_text_color, $leg,
                             $this->legend_text_align, 'center');
             if ($colorbox_mode) {
                 $y1 = $y_pos - $dot_height + 1;
