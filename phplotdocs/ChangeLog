@@ -4,6 +4,17 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2013-01-17 (/branches/Rel6)
+    * More changes for feature request #29 "Finer control over plot element
+      colors":
+      + .ispell_words: Added new method names.
+      + variables.list: Listed 4 new variables for legend color control.
+      + functions.xml: Added links to 2 new functions.
+      + concepts.xml: Updated element color table and notes, and legend
+        section, to account for new functions.
+      + reference.xml: Documented new functions SetLegendBgColor() and
+        SetLegendTextColor(), and updated some cross-references.
+
 * 2013-01-02 (/branches/Rel6)
     * main.xml: Extend copyright to 2013
     * developer.xml: Member Variable Notes, plots[]: rewrote top description
