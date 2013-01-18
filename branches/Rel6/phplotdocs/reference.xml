@@ -1188,6 +1188,15 @@ Background image overrides background color;
 background color is ignored if a background image was set with
 <xref linkend="SetBgImage" />.
     </para>
+    <para>
+The background color shows through in the plot area too, unless the plot
+area background is changed with <xref linkend="SetPlotBgColor"/>
+or <xref linkend="SetPlotAreaBgImage"/>.
+    </para>
+    <para>
+The background color is used as the legend background, unless
+<xref linkend="SetLegendBgColor"/> is used to change it.
+    </para>
   </refsect1>
 </refentry>
 
@@ -4122,6 +4131,69 @@ Through PHPlot-5.3.0, passing NULL would cause an error.
   </refsect1>
 </refentry>
 
+<refentry id="SetLegendBgColor">
+  <refmeta>
+    <refentrytitle>SetLegendBgColor</refentrytitle>
+  </refmeta>
+
+  <refnamediv>
+    <refname>SetLegendBgColor</refname>
+    <refpurpose>Set legend background color</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <synopsis>$plot-&gt;SetLegendBgColor(<parameter>$color</parameter>)</synopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Description</title>
+    <para>
+<function>SetLegendBgColor</function> sets the background color used in the
+legend.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Parameters</title>
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>$color</replaceable></term>
+        <listitem>
+          <para>
+Color value to use.
+See <xref linkend="conc-colors" /> for more on color values.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Notes</title>
+    <para>
+If <function>SetLegendBgColor</function> is not used, the legend background
+color will be the same as the image background color.
+The image background color is set with <xref linkend="SetBackgroundColor"/>,
+and defaults to white.
+    </para>
+    <para>
+If you position the legend outside the plot area, this function is useful to
+make it stand out more, by using a color that differs from image background
+color. Similarly, if your legend is positioned inside the plot area, but you
+have not changed the plot area background, you can use this function to make
+the legend stand out with a different background color.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>History</title>
+    <para>
+This function was added in PHPlot-6.0.0. In earlier releases, the legend
+background was always drawn using the image background color.
+    </para>
+  </refsect1>
+</refentry>
+
 <refentry id="SetLegendColorboxBorders">
   <refmeta>
     <refentrytitle>SetLegendColorboxBorders</refentrytitle>
@@ -4647,6 +4719,62 @@ but was never used. It was removed at PHPlot-5.4.0.
     </para>
     <para>
 This function was added to PHPlot-5.0.4.
+    </para>
+  </refsect1>
+</refentry>
+
+<refentry id="SetLegendTextColor">
+  <refmeta>
+    <refentrytitle>SetLegendTextColor</refentrytitle>
+  </refmeta>
+
+  <refnamediv>
+    <refname>SetLegendTextColor</refname>
+    <refpurpose>Set legend text color</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <synopsis>$plot-&gt;SetLegendTextColor(<parameter>$color</parameter>)</synopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Description</title>
+    <para>
+<function>SetLegendTextColor</function> sets the color used for lines of text
+in the legend.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Parameters</title>
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>$color</replaceable></term>
+        <listitem>
+          <para>
+Color value to use.
+See <xref linkend="conc-colors" /> for more on color values.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Notes</title>
+    <para>
+If <function>SetLegendTextColor</function> is not used, text in the legend
+will be drawn using the general text color as set with
+<xref linkend="SetTextColor"/>.
+The default for the general text color is black.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>History</title>
+    <para>
+This function was added in PHPlot-6.0.0. In earlier releases, the text
+in the legend was always drawn using the general text color.
     </para>
   </refsect1>
 </refentry>
@@ -7916,8 +8044,8 @@ By default, no tick marks or labels are skipped.
   <refsect1>
     <title>Description</title>
     <para>
-<function>SetTextColor</function> sets the color which is used for
-legend text, and the default color used for tick labels and data labels.
+<function>SetTextColor</function> sets the default color which is used for
+legend text, tick labels, and data labels.
     </para>
   </refsect1>
 
@@ -7949,6 +8077,13 @@ the color for labels: <xref linkend="SetDataLabelColor"/>,
 All of these elements default to using the color set with
 <function>SetTextColor</function>.
     </para>
+
+    <para>
+Starting with PHPlot-6.0.0, the legend text color can be set with
+<xref linkend="SetLegendTextColor"/>. If that function is not used,
+then the legend text uses the color set with <function>SetTextColor</function>.
+    </para>
+
   </refsect1>
 
   <refsect1>
