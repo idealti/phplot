@@ -3161,15 +3161,16 @@ class PHPlot
         $sum_vals = !empty(self::$plots[$this->plot_type]['sum_vals']); // Add up values in each row
         $abs_vals = !empty(self::$plots[$this->plot_type]['abs_vals']); // Take absolute values
 
-        // These need to be initialized in case there are multiple plots and missing data points.
+        // Initialize arrays which track the min/max per-row dependent values:
         $this->data_min = array();
         $this->data_max = array();
 
         // Independent values are in the data array or assumed?
         if ($this->datatype_implied) {
-            $all_iv = array(0, $this->num_data_rows - 1);
+            // Range for text-data is 0.5 to num_data_rows-0.5. Add 0.5 fixed margins on each side.
+            $all_iv = array(0, $this->num_data_rows);
         } else {
-            $all_iv = array();
+            $all_iv = array(); // Calculated below
         }
         // For X/Y/Z plots, make sure these are not left over from a previous plot.
         if ($this->datatype_yz)
@@ -3710,8 +3711,6 @@ class PHPlot
             // Regular numeric range: calculate a 1/2/5*10^N step.
             $tick_step = $this->CalcStep125($range, $min_ticks);
         }
-        if ($this->GetCallback('debug_scale'))
-            $this->DoCallback('debug_scale', __FUNCTION__, compact('range', 'tick_step'));
         return $tick_step;
     }
 
@@ -3719,23 +3718,17 @@ class PHPlot
      * Helper for CalcPlotRange() - set initial values for plot_min or plot_max.
      *  $plot_limit : Reference to plot_min_x, plot_max_x, plot_min_y, or plot_max_y (which might be unset)
      *  $implied : True if this is the implied variable (X for vertical plots).
-     *  $min_flag : True if this is the lower bound (only difference is for $implied case).
      *  $data_limit : Actual data limit at this end: one of min_x, max_x,  etc.
-     *  $adjust_flag : Will be True on return if the return value needs further adjustment.
-     * Returns: The initial value of the range limit.
+     * Returns: 2 values in an array: The initial value of the range limit, and the adjustment flag.
      */
-    protected function CalcRangeInit(&$plot_limit, $implied, $min_flag, $data_limit, &$adjust_flag)
+    protected function CalcRangeInit(&$plot_limit, $implied, $data_limit)
     {
-        $adjust_flag = FALSE;
         if (isset($plot_limit) && $plot_limit !== '') {
-            $result = $plot_limit;   // Use user-supplied value, if set
-        } elseif ($implied) {
-            $result = $min_flag ? 0 : $data_limit + 1;  // Implied limit, e.g. X in text-data
-        } else {
-            $result = $data_limit;   // Start with the data limit
-            $adjust_flag = TRUE;     // Flag this as needing adjustment
+            // Use the user-supplied value, and do no further adjustments.
+            return array($plot_limit, FALSE);
         }
-        return $result;
+        // Start with the actual data range. Set adjustment flag TRUE unless the range was implied.
+        return array($data_limit, !$implied);
     }
 
     /*
@@ -3800,21 +3793,15 @@ class PHPlot
      */
     protected function CalcPlotRange($which)
     {
-        // Copy the variables for X or Y into local variables, applying defaults.
-        // Notes:
-        //   end_adjust defaults to 0.3 for the dependent variable, no adjustment for independent variable.
-        //   integer_step defaults to false if [xy]_tick_inc_integer is not set.
-        //   datetime tick increment is used if specified by user or if Set*LabelType('time') was called.
-        //   zero_magnet defaults to 0.857142 which is 6/7, giving up to 600% range increase.
-
         // Independent variable is X in the usual vertical plots; Y in horizontal plots:
         $independent_variable = ($this->datatype_swapped_xy XOR $which == 'x');
         // 'implied' means this is a non-explicitly given independent variable, e.g. X in 'text-data'.
         $implied = $this->datatype_implied && $independent_variable;
 
+        // Copy the variables for X or Y into local variables.
         if ($which == 'x') {
-            $plot_min = $this->CalcRangeInit($this->plot_min_x, $implied, TRUE, $this->min_x, $adjust_min);
-            $plot_max = $this->CalcRangeInit($this->plot_max_x, $implied, FALSE, $this->max_x, $adjust_max);
+            list($plot_min, $adjust_min) = $this->CalcRangeInit($this->plot_min_x, $implied, $this->min_x);
+            list($plot_max, $adjust_max) = $this->CalcRangeInit($this->plot_max_x, $implied, $this->max_x);
             $tick_inc = $this->x_tick_inc_u;
             $num_ticks = $this->num_x_ticks;
             $min_ticks = $this->x_min_ticks;
@@ -3823,8 +3810,8 @@ class PHPlot
             $datetime = $this->x_datetime_interval;
             $integer_step = $this->x_tick_inc_integer;
         } else { // Assumed 'y'
-            $plot_min = $this->CalcRangeInit($this->plot_min_y, $implied, TRUE, $this->min_y, $adjust_min);
-            $plot_max = $this->CalcRangeInit($this->plot_max_y, $implied, FALSE, $this->max_y, $adjust_max);
+            list($plot_min, $adjust_min) = $this->CalcRangeInit($this->plot_min_y, $implied, $this->min_y);
+            list($plot_max, $adjust_max) = $this->CalcRangeInit($this->plot_max_y, $implied, $this->max_y);
             $tick_inc = $this->y_tick_inc_u;
             $num_ticks = $this->num_y_ticks;
             $min_ticks = $this->y_min_ticks;
@@ -3835,6 +3822,7 @@ class PHPlot
         }
         if (!isset($end_adjust))
             $end_adjust = ($independent_variable ? 0 : 0.3);
+        // datetime tick increment is used if specified by user or if Set*LabelType('time') was called.
         if (!isset($datetime))
             $datetime = (isset($this->label_format[$which]['type'])
                             && $this->label_format[$which]['type'] == 'time');
@@ -3913,11 +3901,6 @@ class PHPlot
         // Final error check to ensure the range is positive.
         if ($plot_min >= $plot_max) $plot_max = $plot_min + 1;
 
-        if ($this->GetCallback('debug_scale')) {
-            $this->DoCallback('debug_scale', __FUNCTION__,
-                              compact('which', 'plot_min', 'plot_max', 'tick_inc'));
-        }
-
         // Return the calculated values. (Note these get stored back into class variables.)
         return array($tick_inc, $plot_min, $plot_max);
     }
@@ -3935,6 +3918,12 @@ class PHPlot
     {
         list($this->x_tick_inc, $this->plot_min_x, $this->plot_max_x) = $this->CalcPlotRange('x');
         list($this->y_tick_inc, $this->plot_min_y, $this->plot_max_y) = $this->CalcPlotRange('y');
+        if ($this->GetCallback('debug_scale')) {
+            $this->DoCallback('debug_scale', __FUNCTION__, array(
+                'plot_min_x' => $this->plot_min_x, 'plot_min_y' => $this->plot_min_y,
+                'plot_max_x' => $this->plot_max_x, 'plot_max_y' => $this->plot_max_y,
+                'x_tick_inc' => $this->x_tick_inc, 'y_tick_inc' => $this->y_tick_inc));
+        }
         return isset($this->x_tick_inc, $this->y_tick_inc); // Pass thru FALSE return from CalcPlotRange()
     }
 
