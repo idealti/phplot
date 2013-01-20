@@ -2,6 +2,14 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2013-01-19 (/branches/Rel6)
+    * Minor changes related to range and tick calculations.
+      + Changed FindDataLimits() results for 'implied' range case to include
+        the margins, so CalcRangeInit() does not have to adjust them now.
+      + Simplified usage of internal CalcRangeInit().
+      + Moved debug_scale callbacks from CalcStep() and CalcPlotRange() to
+        caller CalcPlotAreaWorld(), to make it more consistent with 5.8.0.
+
 2013-01-17 (/branches/Rel6)
     * More changes for feature request #29 "Finer control over plot element
       colors":
@@ -27,7 +35,6 @@ The project home page is http://sourceforge.net/projects/phplot/
       can check for a minimum version. For PHPlot-6.0.0 the value is 60000.
 
 2012-12-23 (/branches/Rel6)
-
     * Feature request #50 "Control legend colorbox borders":
 
       + Added new method SetLegendColorboxBorders($mode) to control the color
