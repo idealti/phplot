@@ -1,5 +1,5 @@
 This is phplotdocs/etc/README, for the PHPlot Reference Manual extra files
-Last updated on 2012-12-26
+Last updated on 2013-02-25
 -----------------------------------------------------------------------------
 
 These are extra files and scripts which were originally used to produce the
@@ -14,6 +14,12 @@ colors.php
 
 error-image.php
   This makes error-image.png, the figure in Concepts showing an error.
+
+fig-autorange-a.php
+fig-autorange-b.php
+fig-autorange-c.php
+  These make fig-autorange-*.png, the figures in the Advanced - Plot Range
+  section. fig-autorange-a.php is the master script, which the others call.
 
 fonts.php
   This makes fonts.png, the figure showing built-in and TrueType fonts.
