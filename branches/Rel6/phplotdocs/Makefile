@@ -42,6 +42,9 @@ STATIC_IMAGES=\
   images/drop.png \
   images/encodeimage.png \
   images/error-image.png \
+  images/fig-autorange-a.png \
+  images/fig-autorange-b.png \
+  images/fig-autorange-c.png \
   images/fonts.png \
   images/gdinfo.png \
   images/imagemap-bars.png \
