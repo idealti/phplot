@@ -4,6 +4,48 @@ Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
 
+* 2013-03-01 (/branches/Rel6)
+    * Documented latest changes to auto-range and auto-tick calculations,
+      including moving from tuning variables to Tune*() functions.
+
+      + advanced.xml: Added new section on auto-range and auto-tick
+        calculations, and removed section on tuning variables for these
+        since those variables no longer exist.
+
+      + concepts.xml: Rewrote text that said PHPlot does a bad job with tick
+        increments.
+
+      + developer.xml: Documented usage change to internal CalcStep().  Listed
+        3 new internal functions. Rewrote notes on $plots array because the
+        table cells were too big, and added the new adjust_type key. Also
+        added notes on the 2 new class arrays.
+
+      + functions.xml: Added links to 4 new functions.
+
+      + reference.xml: Documented 4 new public functions Tune*(). Added
+        cross-reference links to the new functions and new section in Advanced.
+
+      + variables.list: Removed 6 class variables and replaced them with 2
+        arrays.
+
+      + etc/fig-autorange-[abc].php: New source scripts for new figures.
+      + etc/README: Added info on new auto-range image scripts.
+      + images/fig-autorange-[abc].png: New figures used in new section
+        on auto-range.
+
+      + examples.xml, examples/ohlcbasic.php, examples/ohlccandlesticks.php,
+        examples/ohlccandlesticks2.php: These 3 OHLC examples did not look
+        right after PHPlot-6.0.0 extended the Y range to include zero, so
+        added tuning function to turn that feature off.
+
+      + examples/ytickanchor.php: Fixed example. This was meant to show the
+        need for setting a Y tick anchor at 0, but the 'before' case no longer
+        had the problem because PHPlot-6.0.0 by default fixes it. Added use
+        of SetPlotAreaWorld() to force the issue, so the example 'works' again.
+
+      + Makefile: List 3 new static image files for release.
+      + .ispell_words: Added new method names.
+
 * 2013-01-17 (/branches/Rel6)
     * More changes for feature request #29 "Finer control over plot element
       colors":
