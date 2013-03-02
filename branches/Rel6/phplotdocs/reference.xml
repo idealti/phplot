@@ -5508,13 +5508,14 @@ You will have an X range from 0 to 200, with 10 intervals of 20 units.
 If neither <function>SetNumXTicks</function> nor 
 <xref linkend="SetXTickIncrement" /> is used, the tick interval
 is automatically calculated by PHPlot.
+See <xref linkend="adv-autorange-tick"/> for details.
     </para>
   </refsect1>
   <refsect1>
     <title>History</title>
     <para>
 Before PHPlot-6.0.0, if neither the number of ticks nor the tick increment
-were specified, PHPlot calculated the tick increment as 1/10 of the X data
+was specified, PHPlot calculated the tick increment as 1/10 of the X data
 range.
 Starting with PHPlot-6.0.0, a more complex algorithm is used which tries
 to produce 'natural' tick increments.
@@ -5603,13 +5604,14 @@ You will have a Y range from -10 to 10, with 20 intervals of 1 unit each.
 If neither <function>SetNumYTicks</function> nor 
 <xref linkend="SetYTickIncrement" /> is used, the tick interval
 is automatically calculated by PHPlot.
+See <xref linkend="adv-autorange-tick"/> for details.
     </para>
   </refsect1>
   <refsect1>
     <title>History</title>
     <para>
 Before PHPlot-6.0.0, if neither the number of ticks nor the tick increment
-were specified, PHPlot calculated the tick increment as 1/10 of the Y data
+was specified, PHPlot calculated the tick increment as 1/10 of the Y data
 range.
 Starting with PHPlot-6.0.0, a more complex algorithm is used which tries
 to produce 'natural' tick increments.
@@ -6711,6 +6713,11 @@ use:
     <para>
 This function has no effect with pie charts, because they do not use world
 coordinates.
+    </para>
+    <para>
+See <xref linkend="adv-autorange"/> for more information about how PHPlot
+calculates the limits of the World Coordinate space in the absence of values
+set with <function>SetPlotAreaWorld</function>.
     </para>
   </refsect1>
   <refsect1>
@@ -9644,11 +9651,22 @@ If omitted or NULL, the default of not using an anchor is restored.
   <refsect1>
     <title>Notes</title>
     <para>
-By default, there is no anchor point for X tick marks. PHPlot will
-generally place the left-most tick mark at the left of the X axis range.
+By default, PHPlot will place the left-most tick mark at the left end of
+the X axis range.
 For example, if the X range is -5 to 5, and the tick increment is 2, tick
 marks will be placed at X=-5, -3, -1, 1, 3, and 5.
-Note there is no tick mark at the Y axis position X=0.
+Note that in this case there would be no tick mark at the Y axis position X=0.
+    </para>
+    <para>
+When using the default method of calculating and adjusting the plot range,
+PHPlot will select a whole multiple of the tick increment as the left end
+of the X plot range. Another way of looking at this is that PHPlot implicitly
+anchors the X tick marks at 0, when it calculates the range with the
+default adjustment method.
+If you set the plot range with <xref linkend="SetPlotAreaWorld"/>, or
+change the range end adjustment method, the tick marks may not be anchored
+at 0 unless you use <function>SetXTickAnchor(0)</function>.
+More on this can be found in <xref linkend="adv-autorange"/>.
     </para>
     <para>
 If an X tick anchor is set, and its value is within the plotted range,
@@ -9673,6 +9691,17 @@ See <xref linkend="ex-xtickanchor"/> for an example of setting an X tick anchor.
 
   <refsect1>
     <title>History</title>
+    <para>
+This function did not change at PHPlot-6.0.0, however a new method of
+automatically calculating the plot range was introduced which always
+anchors the X tick marks at 0, when using the default settings.
+Therefore, <function>SetXTickAnchor(0)</function> is usually no
+longer needed to get a tick mark at X=0.
+In releases before PHPlot-6.0.0, <function>SetXTickAnchor</function> was
+usually necessary to get reasonable tick marks, unless the left end of the X
+plot range happened to be 0, or was set to 0 or a multiple of the tick
+increment.
+    </para>
     <para>
 This function was added in PHPlot-5.4.0.
     </para>
@@ -9747,7 +9776,7 @@ defaults.)
 
   <refnamediv>
     <refname>SetXTickIncrement</refname>
-    <refpurpose>Set the interval between X ticks</refpurpose>
+    <refpurpose>Set the length of the interval between X ticks</refpurpose>
   </refnamediv>
 
   <refsynopsisdiv>
@@ -9757,8 +9786,8 @@ defaults.)
   <refsect1>
     <title>Description</title>
     <para>
-<function>SetXTickIncrement</function> sets the interval between X tick
-marks.
+<function>SetXTickIncrement</function> sets the length of the interval between
+X tick marks (the tick increment, or tick step).
 You can use either this function or <xref linkend="SetNumXTicks" />
 (but not both) to control the tick mark spacing.
     </para>
@@ -9771,7 +9800,7 @@ You can use either this function or <xref linkend="SetNumXTicks" />
         <term><replaceable>$ti</replaceable></term>
         <listitem>
           <para>
-Desired tick interval, in world coordinates.
+Desired tick increment, in world coordinates.
 If the value is omitted or an empty string, the default behavior is restored.
           </para>
         </listitem>
@@ -9785,6 +9814,7 @@ If the value is omitted or an empty string, the default behavior is restored.
 If neither <function>SetXTickIncrement</function> nor 
 <xref linkend="SetNumXTicks" /> is used, the tick interval
 is automatically calculated by PHPlot.
+See <xref linkend="adv-autorange-tick"/> for details.
     </para>
   </refsect1>
 
@@ -11218,11 +11248,22 @@ If omitted or NULL, the default of not using an anchor is restored.
   <refsect1>
     <title>Notes</title>
     <para>
-By default, there is no anchor point for Y tick marks. PHPlot will
-generally place the bottom-most tick mark at the bottom of the Y axis range.
+By default, PHPlot will place the bottom-most tick mark at the bottom of
+the Y axis range.
 For example, if the Y range is -5 to 5, and the tick increment is 2, tick
 marks will be placed at Y=-5, -3, -1, 1, 3, and 5.
-Note there is no tick mark at the X axis position Y=0.
+Note that in this case there would be no tick mark at the X axis position Y=0.
+    </para>
+    <para>
+When using the default method of calculating and adjusting the plot range,
+PHPlot will select a whole multiple of the tick increment as the bottom
+of the Y plot range. Another way of looking at this is that PHPlot implicitly
+anchors the Y tick marks at 0, when it calculates the range with the
+default adjustment method.
+If you set the plot range with <xref linkend="SetPlotAreaWorld"/>, or
+change the range end adjustment method, the tick marks may not be anchored
+at 0 unless you use <function>SetYTickAnchor(0)</function>.
+More on this can be found in <xref linkend="adv-autorange"/>.
     </para>
     <para>
 If a Y tick anchor is set, and its value is within the plotted range,
@@ -11247,6 +11288,17 @@ See <xref linkend="ex-ytickanchor"/> for an example of setting a Y tick anchor.
 
   <refsect1>
     <title>History</title>
+    <para>
+This function did not change at PHPlot-6.0.0, however a new method of
+automatically calculating the plot range was introduced which always
+anchors the Y tick marks at 0, when using the default settings.
+Therefore, <function>SetYTickAnchor(0)</function> is usually no
+longer needed to get a tick mark at Y=0.
+In releases before PHPlot-6.0.0, <function>SetYTickAnchor</function> was
+usually necessary to get reasonable tick marks, unless the bottom of the Y
+plot range happened to be 0, or was set to 0 or a multiple of the tick
+increment.
+    </para>
     <para>
 This function was added in PHPlot-5.4.0.
     </para>
@@ -11308,7 +11360,7 @@ See figure under <xref linkend="SetXTickCrossing" />.
 
   <refnamediv>
     <refname>SetYTickIncrement</refname>
-    <refpurpose>Set the interval between Y ticks</refpurpose>
+    <refpurpose>Set the length of the interval between Y ticks</refpurpose>
   </refnamediv>
 
   <refsynopsisdiv>
@@ -11318,8 +11370,8 @@ See figure under <xref linkend="SetXTickCrossing" />.
   <refsect1>
     <title>Description</title>
     <para>
-<function>SetYTickIncrement</function> sets the interval between Y tick
-marks.
+<function>SetYTickIncrement</function> sets the length of the interval between
+Y tick marks (the tick increment, or tick step).
 You can use either this function or <xref linkend="SetNumYTicks" />
 (but not both) to control the tick mark spacing.
     </para>
@@ -11332,7 +11384,7 @@ You can use either this function or <xref linkend="SetNumYTicks" />
         <term><replaceable>$ti</replaceable></term>
         <listitem>
           <para>
-Desired tick interval, in world coordinates.
+Desired tick increment, in world coordinates.
 If the value is omitted or an empty string, the default behavior is restored.
           </para>
         </listitem>
@@ -11346,6 +11398,7 @@ If the value is omitted or an empty string, the default behavior is restored.
 If neither <function>SetYTickIncrement</function> nor 
 <xref linkend="SetNumYTicks" /> is used, the tick interval
 is automatically calculated by PHPlot.
+See <xref linkend="adv-autorange-tick"/> for details.
     </para>
   </refsect1>
 
@@ -11903,6 +11956,490 @@ See <xref linkend="PrintImageFrame"/> for a partial example, and
     <para>
 This function was added in PHPlot-5.8.0.
 Prior releases are not able to produce streaming plots.
+    </para>
+  </refsect1>
+</refentry>
+
+<refentry id="TuneXAutoRange">
+  <refmeta>
+    <refentrytitle>TuneXAutoRange</refentrytitle>
+  </refmeta>
+
+  <refnamediv>
+    <refname>TuneXAutoRange</refname>
+    <refpurpose>Adjust tuning parameters for X axis range calculation</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <synopsis>$plot-&gt;TuneXAutoRange(<optional><parameter>$zero_magnet</parameter></optional>, <optional><parameter>$adjust_mode</parameter></optional>, <optional><parameter>$adjust_amount</parameter></optional>)</synopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Description</title>
+    <para>
+<function>TuneXAutoRange</function> is used to adjust the parameters used by
+PHPlot when automatically calculating the plot range of the X axis.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Parameters</title>
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>$zero_magnet</replaceable></term>
+        <listitem>
+          <para>
+Optional value for the X axis <emphasis>zero magnet</emphasis>, which
+controls how far PHPlot will extend the plot range to include 0 if it doesn't
+already include 0.
+This is a floating point value between 0 and 1 inclusive, where 0 disables
+the zero magnet, and 1 requires the range be always extended to include 0.
+See <xref linkend="autorange-zero-magnet"/> for more information.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><replaceable>$adjust_mode</replaceable></term>
+        <listitem>
+          <para>
+Optional value for the X axis range extension mode, which determines the
+method PHPlot uses to extend the end of the plot range beyond the data
+range. This is a single character: <literal>T</literal> (extend to tick mark),
+<literal>I</literal> (extend to integer), or <literal>R</literal> (extend by
+factor only).
+See <xref linkend="autorange-adjust-mode"/> for more information.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><replaceable>$adjust_amount</replaceable></term>
+        <listitem>
+          <para>
+Optional value for the X axis range extension amount. This is a factor
+of the overall range by which the range is extended to leave extra room for
+labels, plot markers, etc.
+See the <xref linkend="autorange-adjust-amount"/> for more information.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Notes</title>
+    <para>
+Specifying <literal>NULL</literal>, or omitting trailing unused parameters,
+results in no change to that parameter.
+    </para>
+    <para>
+If one or both ends of the plot range are set with
+<xref linkend="SetPlotAreaWorld"/>, then PHPlot does not calculate or
+adjust those values.
+PHPlot also does not adjust the plot range for the X axis in the case where
+X values are implied, rather than specified, in the data array
+(data type <link linkend="text-data">text-data</link>).
+    </para>
+    <para>
+This applies to the X axis only, where X is the independent variable for
+vertical plots, and the dependent variable for horizontal plots.
+See also <xref linkend="TuneYAutoRange"/>.
+    </para>
+
+    <para>
+See <xref linkend="adv-autorange-range"/> for more information on the
+range calculations and parameters.
+    </para>
+
+    <para>
+The default for the zero magnet is 6/7, which results in up to 600% range
+extension.
+The default adjustment mode is <literal>T</literal>, which forces the axis
+to end at a tick mark.
+The default adjustment amount is either 0% or 3% (0.03), depending on the
+plot type and whether X is the independent or dependent variable.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Example</title>
+    <para>
+If you do not want PHPlot to extend your X axis to include zero, even if it
+is relatively close, set the zero magnet to 0 to disable it.
+<programlisting><![CDATA[$plot->TuneXAutoRange(0);
+]]></programlisting>
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>History</title>
+    <para>
+This function was added in PHPlot-6.0.0.
+    </para>
+  </refsect1>
+</refentry>
+
+<refentry id="TuneYAutoRange">
+  <refmeta>
+    <refentrytitle>TuneYAutoRange</refentrytitle>
+  </refmeta>
+
+  <refnamediv>
+    <refname>TuneYAutoRange</refname>
+    <refpurpose>Adjust tuning parameters for Y axis range calculation</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <synopsis>$plot-&gt;TuneYAutoRange(<optional><parameter>$zero_magnet</parameter></optional>, <optional><parameter>$adjust_mode</parameter></optional>, <optional><parameter>$adjust_amount</parameter></optional>)</synopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Description</title>
+    <para>
+<function>TuneYAutoRange</function> is used to adjust the parameters used by
+PHPlot when automatically calculating the plot range of the Y axis.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Parameters</title>
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>$zero_magnet</replaceable></term>
+        <listitem>
+          <para>
+Optional value for the Y axis <emphasis>zero magnet</emphasis>, which
+controls how far PHPlot will extend the plot range to include 0 if it doesn't
+already include 0.
+This is a floating point value between 0 and 1 inclusive, where 0 disables
+the zero magnet, and 1 requires the range be always extended to include 0.
+See <xref linkend="autorange-zero-magnet"/> for more information.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><replaceable>$adjust_mode</replaceable></term>
+        <listitem>
+          <para>
+Optional value for the Y axis range extension mode, which determines the
+method PHPlot uses to extend the end of the plot range beyond the data
+range. This is a single character: <literal>T</literal> (extend to tick mark),
+<literal>I</literal> (extend to integer), or <literal>R</literal> (extend by
+factor only).
+See <xref linkend="autorange-adjust-mode"/> for more information.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><replaceable>$adjust_amount</replaceable></term>
+        <listitem>
+          <para>
+Optional value for the Y axis range extension amount. This is a factor
+of the overall range by which the range is extended to leave extra room for
+labels, plot markers, etc.
+See the <xref linkend="autorange-adjust-amount"/> for more information.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Notes</title>
+    <para>
+Specifying <literal>NULL</literal>, or omitting trailing unused parameters,
+results in no change to that parameter.
+    </para>
+    <para>
+If one or both ends of the plot range are set with
+<xref linkend="SetPlotAreaWorld"/>, then PHPlot does not calculate or
+adjust those values.
+PHPlot also does not adjust the plot range for the Y axis in the case where
+Y values are implied, rather than specified, in the data array
+(data type <link linkend="text-data-yx">text-data-yx</link>, used with
+horizontal plots).
+    </para>
+    <para>
+This applies to the Y axis only, where Y is the dependent variable for
+vertical plots, and the independent variable for horizontal plots.
+See also <xref linkend="TuneXAutoRange"/>.
+    </para>
+
+    <para>
+See <xref linkend="adv-autorange-range"/> for more information on the
+range calculations and parameters.
+    </para>
+
+    <para>
+The default for the zero magnet is 6/7, which results in up to 600% range
+extension.
+The default adjustment mode is <literal>T</literal>, which forces the axis
+to end at a tick mark.
+The default adjustment amount is either 0% or 3% (0.03), depending on the
+plot type and whether Y is the independent or dependent variable.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Examples</title>
+    <para>
+If you want a plot with 'zero suppression' (not including zero on the Y
+axis), you can disable the zero magnet as follows:
+<programlisting><![CDATA[$plot->TuneYAutoRange(0);
+]]></programlisting>
+This emphasizes small changes in large numbers.
+    </para>
+
+    <para>
+If you want PHPlot to set the plot range to exactly the data range,
+with no extensions or adjustments, set the zero magnet to 0 to disable it,
+select adjustment mode 'R' (range only), and set the adjustment amount to 0%.
+Your Y axis will go from the smallest to the largest Y value in your data
+array, with no extra space on either side.
+<programlisting><![CDATA[$plot->TuneYAutoRange(0, 'R', 0);
+]]></programlisting>
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>History</title>
+    <para>
+This function was added in PHPlot-6.0.0.
+    </para>
+  </refsect1>
+</refentry>
+
+<refentry id="TuneXAutoTicks">
+  <refmeta>
+    <refentrytitle>TuneXAutoTicks</refentrytitle>
+  </refmeta>
+
+  <refnamediv>
+    <refname>TuneXAutoTicks</refname>
+    <refpurpose>Adjust tuning parameters for X axis tick increment calculation</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <synopsis>$plot-&gt;TuneXAutoTicks(<optional><parameter>$min_ticks</parameter></optional>, <optional><parameter>$datetime_interval</parameter></optional>, <optional><parameter>$tick_inc_integer</parameter></optional>)</synopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Description</title>
+    <para>
+<function>TuneXAutoTicks</function> is used to adjust the parameters used by
+PHPlot when automatically calculating the tick increment along the X axis.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Parameters</title>
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>$min_ticks</replaceable></term>
+        <listitem>
+          <para>
+Sets the minimum number of tick intervals along the X axis.
+This is an integer greater than zero.
+See <xref linkend="autotick-min-ticks"/> for more information.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><replaceable>$datetime_interval</replaceable></term>
+        <listitem>
+          <para>
+Indicates whether to select tick a tick increment assuming that the values
+along the X axis represent date/time values.
+See <xref linkend="autotick-datetime-interval"/> for more information.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><replaceable>$tick_inc_integer</replaceable></term>
+        <listitem>
+          <para>
+If TRUE, forces PHPlot to pick a whole number (integer) tick increment.
+If FALSE, allows fractional tick increments.
+See the <xref linkend="autotick-tick-inc-integer"/> for more information.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Notes</title>
+    <para>
+Specifying <literal>NULL</literal>, or omitting trailing unused parameters,
+results in no change to that parameter.
+    </para>
+    <para>
+If the tick increment is set with <xref linkend="SetXTickIncrement"/> or
+indirectly with <xref linkend="SetNumXTicks"/>, then PHPlot does not need
+to calculate the tick increment, and the parameters set with
+<function>TuneXAutoTicks</function> are not used.
+    </para>
+    <para>
+This applies to the X axis only, where X is the independent variable for
+vertical plots, and the dependent variable for horizontal plots.
+See also <xref linkend="TuneYAutoTicks"/>.
+    </para>
+
+    <para>
+See <xref linkend="adv-autorange-tick"/> for more information on the
+tick increment calculations and parameters.
+    </para>
+
+    <para>
+The default for <literal>min_ticks</literal> is 5.
+The maximum number of tick intervals is about 2.5 times the minimum number.
+    </para>
+
+    <para>
+The default for <literal>datetime_interval</literal> depends on label
+formatting type along the X axis. If <xref linkend="SetXLabelType"/>('time')
+is used to select date/time formatting of labels, then the default for
+datetime_interval is TRUE, otherwise it is FALSE.
+    </para>
+
+    <para>
+The default for <literal>tick_inc_integer</literal> is FALSE, meaning PHPlot
+may use fractional tick increments. (Note this does not mean a tick
+increment such as 2.5 would ever be selected. PHPlot uses whole numbers
+above 1 and fractional increments between 0 and 1.)
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Example</title>
+    <para>
+Use a minimum of 10 tick intervals along the X axis, and do not allow tick
+increments less than 1:
+<programlisting><![CDATA[$plot->TuneXAutoRange(10, NULL, FALSE);
+]]></programlisting>
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>History</title>
+    <para>
+This function was added in PHPlot-6.0.0.
+    </para>
+  </refsect1>
+</refentry>
+
+<refentry id="TuneYAutoTicks">
+  <refmeta>
+    <refentrytitle>TuneYAutoTicks</refentrytitle>
+  </refmeta>
+
+  <refnamediv>
+    <refname>TuneYAutoTicks</refname>
+    <refpurpose>Adjust tuning parameters for Y axis tick increment calculation</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <synopsis>$plot-&gt;TuneYAutoTicks(<optional><parameter>$min_ticks</parameter></optional>, <optional><parameter>$datetime_interval</parameter></optional>, <optional><parameter>$tick_inc_integer</parameter></optional>)</synopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+    <title>Description</title>
+    <para>
+<function>TuneYAutoTicks</function> is used to adjust the parameters used by
+PHPlot when automatically calculating the tick increment along the Y axis.
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Parameters</title>
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>$min_ticks</replaceable></term>
+        <listitem>
+          <para>
+Sets the minimum number of tick intervals along the Y axis.
+This is an integer greater than zero.
+See <xref linkend="autotick-min-ticks"/> for more information.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><replaceable>$datetime_interval</replaceable></term>
+        <listitem>
+          <para>
+Indicates whether to select tick a tick increment assuming that the values
+along the Y axis represent date/time values.
+See <xref linkend="autotick-datetime-interval"/> for more information.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><replaceable>$tick_inc_integer</replaceable></term>
+        <listitem>
+          <para>
+If TRUE, forces PHPlot to pick a whole number (integer) tick increment.
+If FALSE, allows fractional tick increments.
+See the <xref linkend="autotick-tick-inc-integer"/> for more information.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1>
+    <title>Notes</title>
+    <para>
+Specifying <literal>NULL</literal>, or omitting trailing unused parameters,
+results in no change to that parameter.
+    </para>
+    <para>
+If the tick increment is set with <xref linkend="SetYTickIncrement"/> or
+indirectly with <xref linkend="SetNumYTicks"/>, then PHPlot does not need
+to calculate the tick increment, and the parameters set with
+<function>TuneYAutoTicks</function> are not used.
+    </para>
+    <para>
+This applies to the Y axis only, where Y is the dependent variable for
+vertical plots, and the independent variable for horizontal plots.
+See also <xref linkend="TuneXAutoTicks"/>.
+    </para>
+
+    <para>
+See <xref linkend="adv-autorange-tick"/> for more information on the
+tick increment calculations and parameters.
+    </para>
+
+    <para>
+The default for <literal>min_ticks</literal> is 5.
+The maximum number of tick intervals is about 2.5 times the minimum number.
+    </para>
+
+    <para>
+The default for <literal>datetime_interval</literal> depends on label
+formatting type along the Y axis. If <xref linkend="SetYLabelType"/>('time')
+is used to select date/time formatting of labels, then the default for
+datetime_interval is TRUE, otherwise it is FALSE.
+    </para>
+
+    <para>
+The default for <literal>tick_inc_integer</literal> is FALSE, meaning PHPlot
+may use fractional tick increments. (Note this does not mean a tick
+increment such as 2.5 would ever be selected. PHPlot uses whole numbers
+above 1 and fractional increments between 0 and 1.)
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>History</title>
+    <para>
+This function was added in PHPlot-6.0.0.
     </para>
   </refsect1>
 </refentry>
