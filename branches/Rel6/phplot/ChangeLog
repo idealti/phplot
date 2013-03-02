@@ -2,6 +2,29 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2013-03-01 (/branches/Rel6)
+    * Changes to range and tick calculations, still trying to get more
+      cases to come out right.
+      + Add per-plot-type tuning variable plots[]['adjust_type']. This is
+        to address the issue that some plot types need extra room around
+        the data points, and some do not.
+      + Moved the 6 class variables for tuning range and tick calculations
+        into 2 arrays $rangectl[] and $tickctl[], to make it easier to
+        access especially for new tuning functions.
+      + Added 2 new public functions for tuning plot range:
+        TuneXAutoRange() and TuneYAutoRange().
+        These are implemented by a new internal function TuneAutoRange().
+      + Added 2 new public functions for tuning tick calculations:
+        TuneXAutoTicks() and TuneYAutoTicks().
+        These are implemented by a new internal function TuneAutoTicks().
+      + New internal function GetRangeEndAdjust() which implements the new
+        per-plot-type default for range end adjustment.
+      + Changed usage of internal CalcStep(), which now gets parameters
+        directly from the new class variable arrays.
+      + Rewrote CalcPlotRange() - use the new class variable arrays, and
+        now implements 3 methods for adjusting the range endpoints.
+    Note: This is almost done. There is one known issue with tick anchors.
+
 2013-01-19 (/branches/Rel6)
     * Minor changes related to range and tick calculations.
       + Changed FindDataLimits() results for 'implied' range case to include
