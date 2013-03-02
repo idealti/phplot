@@ -940,7 +940,7 @@ which show the same data but with a different presentation.
 In this example, the data array is read from an external file in Comma
 Separated Value (CSV) format. (Financial data in this format is available
 for download from sites such as Yahoo! Finance.)
-An portion example of the data file can be found below.
+A portion of the data file can be found below.
 </para>
 <para>
 This example uses the dates from the data file as row labels in the data
@@ -950,6 +950,16 @@ first reads the data into a temporary array, sorts by the date, then copies
 the data into a PHPlot data array. Compare this with the other two OHLC
 examples, where the same data is used differently.
 </para>
+<para>
+This example uses <xref linkend="TuneYAutoRange"/> to disable the
+<emphasis>zero magnet</emphasis>, which would otherwise stretch the Y axis
+range to include 0. For many plots, including 0 on the axis is desirable,
+but for this financial plot we want to be able to see small changes in the
+values, and are less interested in the relative amounts.
+(The zero magnet feature was added at PHPlot-6.0.0, and the script tests
+for the method availability before using it.)
+</para>
+
 <example id="example-ohlcbasic">
 <?dbfo keep-together="auto"?>
 <title>Basic OHLC Plot</title>
@@ -1348,6 +1358,16 @@ that we want a tick mark and label at a specific value.
 First, here is the example without a Y tick anchor. Note that there is no Y
 tick mark or label at the X axis Y=0.
 </para>
+<note>
+  <para>
+The script uses <xref linkend="SetPlotAreaWorld"/> to set the Y axis range
+to -3.5 to 13.5. This is used here to illustrate the need for setting a Y
+tick anchor, and the effect of setting the Y tick anchor at 0.  Without
+<function>SetPlotAreaWorld()</function>, PHPlot-6.0.0 and later (but not
+older versions) will automatically calculate the Y range such that a tick
+mark will be at Y=0 even without <function>SetYTickAnchor(0)</function>.
+  </para>
+</note>
 <informalfigure>
   <mediaobject>
     <imageobject>
