@@ -39,7 +39,7 @@ class PHPlot
     const version_id = 60000;
 
     // All class variables are declared here, and initialized (if applicable).
-    // Starting with PHPlot-6.0, most variables are 'protected' class.
+    // Starting with PHPlot-6.0, most variables have 'protected' visibility
     // For description of all of these variables, see the Reference Manual, Developer's Guide, List
     // of Member Variables. The list below is in alphabetical order, matching the manual.
 
@@ -205,14 +205,17 @@ class PHPlot
         ),
         'bubbles' => array(
             'draw_method' => 'DrawBubbles',
+            'adjust_type' => 1, // See GetRangeEndAdjust()
         ),
         'candlesticks' => array(
             'draw_method' => 'DrawOHLC',
             'draw_arg' => array(TRUE, FALSE), // Draw candlesticks, only fill if "closed down"
+            'adjust_type' => 2, // See GetRangeEndAdjust()
         ),
         'candlesticks2' => array(
             'draw_method' => 'DrawOHLC',
             'draw_arg' => array(TRUE, TRUE), // Draw candlesticks, fill always
+            'adjust_type' => 2, // See GetRangeEndAdjust()
         ),
         'linepoints' => array(
             'draw_method' => 'DrawLinePoints',
@@ -225,6 +228,7 @@ class PHPlot
         'ohlc' => array(
             'draw_method' => 'DrawOHLC',
             'draw_arg' => array(FALSE), // Don't draw candlesticks
+            'adjust_type' => 2, // See GetRangeEndAdjust()
         ),
         'pie' => array(
             'draw_method' => 'DrawPieChart',
@@ -259,6 +263,16 @@ class PHPlot
     );
     protected $point_sizes = array(6);
     protected $print_image = TRUE;
+    protected $rangectl = array( 'x' => array(
+                                   'adjust_mode' => 'T',      // T=adjust to next tick
+                                   'adjust_amount' => NULL,   // See GetRangeEndAdjust()
+                                   'zero_magnet' => 0.857142, // Value is 6/7
+                                 ),
+                                 'y' => array(
+                                   'adjust_mode' => 'T',      // T=adjust to next tick
+                                   'adjust_amount' => NULL,   // See GetRangeEndAdjust()
+                                   'zero_magnet' => 0.857142, // Value is 6/7
+                                ));
     protected $record_bar_width;
     protected $records_per_group;
     protected $rgb_array;
@@ -278,6 +292,16 @@ class PHPlot
     protected $text_color;
     protected $thousands_sep;
     protected $tick_color;
+    protected $tickctl = array( 'x' => array(
+                                  'datetime_interval' => NULL,
+                                  'min_ticks' => 5,
+                                  'tick_inc_integer' => FALSE,
+                                ),
+                                'y' => array(
+                                  'datetime_interval' => NULL,
+                                  'min_ticks' => 5,
+                                  'tick_inc_integer' => FALSE,
+                               ));
     protected $ticklabel_color;
     protected $title_color;
     protected $title_offset;
@@ -292,19 +316,15 @@ class PHPlot
     protected $x_data_label_angle;    // Effective value; calculated or x_data_label_angle_u
     protected $x_data_label_angle_u = '';
     protected $x_data_label_pos;
-    public $x_datetime_interval;
-    public $x_end_adjust;
     protected $x_label_angle = 0;
     protected $x_label_axis_offset;
     protected $x_label_bot_offset;
     protected $x_label_top_offset;
     protected $x_left_margin;
-    public $x_min_ticks = 5;
     protected $x_right_margin;
     protected $x_tick_anchor;
     protected $x_tick_cross = 3;
     protected $x_tick_inc;    // Effective value; calculated or x_tick_inc_u
-    public $x_tick_inc_integer = FALSE;
     protected $x_tick_inc_u = '';
     protected $x_tick_label_pos;
     protected $x_tick_length = 5;
@@ -314,7 +334,6 @@ class PHPlot
     protected $x_title_pos = 'none';
     protected $x_title_top_offset;
     protected $x_title_txt = '';
-    public $x_zero_magnet = 0.857142;  // Value is 6/7
     protected $xscale;
     protected $xscale_type = 'linear';
     protected $y_axis_position;
@@ -322,17 +341,13 @@ class PHPlot
     protected $y_bot_margin;
     protected $y_data_label_angle = 0;
     protected $y_data_label_pos;
-    public $y_datetime_interval;
-    public $y_end_adjust;
     protected $y_label_angle = 0;
     protected $y_label_axis_offset;
     protected $y_label_left_offset;
     protected $y_label_right_offset;
-    public $y_min_ticks = 5;
     protected $y_tick_anchor;
     protected $y_tick_cross = 3;
     protected $y_tick_inc;    // Effective value; calculated or y_tick_inc_u
-    public $y_tick_inc_integer = FALSE;
     protected $y_tick_inc_u = '';
     protected $y_tick_label_pos;
     protected $y_tick_length = 5;
@@ -343,7 +358,6 @@ class PHPlot
     protected $y_title_right_offset;
     protected $y_title_txt = '';
     protected $y_top_margin;
-    public $y_zero_magnet = 0.857142;  // Value is 6/7
     protected $yscale;
     protected $yscale_type = 'linear';
 
@@ -3691,20 +3705,26 @@ class PHPlot
 
     /*
      * Calculate an ideal tick increment for a given range.
+     *   $which : 'x' or 'y' - use the parameters for that axis
      *   $range : The plot area range (max - min)
-     *   $min_ticks :  Minimum permitted ticks.
-     *   $use_datetime : If true, units are seconds so use the date/time algorithm.
-     *   $integer_step : If true, minimum tick interval is 1.
      * Returns: The tick increment.
      * This is only used when neither Set[XY]TickIncrement nor SetNum[XY]Ticks was used.
      * There are two methods, depending on $use_datetime. See CalcStep125() and CalcStepDatetime().
      */
-    protected function CalcStep($range, $min_ticks, $use_datetime, $integer_step)
+    protected function CalcStep($which, $range)
     {
-        if ($use_datetime) {
+        // Get tick control variables: datetime_interval, min_ticks, tick_inc_integer.
+        extract($this->tickctl[$which]);
+
+        // Default to datetime_interval to using the label format mode for that axis:
+        if (!isset($datetime_interval))
+            $datetime_interval = (isset($this->label_format[$which]['type'])
+                                  && $this->label_format[$which]['type'] == 'time');
+
+        if ($datetime_interval) {
             // Date/time range is selected: calculate a date/time step.
             $tick_step = $this->CalcStepDatetime($range, $min_ticks);
-        } elseif ($integer_step && $range <= $min_ticks) {
+        } elseif ($tick_inc_integer && $range <= $min_ticks) {
             // Whole integer ticks is selected, but the range is too small, so use 1.
             $tick_step = 1;
         } else {
@@ -3785,6 +3805,35 @@ class PHPlot
     }
 
     /*
+     * Helper for CalcPlotRange() - Get the range end adjustment factor
+     *  $which : 'x' or 'y' - calculate the X or Y ranges.
+     *  &$adjust : End adjustment factor, NULL or already set.
+     * If $adjust is already set, it is left alone, otherwise a suitable
+     * value is calculated and stored into $adjust.
+     */
+    protected function GetRangeEndAdjust($which, &$adjust)
+    {
+        if (isset($adjust)) return;  // Already set, nothing to do
+
+        // The plot type can customize how an end adjustment is applied:
+        if (empty(self::$plots[$this->plot_type]['adjust_type'])) {
+            // Default (adjust_type missing or 0) means pad the dependent variable axis only.
+            $adjust = ($which == 'x' XOR $this->datatype_swapped_xy) ? 0 : 0.03;
+        } else {
+            switch (self::$plots[$this->plot_type]['adjust_type']) {
+            case 1:
+                // Adjust type = 1 means add extra padding to both X and Y axis ends
+                $adjust = 0.03;
+                break;
+            case 2:
+                // Adjust type = 2 means do not add extra padding to either axis.
+                $adjust = 0;
+                break;
+            }
+        }
+    }
+
+    /*
      * Helper for CalcPlotAreaWorld() - calculate range of X or Y, and tick increment.
      *  $which : 'x' or 'y' - calculate the X or Y ranges.
      * Returns an array of 3 calculated values (or false on caught and returned error):
@@ -3798,34 +3847,19 @@ class PHPlot
         // 'implied' means this is a non-explicitly given independent variable, e.g. X in 'text-data'.
         $implied = $this->datatype_implied && $independent_variable;
 
-        // Copy the variables for X or Y into local variables.
-        if ($which == 'x') {
-            list($plot_min, $adjust_min) = $this->CalcRangeInit($this->plot_min_x, $implied, $this->min_x);
-            list($plot_max, $adjust_max) = $this->CalcRangeInit($this->plot_max_x, $implied, $this->max_x);
-            $tick_inc = $this->x_tick_inc_u;
-            $num_ticks = $this->num_x_ticks;
-            $min_ticks = $this->x_min_ticks;
-            $end_adjust = $this->x_end_adjust;
-            $zero_magnet = $this->x_zero_magnet;
-            $datetime = $this->x_datetime_interval;
-            $integer_step = $this->x_tick_inc_integer;
-        } else { // Assumed 'y'
-            list($plot_min, $adjust_min) = $this->CalcRangeInit($this->plot_min_y, $implied, $this->min_y);
-            list($plot_max, $adjust_max) = $this->CalcRangeInit($this->plot_max_y, $implied, $this->max_y);
-            $tick_inc = $this->y_tick_inc_u;
-            $num_ticks = $this->num_y_ticks;
-            $min_ticks = $this->y_min_ticks;
-            $end_adjust = $this->y_end_adjust;
-            $zero_magnet = $this->y_zero_magnet;
-            $datetime = $this->y_datetime_interval;
-            $integer_step = $this->y_tick_inc_integer;
-        }
-        if (!isset($end_adjust))
-            $end_adjust = ($independent_variable ? 0 : 0.3);
-        // datetime tick increment is used if specified by user or if Set*LabelType('time') was called.
-        if (!isset($datetime))
-            $datetime = (isset($this->label_format[$which]['type'])
-                            && $this->label_format[$which]['type'] == 'time');
+        // Initialize the range (plot_min : plot_max) and get the adjustment flags:
+        list($plot_min, $adjust_min) =
+            $this->CalcRangeInit($this->{"plot_min_$which"}, $implied, $this->{"min_$which"});
+        list($plot_max, $adjust_max) =
+            $this->CalcRangeInit($this->{"plot_max_$which"}, $implied, $this->{"max_$which"});
+
+        // Get local copies of variables used for range adjustment: adjust_{mode,amount} zero_magnet
+        extract($this->rangectl[$which]);
+        $this->GetRangeEndAdjust($which, $adjust_amount);  // Apply default to $adjust_amount if needed
+
+        // Get local copies of other variables for X or Y:
+        $num_ticks = $this->{"num_$which" . '_ticks'};     // num_x_ticks or num_y_ticks
+        $tick_inc = $this->{$which . '_tick_inc_u'};       // x_tick_inc_u or y_tick_inc_u
 
         // Validate the range, which must be positive. Adjusts plot_min and plot_max if necessary.
         if (!$this->CheckPlotRange($which, $plot_min, $plot_max, $adjust_min, $adjust_max))
@@ -3839,55 +3873,71 @@ class PHPlot
         // to zero with the original range. Similar for negative data: (plot_min / (plot_min - plot_max))
         // compares the range with plot_max=0 to the original range.
 
+        $range = $plot_max - $plot_min;
+
         // When all data > 0, test to see if the zero magnet is strong enough to pull the min down to zero:
         if ($adjust_min && $plot_min > 0 && $zero_magnet > 0 && ($zero_magnet == 1.0 ||
-                 $plot_max / ($plot_max - $plot_min) < $zero_magnet / (1 - $zero_magnet))) {
+                 $plot_max / $range < $zero_magnet / (1 - $zero_magnet))) {
             $plot_min = 0;
+            $range = $plot_max;
         }
 
         // Similar to above, but for negative data: zero magnet pulls max up to zero:
         if ($adjust_max && $plot_max < 0 && $zero_magnet > 0 && ($zero_magnet == 1.0 ||
-                 $plot_min / ($plot_min - $plot_max) < $zero_magnet / (1 - $zero_magnet))) {
+                 -$plot_min / $range < $zero_magnet / (1 - $zero_magnet))) {
             $plot_max = 0;
+            $range = 0 - $plot_min;
         }
 
         // Calculate the tick increment, if it wasn't set using Set[XY]TickIncrement().
+        $num_ticks_override = FALSE;
         if (empty($tick_inc)) {
-            $range = $plot_max - $plot_min;
-
             if (empty($num_ticks)) {
                 // Calculate a reasonable tick increment, based on the current plot area limits
-                $tick_inc = $this->CalcStep($range, $min_ticks, $datetime, $integer_step);
+                $tick_inc = $this->CalcStep($which, $range);
             } else {
                 // Number of ticks was provided: use exactly that.
-                // The range adjustment algorithm used by default below is not compatible with
-                // this case, because it uses the tick increment to adjust the range, and here
-                // we use the range to calculate the tick increment. So instead fall back to a
-                // simpler method that increases the range ends by a fixed percentage.
-                if ($adjust_min && $plot_min < 0) {
-                    $plot_min -= 0.1 * $range;
-                    $adjust_min = FALSE;   // Do not allow further adjustments to range below
-                }
-                if ($adjust_max && $plot_max > 0) {
-                    $plot_max += 0.1 * $range;
-                    $adjust_max = FALSE;   // Do not allow further adjustments to range below
-                }
-                $tick_inc = ($plot_max - $plot_min) / $num_ticks;
+                // Adjustment is below, after range is calculated using mode 'R':
+                $adjust_mode = 'R';
+                $num_ticks_override = TRUE;
             }
         }
 
-        // Adjust the lower bound, if not user-set, to start at a tick mark. The end_adjust factor is
-        // applied only when min is negative (to leave room for data value labels, for instance). This
-        // makes sure there is at least 0.3 (by default) * tick_increment below the data.
+        // Adjust the lower bound, if necessary, using one of 3 modes:
         if ($adjust_min && $plot_min != 0) {
-            $plot_min = $tick_inc * floor($plot_min / $tick_inc - ($plot_min < 0 ? $end_adjust : 0));
+            // Mode 'R' and basis for other modes: Extend the limit by a percentage of the
+            // plot range, but only when the data is negative (to leave room below for labels).
+            if ($plot_min < 0)
+                $plot_min -= $adjust_amount * $range;
+
+            if ($adjust_mode == 'T') {
+                // Mode 'T': Adjust to previous tick mark:
+                $plot_min = $tick_inc * floor($plot_min / $tick_inc);
+            } elseif ($adjust_mode == 'I') {
+                // Mode 'I': Adjust to previous integer:
+                $plot_min = floor($plot_min);
+            }
         }
 
-        // Adjust the upper bound, if not user-set, to end at a tick mark. The end_adjust factor is
-        // applied when max is positive (to leave room for data value labels, for instance). As with min
-        // above, this results in even more space - at least 0.3 (by default) * tick_increment.
+        // Adjust the upper bound, if necessary, using one of 3 modes:
         if ($adjust_max && $plot_max != 0) {
-            $plot_max = $tick_inc * ceil($plot_max / $tick_inc + ($plot_max > 0 ? $end_adjust : 0));
+            // Mode 'R' and basis for other modes: Extend the limit by a percentage of the
+            // plot range, but only when the max is positive (leaves room above for labels).
+            if ($plot_max > 0)
+                $plot_max += $adjust_amount * $range;
+
+            if ($adjust_mode == 'T') {
+                // Mode 'T': Adjust to next tick mark:
+                $plot_max = $tick_inc * ceil($plot_max / $tick_inc);
+            } elseif ($adjust_mode == 'I') {
+                // Mode 'I': Adjustment to next higher integer.
+                $plot_max = ceil($plot_max);
+            }  
+        }
+
+        // Calculate the tick increment for the case where number of ticks was given:
+        if ($num_ticks_override) {
+            $tick_inc = ($plot_max - $plot_min) / $num_ticks;
         }
 
         // Check log scale range - plot_min and plot_max must be > 0.
@@ -4451,6 +4501,73 @@ class PHPlot
         }
         return $which_lab;
     }
+
+    /*
+     * Internal function to implement TuneXAutoRange() and TuneYAutoRange() : Set range tuning parameters
+     *   $which : 'x' or 'y', which axis to adjust parameters for
+     *   $zero_magnet, $adjust_most, $adjust_amount : Parameters to set (if not NULL).
+     * Note: Does not report errors - just ignores invalid tuning values.
+     */
+    protected function TuneAutoRange($which, $zero_magnet, $adjust_mode, $adjust_amount)
+    {
+        if (isset($zero_magnet) && $zero_magnet >= 0 && $zero_magnet <= 1.0)
+            $this->rangectl[$which]['zero_magnet'] = $zero_magnet;
+        if (isset($adjust_mode) && strpos('TRI', $adjust_mode[0]) !== FALSE)
+            $this->rangectl[$which]['adjust_mode'] = $adjust_mode;
+        if (isset($adjust_amount) && $adjust_amount >= 0)
+            $this->rangectl[$which]['adjust_amount'] = $adjust_amount;
+        return TRUE;
+    }
+
+    /*
+     * Set tuning variables for range calculations on X axis. See TuneAutoRange() above.
+     */
+    function TuneXAutoRange($zero_magnet = NULL, $adjust_mode = NULL, $adjust_amount = NULL)
+    {
+        return $this->TuneAutoRange('x', $zero_magnet, $adjust_mode, $adjust_amount);
+    }
+
+    /*
+     * Set tuning variables for range calculations on Y axis. See TuneAutoRange() above.
+     */
+    function TuneYAutoRange($zero_magnet = NULL, $adjust_mode = NULL, $adjust_amount = NULL)
+    {
+        return $this->TuneAutoRange('y', $zero_magnet, $adjust_mode, $adjust_amount);
+    }
+
+    /*
+     * Internal function to implement TuneXAutoTicks() and TuneYAutoTicks() : Set tick tuning parameters
+     *   $which : 'x' or 'y', which axis to adjust parameters for
+     *   $min_ticks, $datetime_interval, $tick_inc_integer : Parameters to set (if not NULL).
+     * Note: Does not report errors - just ignores invalid tuning values.
+     */
+    protected function TuneAutoTicks($which, $min_ticks, $datetime_interval, $tick_inc_integer)
+    {
+        if (isset($min_ticks) && $min_ticks > 0)
+            $this->tickctl[$which]['min_ticks'] = $min_ticks;
+        if (isset($datetime_interval))
+            $this->tickctl[$which]['datetime_interval'] = (bool)$datetime_interval;
+        if (isset($tick_inc_integer))
+            $this->tickctl[$which]['tick_inc_integer'] = (bool)$tick_inc_integer;
+        return TRUE;
+    }
+
+    /*
+     * Set tuning variables for tick calculations on X axis. See TuneAutoTicks() above.
+     */
+    function TuneXAutoTicks($min_ticks = NULL, $datetime_interval = NULL, $tick_inc_integer = NULL)
+    {
+        return $this->TuneAutoTicks('x', $min_ticks, $datetime_interval, $tick_inc_integer);
+    }
+
+    /*
+     * Set tuning variables for tick calculations on Y axis. See TuneAutoTicks() above.
+     */
+    function TuneYAutoTicks($min_ticks = NULL, $datetime_interval = NULL, $tick_inc_integer = NULL)
+    {
+        return $this->TuneAutoTicks('y', $min_ticks, $datetime_interval, $tick_inc_integer);
+    }
+
 
 /////////////////////////////////////////////
 ///////////////                         TICKS
