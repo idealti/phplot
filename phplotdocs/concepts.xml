@@ -3291,14 +3291,20 @@ You can also anchor the tick marks at a specific X or Y value.
 For a list of functions used to control tick marks,
 see <xref linkend="ref-ticks"/>.
 </para>
+
 <para>
-Left to its own, PHPlot will determine tick positions for X and Y axes, but it
-isn't too smart about choosing the values, and you might not be happy with the
-results.  You can improve the situation with some combination of: setting
+Left to its own, PHPlot will determine tick positions for X and Y axes.
+(See <xref linkend="adv-autorange-tick"/> if you want to read all the
+details on how PHPlot does this.)
+Starting with PHPlot-6.0.0, an attempt is made to pick a good tick increment.
+(Older releases are much less likely to come up with a good result.)
+Even so, you might not be happy with the results.
+You can improve the situation with some combination of: setting
 the desired tick interval, setting a tick anchor point, or using
 <xref linkend="SetPlotAreaWorld" /> to set the X or Y data range limits
 (since the automatic calculation of tick marks is based on the data range).
 </para>
+
 <para>
  For example:
 <programlisting><![CDATA[$plot->SetPlotAreaWorld(-10, NULL, 10, NULL);
