@@ -396,14 +396,12 @@ and Y ranges.
 </varlistentry>
 
 <varlistentry>
-  <term><anchor id="CalcStep" xreflabel="CalcStep"/>CalcStep($range, $min_ticks, $use_datetime, $integer_step)</term>
+  <term><anchor id="CalcStep" xreflabel="CalcStep"/>CalcStep($which, $range)</term>
   <listitem>
     <para>
 Calculates an appropriate tick increment.
+$which is 'x' or 'y', and selects configuration variables for that axis.
 $range is the plot area range (max - min).
-For $min_ticks, $use_datetime, and $integer_step, see
-<xref linkend="adv-tuning-range"/>; the applicable variable (e.g.
-x_min_ticks or y_min_ticks) is passed to this function (e.g. as min_ticks).
 Returns the calculated tick increment.
     </para>
     <para>
@@ -411,7 +409,6 @@ This function is not called if the user has set a tick increment
 (<xref linkend="SetXTickIncrement"/>, <xref linkend="SetYTickIncrement"/>)
 or the number of tick marks
 (<xref linkend="SetNumXTicks"/>, <xref linkend="SetNumYTicks"/>).
-It is only called if neither tick increment nor number of ticks has been set.
 The function calls either <xref linkend="CalcStep125"/> or
 <xref linkend="CalcStepDatetime"/> to calculate an appropriate value.
 This was added in PHPlot-6.0.0.
@@ -1730,6 +1727,21 @@ fonts.
 </varlistentry>
 
 <varlistentry>
+  <term><anchor id="GetRangeEndAdjust" xreflabel="GetRangeEndAdjust"/>GetRangeEndAdjust($which, &amp;$adjust)</term>
+  <listitem>
+    <para>
+Applies a default to $adjust, the plot range end adjustment factor. $which is
+'x' or 'y'. If $adjust is already set, the function does nothing.
+Otherwise, it uses the current plot type to apply a default setting to $adjust.
+See the notes on the <literal>adjust_type</literal> entry in
+<xref linkend="var-plots"/> for more on the per-plot-type adjustment mode.
+This is used by <xref linkend="CalcPlotRange"/>.
+It was added at PHPlot-6.0.0.
+    </para>
+  </listitem>
+</varlistentry>
+
+<varlistentry>
   <term><anchor id="GetTextAlignment" xreflabel="GetTextAlignment"/>GetTextAlignment($sin_t, $cos_t, &amp;$h_align, &amp;$v_align, $reverse = FALSE)</term>
   <listitem>
     <para>
@@ -2218,6 +2230,34 @@ It was replaced by <xref linkend="SizeText"/>.
 </varlistentry>
 
 <varlistentry>
+  <term><anchor id="TuneAutoRange" xreflabel="TuneAutoRange"/>TuneAutoRange($which, $zero_magnet, $adjust_mode, $adjust_amount)</term>
+  <listitem>
+    <para>
+This implements <xref linkend="TuneXAutoRange"/> and
+<xref linkend="TuneYAutoRange"/> to store tuning parameters used by the
+automatic range calculation. $which is 'x' or 'y', and the other arguments
+are as described under those two public functions.
+This was added in PHPlot-6.0.0
+    </para>
+  </listitem>
+</varlistentry>
+
+<varlistentry>
+  <term><anchor id="TuneAutoTicks"
+xreflabel="TuneAutoTicks"/>TuneAutoTicks($which, $min_ticks, $datetime_interval, $tick_inc_integer)</term>
+  <listitem>
+    <para>
+This implements <xref linkend="TuneXAutoTicks"/> and
+<xref linkend="TuneYAutoTicks"/> to store tuning parameters used by the
+tick increment calculation. $which is 'x' or 'y', and the other arguments
+are as described under those two public functions.
+This was added in PHPlot-6.0.0
+    </para>
+  </listitem>
+</varlistentry>
+
+
+<varlistentry>
   <term><anchor id="xtr" xreflabel="xtr"/>xtr($x_world)</term>
   <listitem>
     <para>
@@ -2595,79 +2635,129 @@ The keys and values of the second-level arrays are:
         <entry>draw_method</entry>
         <entry>
 Name of the PHPlot class method (function) to call to draw the 'insides' of
-the plot.  This is the only required entry.  The function is responsible for
-drawing everything inside the plot area. (That is, everything except the plot
-titles, axis lines, tick marks and tick labels, grid lines, and legend.)
+the plot.  This is the only required entry.
         </entry>
       </row>
 
       <row>
         <entry>draw_arg</entry>
         <entry>
-Optional argument(s) for the drawing method named by draw_method.  If present,
-this must be an array. Each element of the array is passed to the draw_method
-function as a separate argument.  If this is not specified, the drawing method
-is called with no arguments.  This is generally used to 'overload' drawing
-methods so they handle multiple similar plot types.
+Optional argument array to pass to the draw_method function.
         </entry>
       </row>
 
       <row>
         <entry>suppress_axes</entry>
         <entry>
-A flag indicating that the X axis and Y axis should not be drawn.
-The default if omitted is FALSE, meaning the axis lines are drawn.
-This is set to TRUE for pie charts.
-(Before PHPlot-6.0.0 this was called <literal>draw_axes</literal>, with
-default TRUE, and FALSE for pie charts.)
+Optional flag indicating that the X axis and Y axis should not be drawn.
+Default is FALSE.
         </entry>
       </row>
 
       <row>
         <entry>abs_vals</entry>
         <entry>
-Special data processing flag. If TRUE, this tells
-<xref linkend="FindDataLimits"/> that the plot type will take the absolute
-value of all dependent variable values in the data array. FindDataLimits needs
-this information so it knows how to find the minimum and maximum values in
-the data array.  The default if omitted is FALSE.
+Optional flag indicating that the plot type uses the absolute values of data.
+Default is FALSE.
         </entry>
       </row>
 
       <row>
         <entry>sum_vals</entry>
         <entry>
-Special data processing flag. If TRUE, this tells
-<xref linkend="FindDataLimits"/> that the plot type will sum up the dependent
-variable values in each row of the data array.  FindDataLimits needs this
-information so it knows how to find the minimum and maximum values in the data
-array.  The default if omitted is FALSE.
-If both abs_vals and sum_vals are TRUE, this means the plot type
-sums up the absolute values from the data array.
-(The stackedarea plot type does this.)
+Optional flag indicating that the plot type sums up the values in each row.
+Default is FALSE.
         </entry>
       </row>
 
       <row>
         <entry>legend_alt_marker</entry>
         <entry>
-Optional alternate marker mode for legends.
-See <xref linkend="SetLegendUseShapes"/>, which selects either the primary
-mode (color boxes) or the alternate mode.
+Optional alternate marker mode for legends: box, shape, or line.
+        </entry>
+      </row>
 
+      <row>
+        <entry>adjust_type</entry>
+        <entry>
+Optional control for adjusting the end of an automatically calculated plot
+range (see notes below).
+        </entry>
+      </row>
+
+    </tbody>
+  </tgroup>
+</informaltable>
+</para>
+
+<para>
+Only the <literal>draw_method</literal> entry is required.  The named method
+is used to draw everything inside the plot area. (That is, everything except
+the plot titles, axis lines, tick marks and tick labels, grid lines, and
+legend.)
+</para>
+
+<para>
+The <literal>draw_arg</literal> entry can be used to pass constant
+arguments to the <literal>draw_method</literal> method.
+If present, this must be an array, and each element of the array is passed to
+the drawing method as a separate argument.  If this is not specified, the
+drawing method is called with no arguments.  This is generally used to
+overload drawing methods, so they handle multiple similar plot types.
+</para>
+
+<para>
+The <literal>suppress_axes</literal> flag indicates that X and Y axis lines
+should not be drawn (used with pie charts, for example).
+If omitted, FALSE is used, meaning the axis lines are drawn.
+(Before PHPlot-6.0.0 this was called <literal>draw_axes</literal>, with
+default TRUE, and FALSE for pie charts.)
+</para>
+
+<para>
+The two special data processing flags <literal>abs_vals</literal> and
+<literal>sum_vals</literal> are used by <xref linkend="FindDataLimits"/>
+to indicate how to compute the minimum and maximum data values.
+Plot types that ignore sign and take absolute values of the data set
+<literal>abs_vals</literal> to TRUE.
+Plot types that sum up the data values in each row set
+<literal>sum_vals</literal> to TRUE.
+The default if omitted for both flags is FALSE, meaning the plot type
+uses the values as specified in the data array.
+
+If both <literal>abs_vals</literal> and <literal>sum_vals</literal> are TRUE,
+this means the plot type sums up the absolute values from the data array.
+(The stackedarea plot type does this.)
+</para>
+
+<para>
+The optional <literal>legend_alt_marker</literal> entry indicates the
+use of an alternate maker shape in legends.
+Use <xref linkend="SetLegendUseShapes"/> to select either the primary
+mode or the alternate mode for legend shapes. The primary mode is a solid
+filled color box. The alternate mode varies with the plot type, according
+the the <literal>legend_alt_marker</literal> entry.
 Use 'box' for rectangular color boxes. This is the default if the
 <literal>legend_alt_marker</literal> key is omitted from the array.
 Effectively, this means there is no alternate marker
 mode for these plot types, because color boxes are the primary mode.
-Use 'shape' for point shape markers, which applies to points and similar plots
+Use 'shape' for point shape markers, which applies to points plots and similar
 types which use point shapes.
-Use 'line' for short line segments, which applies to line and similar plot
+Use 'line' for short line segments, which applies to line plots and similar
 types.
-        </entry>
-      </row>
-    </tbody>
-  </tgroup>
-</informaltable>
+</para>
+
+<para>
+The optional <literal>adjust_type</literal> entry controls adjustments
+made to the end of an automatically calculated plot range.
+See <xref linkend="TuneXAutoRange"/> and <xref linkend="TuneYAutoRange"/>
+for more information.
+This is used to indicate when a plot type needs additional space, perhaps
+for labels, between the data extrema and the edge of the plot area.
+If omitted, the default value 0 is used.
+A value of 0 means apply the adjustment for the dependent variable only.
+A value of 1 means apply the adjustment for both X and Y, and a value of
+2 means do not apply the adjustment to either X or Y.
 </para>
 </sect2>
 
@@ -2720,6 +2810,117 @@ The array keys correspond to the arguments to
 </informaltable>
 </para>
 </sect2>
+
+<sect2 id="var-rangectl">
+<title>rangectl[]</title>
+<para>
+The <varname>rangectl[]</varname> array contains parameters which are used
+to control the automatic calculation of the plot area range.
+</para>
+
+<para>
+<?dbfo keep-together="always"?> <!-- Prevent PDF break before table -->
+The array contains 2 arrays, indexed as <literal>'x'</literal> and
+<literal>'y'</literal> for X and Y axis parameters respectively.
+Each of those arrays is an array with entries shown in the following table:
+<informaltable>
+  <tgroup cols="3">
+    <?dbhtml table-summary="rangectl[] array elements"?>
+    <colspec colname="c1" colwidth="30*" />
+    <colspec colname="c2" colwidth="30*" />
+    <colspec colname="c3" colwidth="40*" />
+    <thead>
+      <row>
+        <entry>Key</entry>
+        <entry>Default</entry>
+        <entry>Description</entry>
+      </row>
+    </thead>
+    <tbody>
+      <row>
+        <entry>adjust_mode</entry>
+        <entry>T</entry>
+        <entry>End adjustment mode: R, T, or I</entry>
+      </row>
+      <row>
+        <entry>adjust_amount</entry>
+        <entry>(Dynamic; see <xref linkend="GetRangeEndAdjust"/>)</entry>
+        <entry>Amount of end adjustment, as a fraction of the plot range</entry>
+      </row>
+      <row>
+        <entry>zero_magnet</entry>
+        <entry>0.857142 (Note this is 6/7)</entry>
+        <entry>Strength of the <emphasis>zero magnet</emphasis></entry>
+      </row>
+    </tbody>
+  </tgroup>
+</informaltable>
+</para>
+
+<para>
+Values in this array are set with
+<xref linkend="TuneXAutoRange"/> and <xref linkend="TuneYAutoRange"/>.
+For more information see <xref linkend="adv-autorange-params"/>.
+The values are used by <xref linkend="CalcPlotRange"/>.
+</para>
+</sect2>
+
+<sect2 id="var-tickctl">
+<title>tickctl[]</title>
+<para>
+The <varname>tickctl[]</varname> array contains parameters which are used
+to control the automatic calculation of tick intervals.
+</para>
+
+<para>
+<?dbfo keep-together="always"?> <!-- Prevent PDF break before table -->
+The array contains 2 arrays, indexed as <literal>'x'</literal> and
+<literal>'y'</literal> for X and Y axis parameters respectively.
+Each of those arrays is an array with entries shown in the following table:
+<informaltable>
+  <tgroup cols="3">
+    <?dbhtml table-summary="rangectl[] array elements"?>
+    <colspec colname="c1" colwidth="30*" />
+    <colspec colname="c2" colwidth="30*" />
+    <colspec colname="c3" colwidth="40*" />
+    <thead>
+      <row>
+        <entry>Key</entry>
+        <entry>Default</entry>
+        <entry>Description</entry>
+      </row>
+    </thead>
+    <tbody>
+      <row>
+        <entry>datetime_interval</entry>
+        <entry>NULL (calculated)</entry>
+        <entry>If TRUE, assume the axis scale uses date/time values</entry>
+      </row>
+      <row>
+        <entry>min_ticks</entry>
+        <entry>5</entry>
+        <entry>Minimum number of tick intervals</entry>
+      </row>
+      <row>
+        <entry>tick_inc_integer</entry>
+        <entry>FALSE</entry>
+        <entry>If TRUE, force the tick increment to be a whole number</entry>
+      </row>
+    </tbody>
+  </tgroup>
+</informaltable>
+</para>
+
+<para>
+Values in this array are set with
+<xref linkend="TuneXAutoTicks"/> and <xref linkend="TuneYAutoTicks"/>.
+For more information see <xref linkend="adv-autorange-tick-params"/>.
+The values are used by <xref linkend="CalcStep"/>.
+</para>
+
+</sect2>
+
+
 </sect1>
 
 <!-- Note: This used to be another Chapter, since the previous chapter
@@ -2756,7 +2957,7 @@ a string, for example <literal>"5.4.0"</literal>.
   <listitem>
     <para>
 The <varname>version_id</varname> constant contains the PHPlot code version as
-an integer, using the conventional forumula 10000*major_version +
+an integer, using the conventional formula 10000*major_version +
 100*minor_version + patch_version.
 This was added in PHPlot-6.0.0 (with value 60000) to make it
 possible for the test suite to check for a minimum version.
