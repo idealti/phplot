@@ -68,6 +68,7 @@ DrawXTicks
 DrawXTitle
 DrawYAxis
 DrawYDataLabel
+DrawYDataLine
 DrawYErrorBar
 DrawYTick
 DrawYTicks
@@ -90,6 +91,7 @@ GetDataColor
 GetDataErrorColors
 GetDefaultTTFont
 GetDeviceXY
+GetGridSetting
 GetImage
 GetImageBorderWidth
 GetImageType
@@ -97,6 +99,7 @@ GetLegendPosition
 GetLegendSize
 GetLegendSizeParams
 GetLineSpacing
+GetRangeEndAdjust
 GetTextAlignment
 Helvetica
 ImageMagick
@@ -266,6 +269,12 @@ StartStream
 TTF
 TTFBBoxSize
 TrueType
+TuneAutoRange
+TuneAutoTicks
+TuneXAutoRange
+TuneXAutoTicks
+TuneYAutoRange
+TuneYAutoTicks
 Ubuntu
 Unicode
 Verdana
