@@ -3,6 +3,20 @@ This is phplotdocs/ChangeLog, listing changes to the PHPlot Reference Manual
 Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
+* 2013-03-11 (/branches/Rel6)
+    * Document changes from 2 to 3 tick selection modes:
+
+      + advanced.xml: Rewrote parts of "Plot Range and Tick Increment
+        Calculations" section, to document the new tick selection modes.
+        Corrections and clarification throughout this section.
+
+      + developer.xml: Document new internal CalcStepBinary(), and 3 modes
+        numeric, date, binary. Changed parameter names for Tune*AutoTicks()
+        Minor corrections throughout.
+
+      + reference.xml: Added table of parameter values to TuneXAutoRange(),
+        TuneYAutoRange(). Documented parameter change to TuneXAutoTicks()
+        and TuneYAutoTicks(): tick_mode replaces datetime_interval.
 
 * 2013-03-01 (/branches/Rel6)
     * Documented latest changes to auto-range and auto-tick calculations,
