@@ -2,6 +2,34 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2013-03-11 (/branches/Rel6)
+    * Expanded the two modes for calculating a tick increment to three:
+      decimal (1,2,5 * 10^N), date, and binary (2^N).
+      + Changed member array $tickctl[] key 'datetime_interval' (boolean) to
+        'tick_mode' (3 valued string).
+      + New internal function CalcStepBinary() for binary mode.
+      + Changed CalcStep() to select from 3 modes now, using tick_mode.
+      + Changed internal function TuneAutoTicks() and public functions
+        TuneXAutoTicks() and TuneYAutoTicks() parameter 'datetime_interval'
+        to 'tick_mode', checked for validity.
+
+    * Account for tick anchor when adjusting the plot range to start and
+      end at a tick mark. After this change, the range will start and end
+      at a tick mark (when in the default mode) even when a non-zero tick
+      anchor has been set.
+      + Change CalcPlotRange() so that when adjusting the range endpoints
+        to the next tick mark, it uses tick_anchor in the equation. It will
+        not adjust through zero, though. (Example: Range 0-10, tick anchor
+        at 1, resulting range will start at 0, not -9, so the range in this
+        case will not start at a tick mark.)
+
+    * Code cleanup: Avoid use of variable property names such as
+      '$this->{"num_$which" . "_ticks"}' to refer to either num_x_ticks or
+       num_y_ticks, depending on $which. Although these work and are more
+       compact, they make debugging harder (e.g. trying to find everywhere
+       num_x_ticks is used can overlook these).
+
+
 2013-03-01 (/branches/Rel6)
     * Changes to range and tick calculations, still trying to get more
       cases to come out right.
