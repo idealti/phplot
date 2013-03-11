@@ -11978,7 +11978,7 @@ Prior releases are not able to produce streaming plots.
     <title>Description</title>
     <para>
 <function>TuneXAutoRange</function> is used to adjust the parameters used by
-PHPlot when automatically calculating the plot range of the X axis.
+PHPlot when automatically calculating the plot range along the X axis.
     </para>
   </refsect1>
 
@@ -12005,9 +12005,41 @@ See <xref linkend="autorange-zero-magnet"/> for more information.
           <para>
 Optional value for the X axis range extension mode, which determines the
 method PHPlot uses to extend the end of the plot range beyond the data
-range. This is a single character: <literal>T</literal> (extend to tick mark),
-<literal>I</literal> (extend to integer), or <literal>R</literal> (extend by
-factor only).
+range. This is a single character:
+            <informaltable>
+              <?dbfo table-width="50%"?> <!-- Table width hint for PDF only -->
+              <tgroup cols="2">
+                <?dbhtml table-summary="X range adjust mode choices"?>
+                <colspec colname="c1" colwidth="20*" align="center" />
+                <colspec colname="c2" colwidth="80*" />
+                <thead>
+                  <row>
+                    <entry>Mode</entry>
+                    <entry>Description</entry>
+                  </row>
+                </thead>
+                <tbody>
+                  <row>
+                    <entry>T</entry>
+                    <entry>
+Tick : extend the range, then to the next tick mark.
+                    </entry>
+                  </row>
+                  <row>
+                    <entry>R</entry>
+                    <entry>
+Range : extend the range.
+                    </entry>
+                  </row>
+                  <row>
+                    <entry>I</entry>
+                    <entry>
+Integer : extend the range, then to the next integer value.
+                    </entry>
+                  </row>
+                </tbody>
+              </tgroup>
+            </informaltable>
 See <xref linkend="autorange-adjust-mode"/> for more information.
           </para>
         </listitem>
@@ -12034,12 +12066,12 @@ Specifying <literal>NULL</literal>, or omitting trailing unused parameters,
 results in no change to that parameter.
     </para>
     <para>
-If one or both ends of the plot range are set with
-<xref linkend="SetPlotAreaWorld"/>, then PHPlot does not calculate or
-adjust those values.
+PHPlot does not calculate or adjust ends of the plot range which are set
+with <xref linkend="SetPlotAreaWorld"/>.
 PHPlot also does not adjust the plot range for the X axis in the case where
 X values are implied, rather than specified, in the data array
-(data type <link linkend="text-data">text-data</link>).
+(data type <link linkend="text-data">text-data</link>, used with
+vertical plots).
     </para>
     <para>
 This applies to the X axis only, where X is the independent variable for
@@ -12098,7 +12130,7 @@ This function was added in PHPlot-6.0.0.
     <title>Description</title>
     <para>
 <function>TuneYAutoRange</function> is used to adjust the parameters used by
-PHPlot when automatically calculating the plot range of the Y axis.
+PHPlot when automatically calculating the plot range along the Y axis.
     </para>
   </refsect1>
 
@@ -12125,9 +12157,41 @@ See <xref linkend="autorange-zero-magnet"/> for more information.
           <para>
 Optional value for the Y axis range extension mode, which determines the
 method PHPlot uses to extend the end of the plot range beyond the data
-range. This is a single character: <literal>T</literal> (extend to tick mark),
-<literal>I</literal> (extend to integer), or <literal>R</literal> (extend by
-factor only).
+range. This is a single character:
+            <informaltable>
+              <?dbfo table-width="50%"?> <!-- Table width hint for PDF only -->
+              <tgroup cols="2">
+                <?dbhtml table-summary="X range adjust mode choices"?>
+                <colspec colname="c1" colwidth="20*" align="center" />
+                <colspec colname="c2" colwidth="80*" />
+                <thead>
+                  <row>
+                    <entry>Mode</entry>
+                    <entry>Description</entry>
+                  </row>
+                </thead>
+                <tbody>
+                  <row>
+                    <entry>T</entry>
+                    <entry>
+Tick : extend the range, then to the next tick mark.
+                    </entry>
+                  </row>
+                  <row>
+                    <entry>R</entry>
+                    <entry>
+Range : extend the range.
+                    </entry>
+                  </row>
+                  <row>
+                    <entry>I</entry>
+                    <entry>
+Integer : extend the range, then to the next integer value.
+                    </entry>
+                  </row>
+                </tbody>
+              </tgroup>
+            </informaltable>
 See <xref linkend="autorange-adjust-mode"/> for more information.
           </para>
         </listitem>
@@ -12154,9 +12218,8 @@ Specifying <literal>NULL</literal>, or omitting trailing unused parameters,
 results in no change to that parameter.
     </para>
     <para>
-If one or both ends of the plot range are set with
-<xref linkend="SetPlotAreaWorld"/>, then PHPlot does not calculate or
-adjust those values.
+PHPlot does not calculate or adjust ends of the plot range which are set
+with <xref linkend="SetPlotAreaWorld"/>.
 PHPlot also does not adjust the plot range for the Y axis in the case where
 Y values are implied, rather than specified, in the data array
 (data type <link linkend="text-data-yx">text-data-yx</link>, used with
@@ -12223,7 +12286,7 @@ This function was added in PHPlot-6.0.0.
   </refnamediv>
 
   <refsynopsisdiv>
-    <synopsis>$plot-&gt;TuneXAutoTicks(<optional><parameter>$min_ticks</parameter></optional>, <optional><parameter>$datetime_interval</parameter></optional>, <optional><parameter>$tick_inc_integer</parameter></optional>)</synopsis>
+    <synopsis>$plot-&gt;TuneXAutoTicks(<optional><parameter>$min_ticks</parameter></optional>, <optional><parameter>$tick_mode</parameter></optional>, <optional><parameter>$tick_inc_integer</parameter></optional>)</synopsis>
   </refsynopsisdiv>
 
   <refsect1>
@@ -12249,12 +12312,40 @@ See <xref linkend="autotick-min-ticks"/> for more information.
       </varlistentry>
 
       <varlistentry>
-        <term><replaceable>$datetime_interval</replaceable></term>
+        <term><replaceable>$tick_mode</replaceable></term>
         <listitem>
           <para>
-Indicates whether to select tick a tick increment assuming that the values
-along the X axis represent date/time values.
-See <xref linkend="autotick-datetime-interval"/> for more information.
+Selects from one of three available modes for calculating the tick increment
+along the X axis:
+            <informaltable>
+              <?dbfo table-width="50%"?> <!-- Table width hint for PDF only -->
+              <tgroup cols="2">
+                <?dbhtml table-summary="X axis tick modes"?>
+                <colspec colname="c1" colwidth="20*" />
+                <colspec colname="c2" colwidth="80*" />
+                <thead>
+                  <row>
+                    <entry>Mode</entry>
+                    <entry>Description</entry>
+                  </row>
+                </thead>
+                <tbody>
+                  <row>
+                    <entry>decimal</entry>
+                    <entry>Use a power of 10 times 1, 2, or 5</entry>
+                  </row>
+                  <row>
+                    <entry>binary</entry>
+                    <entry>Use a power of 2</entry>
+                  </row>
+                  <row>
+                    <entry>date</entry>
+                    <entry>Use a date/time value</entry>
+                  </row>
+                </tbody>
+              </tgroup>
+            </informaltable>
+See <xref linkend="autotick-mode"/> for more information.
           </para>
         </listitem>
       </varlistentry>
@@ -12301,10 +12392,10 @@ The maximum number of tick intervals is about 2.5 times the minimum number.
     </para>
 
     <para>
-The default for <literal>datetime_interval</literal> depends on label
-formatting type along the X axis. If <xref linkend="SetXLabelType"/>('time')
-is used to select date/time formatting of labels, then the default for
-datetime_interval is TRUE, otherwise it is FALSE.
+The default for <literal>tick_mode</literal> depends on the label formatting
+type along the X axis. If <xref linkend="SetXLabelType"/>('time') is used to
+select date/time formatting of labels, then the default for tick_mode is
+<literal>'date'</literal>, otherwise it is <literal>'decimal'</literal>.
     </para>
 
     <para>
@@ -12320,7 +12411,7 @@ above 1 and fractional increments between 0 and 1.)
     <para>
 Use a minimum of 10 tick intervals along the X axis, and do not allow tick
 increments less than 1:
-<programlisting><![CDATA[$plot->TuneXAutoRange(10, NULL, FALSE);
+<programlisting><![CDATA[$plot->TuneXAutoRange(10, NULL, TRUE);
 ]]></programlisting>
     </para>
   </refsect1>
@@ -12344,7 +12435,7 @@ This function was added in PHPlot-6.0.0.
   </refnamediv>
 
   <refsynopsisdiv>
-    <synopsis>$plot-&gt;TuneYAutoTicks(<optional><parameter>$min_ticks</parameter></optional>, <optional><parameter>$datetime_interval</parameter></optional>, <optional><parameter>$tick_inc_integer</parameter></optional>)</synopsis>
+    <synopsis>$plot-&gt;TuneYAutoTicks(<optional><parameter>$min_ticks</parameter></optional>, <optional><parameter>$tick_mode</parameter></optional>, <optional><parameter>$tick_inc_integer</parameter></optional>)</synopsis>
   </refsynopsisdiv>
 
   <refsect1>
@@ -12370,12 +12461,40 @@ See <xref linkend="autotick-min-ticks"/> for more information.
       </varlistentry>
 
       <varlistentry>
-        <term><replaceable>$datetime_interval</replaceable></term>
+        <term><replaceable>$tick_mode</replaceable></term>
         <listitem>
           <para>
-Indicates whether to select tick a tick increment assuming that the values
-along the Y axis represent date/time values.
-See <xref linkend="autotick-datetime-interval"/> for more information.
+Selects from one of three available modes for calculating the tick increment
+along the Y axis:
+            <informaltable>
+              <?dbfo table-width="50%"?> <!-- Table width hint for PDF only -->
+              <tgroup cols="2">
+                <?dbhtml table-summary="Y axis tick modes"?>
+                <colspec colname="c1" colwidth="20*" />
+                <colspec colname="c2" colwidth="80*" />
+                <thead>
+                  <row>
+                    <entry>Mode</entry>
+                    <entry>Description</entry>
+                  </row>
+                </thead>
+                <tbody>
+                  <row>
+                    <entry>decimal</entry>
+                    <entry>Use a power of 10 times 1, 2, or 5</entry>
+                  </row>
+                  <row>
+                    <entry>binary</entry>
+                    <entry>Use a power of 2</entry>
+                  </row>
+                  <row>
+                    <entry>date</entry>
+                    <entry>Use a date/time value</entry>
+                  </row>
+                </tbody>
+              </tgroup>
+            </informaltable>
+See <xref linkend="autotick-mode"/> for more information.
           </para>
         </listitem>
       </varlistentry>
@@ -12422,10 +12541,10 @@ The maximum number of tick intervals is about 2.5 times the minimum number.
     </para>
 
     <para>
-The default for <literal>datetime_interval</literal> depends on label
-formatting type along the Y axis. If <xref linkend="SetYLabelType"/>('time')
-is used to select date/time formatting of labels, then the default for
-datetime_interval is TRUE, otherwise it is FALSE.
+The default for <literal>tick_mode</literal> depends on the label formatting
+type along the Y axis. If <xref linkend="SetYLabelType"/>('time') is used to
+select date/time formatting of labels, then the default for tick_mode is
+<literal>'date'</literal>, otherwise it is <literal>'decimal'</literal>.
     </para>
 
     <para>
@@ -12433,6 +12552,16 @@ The default for <literal>tick_inc_integer</literal> is FALSE, meaning PHPlot
 may use fractional tick increments. (Note this does not mean a tick
 increment such as 2.5 would ever be selected. PHPlot uses whole numbers
 above 1 and fractional increments between 0 and 1.)
+    </para>
+  </refsect1>
+
+  <refsect1>
+    <title>Example</title>
+    <para>
+Use a minimum of 8 tick intervals along the Y axis, and pick a power of
+2 as a tick increment:
+<programlisting><![CDATA[$plot->TuneYAutoRange(9, 'binary');
+]]></programlisting>
     </para>
   </refsect1>
 
