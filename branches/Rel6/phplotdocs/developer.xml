@@ -409,8 +409,9 @@ This function is not called if the user has set a tick increment
 (<xref linkend="SetXTickIncrement"/>, <xref linkend="SetYTickIncrement"/>)
 or the number of tick marks
 (<xref linkend="SetNumXTicks"/>, <xref linkend="SetNumYTicks"/>).
-The function calls either <xref linkend="CalcStep125"/> or
-<xref linkend="CalcStepDatetime"/> to calculate an appropriate value.
+This function calls either <xref linkend="CalcStep125"/>,
+<xref linkend="CalcStepBinary"/>, or <xref linkend="CalcStepDatetime"/>
+to calculate an appropriate value, depending on the tick increment mode.
 This was added in PHPlot-6.0.0.
 Called by <xref linkend="CalcPlotRange"/>.
     </para>
@@ -421,8 +422,8 @@ Called by <xref linkend="CalcPlotRange"/>.
   <term><anchor id="CalcStep125" xreflabel="CalcStep125"/>CalcStep125($range, $min_ticks)</term>
   <listitem>
     <para>
-Calculates an appropriate tick increment for a numeric (as opposed to
-date/time) range.
+Calculates an appropriate tick increment in 'decimal' mode. This is the
+default mode.
 $range is the plot area range (max - min).
 $min_ticks is the minimum number of tick intervals to produce.
 Returns the calculated tick increment.
@@ -436,18 +437,37 @@ Called by <xref linkend="CalcStep"/>.
 </varlistentry>
 
 <varlistentry>
+  <term><anchor id="CalcStepBinary" xreflabel="CalcStepBinary"/>CalcStepBinary($range, $min_ticks)</term>
+  <listitem>
+    <para>
+Calculates an appropriate tick increment in 'binary' (power of 2) mode.
+$range is the plot area range (max - min).
+$min_ticks is the minimum number of tick intervals to produce.
+Returns the calculated tick increment.
+The algorithm produces the largest tick increment that is a power of 2
+and divides the plot area range $range into no fewer than $min_ticks intervals.
+This was added in PHPlot-6.0.0.
+Called by <xref linkend="CalcStep"/>.
+    </para>
+  </listitem>
+</varlistentry>
+
+<varlistentry>
   <term><anchor id="CalcStepDatetime"
 xreflabel="CalcStepDatetime"/>CalcStepDatetime($range, $min_ticks)</term>
   <listitem>
     <para>
-Calculates an appropriate tick increment for a date/time range.
+Calculates an appropriate tick increment in 'date' mode.
+This is for when the values along the axis represent date/time values.
 $range is the plot area range (max - min), in seconds.
 $min_ticks is the minimum number of tick intervals to produce.
 Returns the calculated tick increment.
 The function contains a list of acceptable intervals between 1 second and 1
-week, and returns one of those if possible. If the range is too large
-(would produce too many ticks with an increment of 1 week), the function
-falls back to using <xref linkend="CalcStep125"/> with units of 1 day.
+week, and returns one of those if possible - the largest value that divides
+the plot area range $range into no fewer than $min_ticks intervals.  If the
+range is too large (would produce too many ticks with an increment of 1
+week), the function falls back to using <xref linkend="CalcStep125"/> with
+units of 1 day.
 This was added in PHPlot-6.0.0.
 Called by <xref linkend="CalcStep"/>.
     </para>
@@ -2244,7 +2264,7 @@ This was added in PHPlot-6.0.0
 
 <varlistentry>
   <term><anchor id="TuneAutoTicks"
-xreflabel="TuneAutoTicks"/>TuneAutoTicks($which, $min_ticks, $datetime_interval, $tick_inc_integer)</term>
+xreflabel="TuneAutoTicks"/>TuneAutoTicks($which, $min_ticks, $tick_mode, $tick_inc_integer)</term>
   <listitem>
     <para>
 This implements <xref linkend="TuneXAutoTicks"/> and
@@ -2255,7 +2275,6 @@ This was added in PHPlot-6.0.0
     </para>
   </listitem>
 </varlistentry>
-
 
 <varlistentry>
   <term><anchor id="xtr" xreflabel="xtr"/>xtr($x_world)</term>
@@ -2442,7 +2461,7 @@ the second-level arrays are:
       </row>
       <row>
         <entry>width</entry>
-        <entry>Width in pixels of an upper-case "E" in the font.</entry>
+        <entry>Width in pixels of an upper-case "E" in the font</entry>
         <entry>Font width in pixels</entry>
       </row>
       <row>
@@ -2822,7 +2841,7 @@ to control the automatic calculation of the plot area range.
 <?dbfo keep-together="always"?> <!-- Prevent PDF break before table -->
 The array contains 2 arrays, indexed as <literal>'x'</literal> and
 <literal>'y'</literal> for X and Y axis parameters respectively.
-Each of those arrays is an array with entries shown in the following table:
+The keys and values of the second-level arrays are:
 <informaltable>
   <tgroup cols="3">
     <?dbhtml table-summary="rangectl[] array elements"?>
@@ -2838,6 +2857,11 @@ Each of those arrays is an array with entries shown in the following table:
     </thead>
     <tbody>
       <row>
+        <entry>zero_magnet</entry>
+        <entry>0.857142 (Note this is 6/7)</entry>
+        <entry>Strength of the <emphasis>zero magnet</emphasis></entry>
+      </row>
+      <row>
         <entry>adjust_mode</entry>
         <entry>T</entry>
         <entry>End adjustment mode: R, T, or I</entry>
@@ -2846,11 +2870,6 @@ Each of those arrays is an array with entries shown in the following table:
         <entry>adjust_amount</entry>
         <entry>(Dynamic; see <xref linkend="GetRangeEndAdjust"/>)</entry>
         <entry>Amount of end adjustment, as a fraction of the plot range</entry>
-      </row>
-      <row>
-        <entry>zero_magnet</entry>
-        <entry>0.857142 (Note this is 6/7)</entry>
-        <entry>Strength of the <emphasis>zero magnet</emphasis></entry>
       </row>
     </tbody>
   </tgroup>
@@ -2876,7 +2895,7 @@ to control the automatic calculation of tick intervals.
 <?dbfo keep-together="always"?> <!-- Prevent PDF break before table -->
 The array contains 2 arrays, indexed as <literal>'x'</literal> and
 <literal>'y'</literal> for X and Y axis parameters respectively.
-Each of those arrays is an array with entries shown in the following table:
+The keys and values of the second-level arrays are:
 <informaltable>
   <tgroup cols="3">
     <?dbhtml table-summary="rangectl[] array elements"?>
@@ -2892,14 +2911,14 @@ Each of those arrays is an array with entries shown in the following table:
     </thead>
     <tbody>
       <row>
-        <entry>datetime_interval</entry>
-        <entry>NULL (calculated)</entry>
-        <entry>If TRUE, assume the axis scale uses date/time values</entry>
-      </row>
-      <row>
         <entry>min_ticks</entry>
         <entry>5</entry>
         <entry>Minimum number of tick intervals</entry>
+      </row>
+      <row>
+        <entry>tick_mode</entry>
+        <entry>NULL (calculated)</entry>
+        <entry>Tick increment calculation mode: 'decimal', 'binary', or 'date'</entry>
       </row>
       <row>
         <entry>tick_inc_integer</entry>
