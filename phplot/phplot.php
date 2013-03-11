@@ -293,12 +293,12 @@ class PHPlot
     protected $thousands_sep;
     protected $tick_color;
     protected $tickctl = array( 'x' => array(
-                                  'datetime_interval' => NULL,
+                                  'tick_mode' => NULL,
                                   'min_ticks' => 5,
                                   'tick_inc_integer' => FALSE,
                                 ),
                                 'y' => array(
-                                  'datetime_interval' => NULL,
+                                  'tick_mode' => NULL,
                                   'min_ticks' => 5,
                                   'tick_inc_integer' => FALSE,
                                ));
@@ -3653,12 +3653,11 @@ class PHPlot
     }
 
     /*
-     * Calculate a tick step for a numeric range. This is used by CalcStep().
-     * Result is a multiple of 1, 2, or 5 times a power of 10, and divides the data range
-     * into no fewer than min_ticks tick intervals.
+     * Calculate a 'decimal' mode (the default) tick step. This is used by CalcStep().
+     * Returns the largest value that is 1, 2, or 5 times an integer power of 10 which
+     * divides the data range into no fewer than min_ticks tick intervals.
      *   $range : The data range (max - min), already checked as > 0.
      *   $min_ticks : is the smallest number of intervals allowed, already checked > 0.
-     * Returns the calculated tick step.
      */
     protected function CalcStep125($range, $min_ticks)
     {
@@ -3704,31 +3703,44 @@ class PHPlot
     }
 
     /*
+     * Calculate a 'binary' mode tick step.  This is used by CalcStep().
+     * Returns the largest integer power of 2 that divides the range into at least min_ticks intervals.
+     *   $range : The data range (max - min), already checked as > 0.
+     *   $min_ticks : is the smallest number of intervals allowed, already checked > 0.
+     */
+    protected function CalcStepBinary($range, $min_ticks)
+    {
+        return pow(2, (int)floor(log($range / $min_ticks, 2)));
+    }
+
+    /*
      * Calculate an ideal tick increment for a given range.
      *   $which : 'x' or 'y' - use the parameters for that axis
      *   $range : The plot area range (max - min)
-     * Returns: The tick increment.
+     * Returns: The tick increment, using one of 3 methods depending on 'tick_mode'.
      * This is only used when neither Set[XY]TickIncrement nor SetNum[XY]Ticks was used.
-     * There are two methods, depending on $use_datetime. See CalcStep125() and CalcStepDatetime().
      */
     protected function CalcStep($which, $range)
     {
-        // Get tick control variables: datetime_interval, min_ticks, tick_inc_integer.
+        // Get tick control variables: min_ticks, tick_mode, tick_inc_integer.
         extract($this->tickctl[$which]);
 
-        // Default to datetime_interval to using the label format mode for that axis:
-        if (!isset($datetime_interval))
-            $datetime_interval = (isset($this->label_format[$which]['type'])
-                                  && $this->label_format[$which]['type'] == 'time');
+        // If tick_mode is null, default to decimal mode unless the axis uses date/time formatting:
+        if (!isset($tick_mode)) {
+            if (isset($this->label_format[$which]['type']) && $this->label_format[$which]['type'] == 'time')
+                $tick_mode = 'date';
+            else
+                $tick_mode = 'decimal';
+        }
 
-        if ($datetime_interval) {
-            // Date/time range is selected: calculate a date/time step.
+        // Use proper mode to calculate the tick increment, with integer override option.
+        if ($tick_mode == 'date') {
             $tick_step = $this->CalcStepDatetime($range, $min_ticks);
         } elseif ($tick_inc_integer && $range <= $min_ticks) {
-            // Whole integer ticks is selected, but the range is too small, so use 1.
-            $tick_step = 1;
+            $tick_step = 1;  // Whole integer ticks selected but range is too small.
+        } elseif ($tick_mode == 'binary') {
+            $tick_step = $this->CalcStepBinary($range, $min_ticks);
         } else {
-            // Regular numeric range: calculate a 1/2/5*10^N step.
             $tick_step = $this->CalcStep125($range, $min_ticks);
         }
         return $tick_step;
@@ -3858,8 +3870,16 @@ class PHPlot
         $this->GetRangeEndAdjust($which, $adjust_amount);  // Apply default to $adjust_amount if needed
 
         // Get local copies of other variables for X or Y:
-        $num_ticks = $this->{"num_$which" . '_ticks'};     // num_x_ticks or num_y_ticks
-        $tick_inc = $this->{$which . '_tick_inc_u'};       // x_tick_inc_u or y_tick_inc_u
+        if ($which == 'x') {
+            $num_ticks = $this->num_x_ticks;
+            $tick_inc = $this->x_tick_inc_u;
+            // Tick anchor is only used in 'T' adjust mode, where no tick anchor means anchor at 0.
+            $tick_anchor = isset($this->x_tick_anchor) ? $this->x_tick_anchor : 0;
+        } else {
+            $num_ticks = $this->num_y_ticks;
+            $tick_inc = $this->y_tick_inc_u;
+            $tick_anchor = isset($this->y_tick_anchor) ? $this->y_tick_anchor : 0;
+        }
 
         // Validate the range, which must be positive. Adjusts plot_min and plot_max if necessary.
         if (!$this->CheckPlotRange($which, $plot_min, $plot_max, $adjust_min, $adjust_max))
@@ -3911,8 +3931,8 @@ class PHPlot
                 $plot_min -= $adjust_amount * $range;
 
             if ($adjust_mode == 'T') {
-                // Mode 'T': Adjust to previous tick mark:
-                $plot_min = $tick_inc * floor($plot_min / $tick_inc);
+                // Mode 'T': Adjust to previous tick mark, taking tick anchor into account:
+                $plot_min = $tick_anchor + $tick_inc * floor(($plot_min - $tick_anchor) / $tick_inc);
             } elseif ($adjust_mode == 'I') {
                 // Mode 'I': Adjust to previous integer:
                 $plot_min = floor($plot_min);
@@ -3927,8 +3947,8 @@ class PHPlot
                 $plot_max += $adjust_amount * $range;
 
             if ($adjust_mode == 'T') {
-                // Mode 'T': Adjust to next tick mark:
-                $plot_max = $tick_inc * ceil($plot_max / $tick_inc);
+                // Mode 'T': Adjust to next tick mark, taking tick anchor into account:
+                $plot_max = $tick_anchor + $tick_inc * ceil(($plot_max - $tick_anchor) / $tick_inc);
             } elseif ($adjust_mode == 'I') {
                 // Mode 'I': Adjustment to next higher integer.
                 $plot_max = ceil($plot_max);
@@ -4538,15 +4558,19 @@ class PHPlot
     /*
      * Internal function to implement TuneXAutoTicks() and TuneYAutoTicks() : Set tick tuning parameters
      *   $which : 'x' or 'y', which axis to adjust parameters for
-     *   $min_ticks, $datetime_interval, $tick_inc_integer : Parameters to set (if not NULL).
-     * Note: Does not report errors - just ignores invalid tuning values.
+     *   $min_ticks, $tick_mode, $tick_inc_integer : Parameters to set (if not NULL).
      */
-    protected function TuneAutoTicks($which, $min_ticks, $datetime_interval, $tick_inc_integer)
+    protected function TuneAutoTicks($which, $min_ticks, $tick_mode, $tick_inc_integer)
     {
         if (isset($min_ticks) && $min_ticks > 0)
-            $this->tickctl[$which]['min_ticks'] = $min_ticks;
-        if (isset($datetime_interval))
-            $this->tickctl[$which]['datetime_interval'] = (bool)$datetime_interval;
+            $this->tickctl[$which]['min_ticks'] = (integer)$min_ticks;
+        if (isset($tick_mode)) {
+            $tick_mode = $this->CheckOption($tick_mode, 'decimal, binary, date',
+                                            'Tune' . strtoupper($which) . 'AutoTicks');
+            if (!$tick_mode)
+                return FALSE;
+            $this->tickctl[$which]['tick_mode'] = $tick_mode;
+        }
         if (isset($tick_inc_integer))
             $this->tickctl[$which]['tick_inc_integer'] = (bool)$tick_inc_integer;
         return TRUE;
@@ -4555,17 +4579,17 @@ class PHPlot
     /*
      * Set tuning variables for tick calculations on X axis. See TuneAutoTicks() above.
      */
-    function TuneXAutoTicks($min_ticks = NULL, $datetime_interval = NULL, $tick_inc_integer = NULL)
+    function TuneXAutoTicks($min_ticks = NULL, $tick_mode = NULL, $tick_inc_integer = NULL)
     {
-        return $this->TuneAutoTicks('x', $min_ticks, $datetime_interval, $tick_inc_integer);
+        return $this->TuneAutoTicks('x', $min_ticks, $tick_mode, $tick_inc_integer);
     }
 
     /*
      * Set tuning variables for tick calculations on Y axis. See TuneAutoTicks() above.
      */
-    function TuneYAutoTicks($min_ticks = NULL, $datetime_interval = NULL, $tick_inc_integer = NULL)
+    function TuneYAutoTicks($min_ticks = NULL, $tick_mode = NULL, $tick_inc_integer = NULL)
     {
-        return $this->TuneAutoTicks('y', $min_ticks, $datetime_interval, $tick_inc_integer);
+        return $this->TuneAutoTicks('y', $min_ticks, $tick_mode, $tick_inc_integer);
     }
 
 
