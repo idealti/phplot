@@ -1554,7 +1554,21 @@ exactly that many intervals.
 For example, if the Y axis range is 0 to 17, and you use
 <literal>$plot->SetNumYTicks(6)</literal> to get 6 intervals, then the tick
 mark spacing will be about 2.833333.
+This is probably not a desirable value for the tick increment.
+Using <function>SetNumXTicks</function> or <function>SetNumYTicks</function>
+to set the number of tick intervals is usually not a good idea, unless you
+also set the plot range with <xref linkend="SetPlotAreaWorld"/>.
 </para>
+
+<para>
+If you set both ends of the X or Y plot range, PHPlot will position
+tick marks starting from the lower end of that range, by default.
+For example, if you set the Y axis range from 1 to 20, with a tick
+increment of 5, the tick marks will be at 1, 6, 11, and 16.
+You can set a <emphasis>tick anchor</emphasis> to change this.
+See <xref linkend="adv-autorange-tick-positions"/> below for more information.
+</para>
+
 </sect2>
 
 <sect2 id="adv-autorange-partial">
@@ -1576,6 +1590,16 @@ Fahrenheit, you might use something like this:
 <programlisting><![CDATA[$plot->SetPlotAreaWorld(NULL, 60);
 ]]></programlisting>
 which sets Ymin to 60.
+</para>
+
+<para>
+Since PHPlot positions tick marks starting from the lower limit of the X
+and Y plot ranges, setting <varname>Xmin</varname> or <varname>Ymin</varname>
+establishes the basis for tick marks along that axis.
+For example, if you set the lower end of the X axis range to 12, with a tick
+increment of 10, the tick marks along X will be at 12, 22, 32, etc.
+You can set a <emphasis>tick anchor</emphasis> to change this.
+See <xref linkend="adv-autorange-tick-positions"/> below for more information.
 </para>
 </sect2>
 
@@ -1617,10 +1641,10 @@ barely.
     <listitem>
       <para>
 Zero Magnet:
-If the plot range does not currently include zero, PHPlot tries to
-extend the range so it will begin or end at zero. This is done by
-either by moving PlotMin down to zero (for positive data), or by
-moving PlotMax up to zero (for negative data).
+If the plot range does not currently include zero
+(PlotMin &lt;= 0 and 0 &lt;= PlotMax), PHPlot tries to extend the range so it
+will begin or end at zero. This is done by either by moving PlotMin down to
+zero (for positive data), or by moving PlotMax up to zero (for negative data).
 There is a limit as to how far PHPlot is willing to extend the plot range
 to include zero (see below).
       </para>
@@ -1635,7 +1659,7 @@ room above or below the data for data value labels, and prevents the top
 (or bottom) of the plotted data from hitting the edge of the plot area,
 which would detract from the appearance. Adjustment only occurs for PlotMin
 if it is negative, and for PlotMax if it is positive. This corresponds to
-the direction of the plot data 'away' from the axis line.
+the direction of the plot data 'away' from zero.
 <!-- This is: 0 < PlotMin < PlotMax  -->
 For example, if 0&nbsp;&lt;&nbsp;PlotMin&nbsp;&lt;&nbsp;PlotMax
 (all the data is positive), then PlotMax will be increased.
@@ -1661,6 +1685,8 @@ If the adjustment mode is <literal>T</literal> (Tick, the default mode),
 then PlotMax is adjusted up to the next higher tick mark position, and
 PlotMin is adjusted down to the next lower tick mark position. Note that
 this happens even if tick marks are not displayed.
+If a tick anchor is set, this is taken into account when adjusting the
+range (see <xref linkend="adv-autorange-tick-positions"/> below).
             </para>
           </listitem>
           <listitem>
@@ -1993,8 +2019,8 @@ not set as described above.
 (Even if your plot has no visible tick marks along an axis, PHPlot will
 calculate a tick increment for that axis, since it might be used in adjusting
 the plot range.)
-
 </para>
+
 <note>
   <para>
 This description applies starting with PHPlot-6.0.0. In older versions,
@@ -2003,21 +2029,25 @@ PHPlot simply divided the plot range by 10 to calculate the tick increment.
 </note>
 
 <para>
-PHPlot uses one of two methods to calculate a tick increment for a given plot
-range (along the X or Y axis): the standard, or numeric method, and the
-date/time method. By default, PHPlot uses the numeric method, unless the axis
-labels have been set up to use date/time labels.
+PHPlot uses one of three methods to calculate a tick increment for a given plot
+range (along the X or Y axis). The methods are called 'decimal', 'binary',
+and 'date', and correspond to the <varname>tick_mode</varname> parameter
+described below.  By default, PHPlot uses the 'decimal' method, unless the axis
+labels have been set up to use date/time labels, in which case it uses the
+'date' mode.
 You can also directly control which method is used.
 </para>
 
 <para>
-Using the numeric method, PHPlot picks the largest tick increment which is
-1, 2, or 5 times a power of 10, and which divides the plot range into no
-fewer than the acceptable minimum number of tick intervals
+Using the <emphasis>decimal</emphasis> method, PHPlot picks the largest tick
+increment which is 1, 2, or 5 times a power of 10, and which divides the plot
+range into no fewer than the acceptable minimum number of tick intervals
 (see the <varname>min_ticks</varname> parameter below).
-The power of 10 can be negative (fractional tick marks), zero,
-or positive, so valid automatically-calculated tick increments include:
-..., 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, ...
+The power of 10 can be negative, zero, or positive.
+Valid automatically-calculated tick increments for non-negative powers of 10
+include 1, 2, 5, 10, 20, 50, 100, 200, 500, etc.
+Valid automatically-calculated tick increments for negative powers of 10
+include 0.5, 0.2, 0.1, 0.05, 0.02, 0.01, etc.
 </para>
 
 <para>
@@ -2031,18 +2061,17 @@ explicit maximum, PHPlot chooses the largest valid increment that produces
 </para>
 
 <para>
-When using the date/time method, PHPlot selects from a pre-defined list of
-valid tick increments.
+When using the <emphasis>date</emphasis> method, PHPlot selects from a
+pre-defined list of valid tick increments.
 The list covers a range from 1 second up to 7 days: 1, 2, 5, 10, 15, and 30
 seconds; 1, 2, 5, 10, 15, and 30 minutes, then 1, 2, 4, 8, 12, 24, 48, 96,
 and 168 hours.
 PHPlot will pick the largest increment in the list which will result in no
 fewer than the acceptable minimum number of tick intervals
 (<varname>min_ticks</varname>).
-For date/time ranges that exceed 7 days, PHPlot uses the numeric method
-instead, but with units of 24 hours.
-With the date/time method, PHPlot never chooses an increment less than 1
-second.
+If the plot area range exceeds 7 days, PHPlot switches to the 'decimal' method
+instead, with units of 24 hours.
+With the 'date' method, PHPlot never chooses an increment less than 1 second.
 </para>
 
 <para>
@@ -2050,6 +2079,19 @@ For example, given a date/time range which spans 960 seconds (16 minutes), and
 the default min_ticks of 5, PHPlot will calculate a tick increment of 120
 seconds (2 minutes), which results in 8 intervals. This is the largest
 increment in the list above which results in 5 or more intervals.
+</para>
+
+<para>
+When using the <emphasis>binary</emphasis> method, PHPlot picks the largest
+tick increment which is a power of 2, and which divides the plot range into no
+fewer than the acceptable minimum number of tick intervals
+(see the <varname>min_ticks</varname> parameter below).
+The power of 2 can be negative, zero, or positive.
+Valid automatically-calculated tick increments for non-negative powers of 2
+include 1, 2, 4, 8, 16, 32, etc.
+Valid automatically-calculated tick increments for negative powers of 2
+include 1/2, 1/4, 1/8, 1/16, 1/32, etc. (Note that PHPlot will label these
+ticks as decimal values 0.5, 0.25, 0.125 etc., not fractions.)
 </para>
 
 </sect2>
@@ -2069,31 +2111,58 @@ The <varname>min_ticks</varname> parameter sets the minimum number of tick
 intervals along the axis. The default is 5.
 The maximum number of tick intervals will be about 2.5 times the minimum.
 (The value 2.5 comes from the largest ratio between adjacent acceptable tick
-increment values. This is true for the numeric method choices of 1, 2, 5,
-10, 20, etc. and also for the pre-defined list of values used with the
-date/time method.)
+increment values. This is true for the 'decimal' method choices of 1, 2, 5,
+10, 20, etc., the 'binary' method, and also for the pre-defined list of values
+used with the 'date' method.)
 Therefore, by default, a plot range will have between 5 and 12 tick intervals
 inclusive (before possible additional tick intervals resulting from
 adjustment to the range, as described above).
 </para>
 </sect3>
 
-<sect3 id="autotick-datetime-interval">
-<title>Tick Increment parameter: datetime_interval</title>
+<sect3 id="autotick-mode">
+<title>Tick Increment parameter: tick_mode</title>
 <para>
-The <varname>datetime_interval</varname> parameter is a boolean flag which
-selects one of the two methods used to calculate a tick increment.
-If the flag is TRUE, PHPlot will use the date/time method.
-If the flag is FALSE, PHPlot will use its standard, numeric method.
+The <varname>tick_mode</varname> parameter selects one of the three available
+methods to calculate the tick increment:
+  <informaltable>
+    <?dbfo table-width="50%"?> <!-- Table width hint for PDF only -->
+    <tgroup cols="2">
+      <?dbhtml table-summary="X axis tick modes"?>
+      <colspec colname="c1" colwidth="20*" />
+      <colspec colname="c2" colwidth="80*" />
+      <thead>
+        <row>
+          <entry>Mode</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>decimal</entry>
+          <entry>Use a power of 10 times 1, 2, or 5</entry>
+        </row>
+        <row>
+          <entry>binary</entry>
+          <entry>Use a power of 2</entry>
+        </row>
+        <row>
+          <entry>date</entry>
+          <entry>Use a date/time increment value</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+These methods are described in more detail above.
 </para>
 
 <para>
 By default, PHPlot will automatically decide which method to use.
-It will use the date/time tick increment method if
-the corresponding axis tick labels use date/time formatting (as set with 
+It will use the <literal>'date'</literal> method if the corresponding axis
+tick labels use date/time formatting (as set with 
 <xref linkend="SetXLabelType"/><literal>('time')</literal> or
 <xref linkend="SetYLabelType"/><literal>('time')</literal>).
-Otherwise is will use the standard method.
+Otherwise is will use the <literal>'decimal'</literal>  method.
 </para>
 
 <para>
@@ -2102,8 +2171,8 @@ For example, if you are using date/time values along the X axis,
 but have a custom label formatting function (rather than selecting
 <literal>time</literal> format type), you will probably want to tell PHPlot
 to pick a date/time tick increment for the X axis:
-<programlisting><![CDATA[// Set X datetime_interval to TRUE
-$plot->TuneXAutoTicks(NULL, TRUE);
+<programlisting><![CDATA[// Pick a date/time tick increment on X:
+$plot->TuneXAutoTicks(NULL, 'date');
 ]]></programlisting>
 </para>
 
@@ -2113,77 +2182,168 @@ but you want tick increments to follow the 1, 2, 5 times power of 10 rule,
 rather than choosing a date/time value. You can use:
 <programlisting><![CDATA[// Format X labels as time values:
 $plot->SetXLabelType('time', '%H:%M:%S');
-// Set X datetime_interval to FALSE to not pick a date/time tick increment:
-$plot->TuneXAutoTicks(NULL, FALSE);
+// Override default and use the decimal method to pick a tick increment:
+$plot->TuneXAutoTicks(NULL, 'decimal');
 ]]></programlisting>
 </para>
+
+<para>
+In this third example, your Y axis values represent something like memory
+sizes which are normally measured in powers of two. You can have PHPlot pick
+a power of two as a tick increment with:
+<programlisting><![CDATA[// Use a power of 2 for the Y axis tick increment:
+$plot->TuneYAutoTicks(NULL, 'binary');
+]]></programlisting>
+</para>
+
+<para>
+If the plot range is small enough, PHPlot may select a tick increment which
+is less than one - a negative power of two.
+This results in a tick increment of 1/2, 1/4, 1/8, 1/16, or smaller.
+If you want to use the binary tick method, but do not want fractional tick
+increments, set <varname>tick_inc_integer</varname> (see next section):
+<programlisting><![CDATA[// Valid tick increments are powers of 2 &gt;= 1
+$plot->TuneXAutoTicks(NULL, 'binary', TRUE);
+]]></programlisting>
+</para>
+
 </sect3>
 
 <sect3 id="autotick-tick-inc-integer">
 <title>Tick Increment parameter: tick_inc_integer</title>
 <para>
 The <varname>tick_inc_integer</varname> parameter is a boolean flag which
-allows or disallows fractional tick increments.
+can be set to prevent fractional tick increments.
 If the flag is TRUE, PHPlot will not pick a tick increment less than 1.
+This may result in fewer than <varname>min_ticks</varname> tick intervals.
 If the flag is FALSE, PHPlot may pick any tick increment.
 The default is FALSE.
 </para>
 
 <para>
-If you set this to TRUE, PHPlot will disregard the minimum number of ticks
-if the data range is small.  For example, if your Y data range is 0 to 2,
-and you set the tick_inc_integer flag for Y to TRUE, then PHPlot will use a
-tick increment of 1, and you will likely get only 2 tick intervals.  This
-is less than the default minimum of 5 tick intervals.  With
-tick_inc_integer FALSE, PHPlot would use a tick increment of 0.2 instead.
+The 'decimal' and 'binary' tick increment selection methods (see above)
+can select tick increments less than 1, using negative powers of 10 or 2
+respectively.
+This will happen if the plot range is small enough (and/or
+<varname>min_ticks</varname> is high enough).
+Specifically, a fractional tick increment will result from having a plot
+range which is less than the minimum number of ticks.
+Set <varname>tick_inc_integer</varname> to TRUE if you do not want
+fractional tick increments.
+This parameter does not apply to the 'date' tick increment selection method,
+which does not support tick increments less than 1 second.
+In 'date' mode, <varname>tick_inc_integer</varname> is assumed TRUE.
 </para>
 
+<note>
+  <para>
+PHPlot never picks a tick increment which is greater than one and not a whole
+number. Selected tick increments are either integers &gt;= 1, or fractions
+between 0 and 1.
+  </para>
+</note>
+
 <para>
-If PHPlot uses the date/time method for selecting a tick increment (see above),
-then only integer increments are allowed, as the minimum increment in that
-mode is 1 second.
-In that case, <varname>tick_inc_integer</varname> is assumed TRUE.
+For example, if your Y data range is 0 to 2, and you set the
+<varname>tick_inc_integer</varname> parameter for Y to TRUE,
+then PHPlot will use a tick increment of 1, and you will likely get only
+2 tick intervals.  This is less than the default minimum of 5
+tick intervals.
+With <varname>tick_inc_integer</varname> FALSE, PHPlot would use a tick
+increment of 0.2 in 'decimal' mode, or 0.25 in 'binary' mode.
 </para>
+
 </sect3>
 
 </sect2>
 
-<sect2 id="adv-autorange-vs-tick">
-<title>Plot Range versus Tick Positions</title>
+<sect2 id="adv-autorange-tick-positions">
+<title>Tick Positions</title>
 <para>
-PHPlot places tick marks along the X axis (if enabled), starting from the
-left-most X position which corresponds to the minimum of the plot range for X.
-The Y axis tick marks are placed starting from the minimum of the plot
-range for Y. This interaction between the minima of the plot range and the
-tick positions is often important for good plot appearance.
+This section describes how PHPlot positions the tick marks along the X and Y
+axis (if tick marks are enabled), and the tick label values which result.
+Several factors are involved:
+  <itemizedlist>
+    <listitem>
+      <para>
+The plot range minimum (PlotMin), which is the world coordinates of the left
+end of the X axis, or the world coordinates of the bottom of the Y axis.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+Whether or not a tick anchor was set. You use a tick anchor to tell PHPlot
+that you want tick marks based on a particular world coordinate value.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+The plot range adjustment mode <varname>adjust_mode</varname> (see above),
+if PHPlot calculated the plot range minimum PlotMin automatically.
+      </para>
+    </listitem>
+  </itemizedlist>
 </para>
 
 <para>
-When PHPlot calculates a plot range using the default adjustment mode
-<literal>T</literal> (adjust to tick, see above), you will always get a
-tick mark at zero, if zero is located within the axis range.  If zero is
-not within the axis range, you will still get tick marks at whole multiples
-of the tick increment.  This is because PHPlot adjusts the plot range ends
-to coincide with a multiple of the tick increment, resulting in a tick
-position at zero.
+PHPlot generally places tick marks along each axis starting from the minimum
+value of the plot range (PlotMin), which is the left-most position on the X
+axis, and the bottom-most position on the Y axis.
+Therefore, the value of PlotMin affects all the tick values. For example,
+if the tick increment is 10, and PlotMin is 12, ticks will be at 12, 22,
+32, 42.
 </para>
 
 <para>
-In the other adjustments modes, <literal>I</literal> (integer) or
-<literal>R</literal> (range), you will not necessarily get a tick mark at
-zero.  In mode <literal>R</literal> your tick marks will likely not even be
-whole numbers, by default. This is because the plot range minimum in both
-of these cases will not necessarily be a multiple of the tick increment.
-For example:
+A tick anchor can be set with <xref linkend="SetXTickAnchor"/> or
+<xref linkend="SetYTickAnchor"/> to change tick mark positions. In the
+above example, with PlotMin 12, if you set a tick anchor at 10, you will
+get tick positions 20, 30, 40, etc. Setting the tick anchor shifts all the
+ticks, so one of them falls at the anchor (or would, if the axis was
+extended).  Thus, a tick anchor can be used to 'round off' the tick values
+to desired numbers, when the plot range minimum (PlotMin) is not a multiple
+of the tick increment.
+</para>
+
+<para>
+If you set the plot range minimum (PlotMin) to a fixed value with
+<xref linkend="SetPlotAreaWorld"/>, consider that this value will be
+used as the basis for tick marks along that axis, unless you also set
+a tick anchor.
+</para>
+
+<para>
+If PHPlot calculates the plot range minimum using the default adjustment
+mode <literal>T</literal> (adjust to tick, see above), then PHPlot will
+adjust the range to start at a tick mark. That is, PHPlot acts as if a
+tick anchor was set at 0. Your tick marks will be at whole multiples
+of the tick increment, unless you set a tick anchor to move them somewhere
+else.
+</para>
+
+<para>
+In the other adjustments modes - <literal>I</literal> (integer) or
+<literal>R</literal> (range) - PHPlot makes no attempt to correlate the
+plot range minimum with the tick increment. Your tick marks will probably
+not be located at multiples of the tick increment.
+In mode <literal>R</literal> (range), your tick marks will likely not even be
+whole numbers.  As in all other cases, you can set a tick anchor to position
+the tick marks at the values you prefer.
+</para>
+
+<para>
+Here are some examples of PHPlot-calculated plot ranges and tick positions,
+when no tick anchor has been set.
   <informaltable>
-    <?dbfo table-width="80%"?> <!-- Table width hint for PDF only -->
-    <tgroup cols="5">
-      <?dbhtml table-summary="X range adjust mode choices"?>
-      <colspec colname="c1" colwidth="10*" align="center" />
-      <colspec colname="c2" colwidth="10*" align="center" />
-      <colspec colname="c3" colwidth="10*" align="center" />
-      <colspec colname="c4" colwidth="30*" align="center" />
-      <colspec colname="c5" colwidth="40*" align="center" />
+    <?dbfo table-width="100%"?> <!-- Table width hint for PDF only -->
+    <tgroup cols="6">
+      <?dbhtml table-summary="Range and tick position results"?>
+      <colspec colname="c1" colwidth="8*" align="center" />
+      <colspec colname="c2" colwidth="8*" align="center" />
+      <colspec colname="c3" colwidth="12*" align="center" />
+      <colspec colname="c4" colwidth="12*" align="center" />
+      <colspec colname="c5" colwidth="25*" align="center" />
+      <colspec colname="c6" colwidth="35*" />
       <thead>
         <row>
           <entry>Y data min</entry>
@@ -2191,15 +2351,59 @@ For example:
           <entry>Adjustment Mode</entry>
           <entry>Resulting Plot Range</entry>
           <entry>Resulting Tick Positions</entry>
+          <entry>Notes</entry>
         </row>
       </thead>
       <tbody>
+        <row>
+          <entry>7</entry>
+          <entry>123</entry>
+          <entry><literal>T</literal> (tick)</entry>
+          <entry>0 to 140</entry>
+          <entry>0, 20, 40, ... 140</entry>
+          <entry>
+The bottom of the Y range is extended to zero, and the tick marks are at
+multiples of 20. The top of the Y range is extended to the next tick mark.
+          </entry>
+        </row>
+        <row>
+          <entry>7</entry>
+          <entry>123</entry>
+          <entry><literal>R</literal> (range)</entry>
+          <entry>0 to 126.69</entry>
+          <entry>0, 20, 40, ... 120</entry>
+          <entry>
+With <literal>'R'</literal> adjustment mode, the top of the Y range is
+extended by 3% of the range. The bottom of the Y range was moved to zero
+(due to the <emphasis>zero magnet</emphasis>), so the tick marks are based
+at 0 and positioned at whole multiples of 20. The resulting tick marks
+are the same as <literal>'T'</literal> mode, except the Y axis does not end
+at a tick mark.
+          </entry>
+        </row>
+        <row>
+          <entry>7</entry>
+          <entry>123</entry>
+          <entry><literal>I</literal> (integer)</entry>
+          <entry>0 to 127</entry>
+          <entry>0, 20, 40, ... 120</entry>
+          <entry>
+Here <literal>'I'</literal> adjustment mode is almost the the same as the
+previous case, except the top of the range is adjusted to the next integer.
+Since there is no tick mark there, the difference would not be visible.
+          </entry>
+        </row>
         <row>
           <entry>-17</entry>
           <entry>35</entry>
           <entry><literal>T</literal> (tick)</entry>
           <entry>-20 to 40</entry>
           <entry>-20, -10, 0, 10, 20, 40</entry>
+          <entry>
+Both ends of plot range are adjusted to a tick position,
+with an implied tick anchor at 0. The resulting tick marks are at
+whole multiples of the tick step 10.
+          </entry>
         </row>
         <row>
           <entry>-17</entry>
@@ -2207,6 +2411,11 @@ For example:
           <entry><literal>R</literal> (range)</entry>
           <entry>-18.56 to 36.56</entry>
           <entry>-18.56, -8.56, 1.44, 11.44, 21.44, 31.44</entry>
+          <entry>
+In this mode, the range is simply extended by 3% (by default) at each end,
+where 3% of (35+17) = 1.56. The resulting tick mark positions are probably
+not ideal.
+          </entry>
         </row>
         <row>
           <entry>-17</entry>
@@ -2214,6 +2423,11 @@ For example:
           <entry><literal>I</literal> (integer)</entry>
           <entry>-19 to 37</entry>
           <entry>-19, -9, 1, 11, 21, 31</entry>
+          <entry>
+In this mode, the range is extended by 3%, and then the ends are extended
+to the next integer. The tick mark positions are whole numbers now, but
+not anchored at 0.
+          </entry>
         </row>
       </tbody>
     </tgroup>
@@ -2221,9 +2435,9 @@ For example:
 </para>
 
 <para>
-You can use <xref linkend="SetXTickAnchor"/> or <xref linkend="SetYTickAnchor"/>
-to force the tick positions to align one tick at a particular value,
-usually 0, if necessary.  This can be useful in the following situations:
+To summarize, setting a tick anchor to force the tick positions to align one
+tick at a particular value, usually 0, can be useful in the situations
+including:
   <itemizedlist>
     <listitem>
       <para>
