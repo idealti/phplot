@@ -3707,10 +3707,17 @@ class PHPlot
      * Returns the largest integer power of 2 that divides the range into at least min_ticks intervals.
      *   $range : The data range (max - min), already checked as > 0.
      *   $min_ticks : is the smallest number of intervals allowed, already checked > 0.
+     * Note: This contains an ugly work-around to a round-off problem. Using floor(log2(2^N))
+     * should produce N for all integer N, but with glibc, it turns out that log2(8) is slightly < 8,
+     * and also for a few other values (64, 4096, 8192). So they truncate to N-1. Other tested values,
+     * and all negative values, and all values on Windows, were found to truncate with floor() in the
+     * right direction. The adjustment below makes all values N=-50 to 50 truncate correctly.
      */
     protected function CalcStepBinary($range, $min_ticks)
     {
-        return pow(2, (int)floor(log($range / $min_ticks, 2)));
+        $log2 = log($range / $min_ticks, 2);
+        if ($log2 > 0) $log2 *= 1.000001; // See note above
+        return pow(2, (int)floor($log2));
     }
 
     /*
@@ -3931,8 +3938,10 @@ class PHPlot
                 $plot_min -= $adjust_amount * $range;
 
             if ($adjust_mode == 'T') {
-                // Mode 'T': Adjust to previous tick mark, taking tick anchor into account:
-                $plot_min = $tick_anchor + $tick_inc * floor(($plot_min - $tick_anchor) / $tick_inc);
+                // Mode 'T': Adjust to previous tick mark, taking tick anchor into account.
+                $pm = $tick_anchor + $tick_inc * floor(($plot_min - $tick_anchor) / $tick_inc);
+                // Don't allow the tick anchor adjustment to result in the range end moving across 0:
+                $plot_min = (($plot_min >= 0) === ($pm >= 0)) ? $pm : 0;
             } elseif ($adjust_mode == 'I') {
                 // Mode 'I': Adjust to previous integer:
                 $plot_min = floor($plot_min);
@@ -3948,7 +3957,9 @@ class PHPlot
 
             if ($adjust_mode == 'T') {
                 // Mode 'T': Adjust to next tick mark, taking tick anchor into account:
-                $plot_max = $tick_anchor + $tick_inc * ceil(($plot_max - $tick_anchor) / $tick_inc);
+                $pm = $tick_anchor + $tick_inc * ceil(($plot_max - $tick_anchor) / $tick_inc);
+                // Don't allow the tick anchor adjustment to result in the range end moving across 0:
+                $plot_max = (($plot_max >= 0) === ($pm >= 0)) ? $pm : 0;
             } elseif ($adjust_mode == 'I') {
                 // Mode 'I': Adjustment to next higher integer.
                 $plot_max = ceil($plot_max);
@@ -4242,22 +4253,22 @@ class PHPlot
         if ($which == 'x') {
             $tick_step = $this->x_tick_inc;
             $anchor = &$this->x_tick_anchor;  // Reference used because it might not be set.
-            $data_max = $this->plot_max_x;
-            $data_min = $this->plot_min_x;
+            $plot_max = $this->plot_max_x;
+            $plot_min = $this->plot_min_x;
             $skip_lo = $this->skip_left_tick;
             $skip_hi = $this->skip_right_tick;
         } else { // Assumed 'y'
             $tick_step = $this->y_tick_inc;
             $anchor = &$this->y_tick_anchor;
-            $data_max = $this->plot_max_y;
-            $data_min = $this->plot_min_y;
+            $plot_max = $this->plot_max_y;
+            $plot_min = $this->plot_min_y;
             $skip_lo = $this->skip_bottom_tick;
             $skip_hi = $this->skip_top_tick;
         }
 
         // To avoid losing a final tick mark due to round-off errors, push tick_end out slightly.
-        $tick_start = (double)$data_min;
-        $tick_end = (double)$data_max + ($data_max - $data_min) / 10000.0;
+        $tick_start = (double)$plot_min;
+        $tick_end = (double)$plot_max + ($plot_max - $plot_min) / 10000.0;
 
         // If a tick anchor was given, adjust the start of the range so the anchor falls
         // at an exact tick mark (or would, if it was within range).
