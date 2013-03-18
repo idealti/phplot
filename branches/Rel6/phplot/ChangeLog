@@ -2,6 +2,15 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2013-03-18 (/branches/Rel6)
+    * Added adjustment factor in CalcStepBinary() to avoid round-off errors
+      for a few values where log2(2^N) < N.
+    * Fixed CalcPlotRange() to prevent the plot range ends from crossing
+      to the wrong side of 0 when there is a tick anchor. Instead, the
+      range will clip to zero, and there won't be a tick mark at that end.
+    * Fixed local variable names in CalcTicks(): data_min/data_max corrected
+      to plot_min/plot_max which is more descriptive.
+
 2013-03-11 (/branches/Rel6)
     * Expanded the two modes for calculating a tick increment to three:
       decimal (1,2,5 * 10^N), date, and binary (2^N).
