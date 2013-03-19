@@ -2,6 +2,12 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2013-03-19 (/branches/Rel6)
+    * Fixed bug #166 "Legend, UsePointShapes, and shape='none'":
+      Added argument to DrawShape() to disallow using 'none' as a shape.  This
+      is used when drawing markers in the legend. DrawShape will draw the
+      'line' shape instead of 'none' in this case.
+
 2013-03-18 (/branches/Rel6)
     * Added adjustment factor in CalcStepBinary() to avoid round-off errors
       for a few values where log2(2^N) < N.
