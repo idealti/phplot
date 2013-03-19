@@ -3532,7 +3532,8 @@ $plot->SetFontTTF('x_title', 'DejaVuSans-Bold.ttf', 12)
 
 # Ubuntu and Debian use subdirectories under a searched path.
 # You can use a partial path here.
-$plot->SetFontTTF('x_title', 'ttf-liberation/LiberationSans-Regular.ttf', 12)
+$plot->SetFontTTF('x_title', 'liberation/LiberationSans-Regular.ttf', 12)
+# Note: Older Ubuntu/Debian used the path ttf-liberation/...
 
 # Fedora uses subdirectories which are not under a searched path.
 # You must use full paths here.
@@ -3541,6 +3542,16 @@ $plot->SetFontTTF('x_title', 'LiberationSans-Regular.ttf', 12)
 ]]></programlisting>
 </para>
 
+<note>
+  <para>
+Your Linux system probably has a package called <literal>fontconfig</literal>
+which is used to provide more consistent access to fonts. But even if your
+system uses a version of the <literal>gd</literal> library which is built
+with <literal>fontconfig</literal> (and the one bundled with PHP does not),
+<emphasis>PHP does not use <literal>fontconfig</literal></emphasis>.
+Therefore PHPlot needs to be able to locate font files using other means.
+  </para>
+</note>
 </sect2>
 
 <sect2 id="conc-text-defaultfont">
@@ -3573,8 +3584,10 @@ with <xref linkend="SetTTFPath"/>.
     </listitem>
     <listitem>
       <para>
-<filename>ttf-liberation/LiberationSans-Regular.ttf</filename>
-- This is for Debian, Ubuntu, and similar.
+<filename>liberation/LiberationSans-Regular.ttf,
+          ttf-liberation/LiberationSans-Regular.ttf</filename>
+- This is for Debian, Ubuntu, and similar (the first is for newer releases,
+such as Ubuntu 12.04 and later, and the second is for older releases).
       </para>
     </listitem>
     <listitem>
