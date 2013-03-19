@@ -11,6 +11,12 @@ The project home page is http://sourceforge.net/projects/phplot/
     * Fixed local variable names in CalcTicks(): data_min/data_max corrected
       to plot_min/plot_max which is more descriptive.
 
+    * Fixed bug #167 "Fails to find a default font on Ubuntu":
+      Debian changed the install location for the LiberationSans fonts,
+      which also affects Ubuntu and related distributions. Added a new
+      entry to the default font search list in GetDefaultTTFont() so the
+      font will be found at the new location.
+
 2013-03-11 (/branches/Rel6)
     * Expanded the two modes for calculating a tick increment to three:
       decimal (1,2,5 * 10^N), date, and binary (2^N).
