@@ -3,6 +3,10 @@ This is phplotdocs/ChangeLog, listing changes to the PHPlot Reference Manual
 Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
+* 2013-03-19 (/branches/Rel6)
+    * developer.xml: Documented usage change to internal DrawShape() to
+      address bug #166, legend vs 'none' point shape.
+
 * 2013-03-18 (/branches/Rel6)
     * concepts.xml: Documented changes for fix to bug #167 "Fails to find
       a default font on Ubuntu" - new font search list. Also added note
