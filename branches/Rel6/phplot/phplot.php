@@ -5763,7 +5763,7 @@ class PHPlot
                 switch ($colorbox_mode) {
                 case 'shape':
                     // Draw the shape. DrawShape() takes shape_index modulo number of defined shapes.
-                    $this->DrawShape($xc, $yc, $shape_index++, $this->ndx_data_colors[$color_index]);
+                    $this->DrawShape($xc, $yc, $shape_index++, $this->ndx_data_colors[$color_index], FALSE);
                     break;
 
                 case 'line':
@@ -5921,8 +5921,9 @@ class PHPlot
      *   $x, $y : Device coordinates of the center of the shape
      *   $record : Index into point_shapes[] and point_sizes[]. This is taken modulo the array sizes.
      *   $color : Color to use for the point shape
+     *   $allow_none : If FALSE, replace shape 'none' with a line (used by legend).
      */
-    protected function DrawShape($x, $y, $record, $color)
+    protected function DrawShape($x, $y, $record, $color, $allow_none = TRUE)
     {
         $index = $record % $this->point_counts;
         $point_size = $this->point_sizes[$index];
@@ -5937,6 +5938,8 @@ class PHPlot
         case 'halfline':
             ImageLine($this->img, $x1, $y, $x, $y, $color);
             break;
+        case 'none': /* Special case, no point shape here */
+            if ($allow_none) break; // But fall throught to line if a shape is required
         case 'line':
             ImageLine($this->img, $x1, $y, $x2, $y, $color);
             break;
@@ -6005,8 +6008,6 @@ class PHPlot
             break;
         case 'down':
             ImagePolygon($this->img, array($x, $y2, $x1, $y1, $x2, $y1), 3, $color);
-            break;
-        case 'none': /* Special case, no point shape here */
             break;
         default: /* Also 'rect' */
             ImageFilledRectangle($this->img, $x1, $y1, $x2, $y2, $color);
