@@ -3,6 +3,11 @@ This is phplotdocs/ChangeLog, listing changes to the PHPlot Reference Manual
 Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
+* 2013-03-18 (/branches/Rel6)
+    * concepts.xml: Documented changes for fix to bug #167 "Fails to find
+      a default font on Ubuntu" - new font search list. Also added note
+      about non-use of fontconfig.
+
 * 2013-03-11 (/branches/Rel6)
     * Document changes from 2 to 3 tick selection modes:
 
