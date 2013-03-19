@@ -1123,7 +1123,7 @@ Called by <xref linkend="DrawGraph"/>.
 </varlistentry>
 
 <varlistentry>
-  <term><anchor id="DrawShape" xreflabel="DrawShape"/>DrawShape($x, $y, $record, $color)</term>
+  <term><anchor id="DrawShape" xreflabel="DrawShape"/>DrawShape($x, $y, $record, $color, $allow_none = TRUE)</term>
   <listitem>
     <para>
 Draws a single marker point ('dot' or 'shape') at the given X and Y device
@@ -1137,6 +1137,13 @@ This was added at PHPlot-5.4.0 by moving the shape drawing code out of
 DrawDot(), leaving behind only the conversion from world to device coordinates.
 This was necessary because DrawLegend() needs to specify marker positions
 in pixel coordinates when using point shapes instead of color boxes.
+    </para>
+    <para>
+If the optional $allow_none is FALSE, then the function will substitute
+another shape for the special 'none' shape (which suppresses a shape marker
+for a data set in a linepoints plot). This is used when drawing a legend, to
+ensure that there is a marker shape for each data set. This argument was
+added in PHPlot-6.0.0.
     </para>
   </listitem>
 </varlistentry>
