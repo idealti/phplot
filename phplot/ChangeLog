@@ -8,6 +8,10 @@ The project home page is http://sourceforge.net/projects/phplot/
       is used when drawing markers in the legend. DrawShape will draw the
       'line' shape instead of 'none' in this case.
 
+    * Code cleanup: minor cleanup in CalcMaxDataLabelSize() and
+      CalcMaxTickLabelSize() in selecting 'x' vs 'y' cases.
+    * Code cleanup: minor cleanup in GetDataColor().
+
 2013-03-18 (/branches/Rel6)
     * Added adjustment factor in CalcStepBinary() to avoid round-off errors
       for a few values where log2(2^N) < N.
