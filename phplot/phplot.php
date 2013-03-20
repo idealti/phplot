@@ -4301,14 +4301,8 @@ class PHPlot
     {
         list($tick_start, $tick_end, $tick_step) = $this->CalcTicks($which);
 
-        if ($which == 'x') {
-            $font_id = 'x_label';
-            $angle = $this->x_label_angle;
-        } else { // Assumed 'y'
-            $font_id = 'y_label';
-            $angle = $this->y_label_angle;
-        }
-
+        $angle = ($which == 'x') ? $this->x_label_angle : $this->y_label_angle;
+        $font_id = $which . '_label';  // Use x_label or y_label font.
         $max_width = 0;
         $max_height = 0;
 
@@ -4346,21 +4340,14 @@ class PHPlot
      */
     protected function CalcMaxDataLabelSize($which = 'x')
     {
-        if ($which == 'x') {
-          if ($this->datatype_swapped_xy)
-              return 0; // Shortcut: labels aren't on top/bottom.
-          $font_id = 'x_label';
-          $angle = $this->x_data_label_angle;
-          $format_code = 'xd';
-        } elseif ($which == 'y') {
-          if (!$this->datatype_swapped_xy)
-              return 0; // Shortcut: labels aren't on left/right.
-          $font_id = 'y_label';
-          $angle = $this->y_data_label_angle;
-          $format_code = 'yd';
-        } else {
-          return $this->PrintError("CalcMaxDataLabelSize: Invalid usage ($which)");
-        }
+        // Shortcut: Y data labels for vertical plots, and X data labels for horizontal plots,
+        // are inside the plot, rather than along the axis lines, and so take up no margin space.
+        if ($which == 'y' XOR $this->datatype_swapped_xy)
+            return 0;
+
+        $angle = ($which == 'x') ? $this->x_data_label_angle : $this->y_data_label_angle;
+        $font_id = $which . '_label';  // Use x_label or y_label font.
+        $format_code = $which . 'd';   // Use format code 'xd' or 'yd'
         $max_width = 0;
         $max_height = 0;
 
@@ -5819,13 +5806,11 @@ class PHPlot
             extract($vars);
         }
 
-        // Select the colors.
+        // Select the data color:
         if ($custom_color) {
-            $col_i = $this->DoCallback('data_color', $row, $idx, $extra); // Custom color index
-            $data_color = $this->ndx_data_colors[$col_i % $num_data_colors];
-        } else {
-            $data_color = $this->ndx_data_colors[$idx];
+            $idx = $this->DoCallback('data_color', $row, $idx, $extra) % $num_data_colors;
         }
+        $data_color = $this->ndx_data_colors[$idx];
     }
 
     /*
