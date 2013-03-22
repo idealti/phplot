@@ -2,6 +2,14 @@ This is the Change Log for PHPlot.
 The project home page is http://sourceforge.net/projects/phplot/
 -----------------------------------------------------------------------------
 
+2013-03-22 (/branches/Rel6)
+    * Changed default minimum number of ticks intervals (min_ticks) for both
+      X and Y from 5 to 8. Considering PHPlot previously used 10 intervals
+      by default, 5 is just too low.
+
+    * Numeric change to CalcStep125() - slight tweak to make the tick steps
+      come out right for exact powers of 2.
+
 2013-03-19 (/branches/Rel6)
     * Fixed bug #166 "Legend, UsePointShapes, and shape='none'":
       Added argument to DrawShape() to disallow using 'none' as a shape.  This
