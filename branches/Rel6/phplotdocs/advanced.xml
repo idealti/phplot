@@ -1789,7 +1789,7 @@ The value is a single character, selecting one of three available modes.
   <informaltable>
     <?dbfo table-width="50%"?> <!-- Table width hint for PDF only -->
     <tgroup cols="2">
-      <?dbhtml table-summary="X range adjust mode choices"?>
+      <?dbhtml table-summary="Range adjust mode choices"?>
       <colspec colname="c1" colwidth="20*" align="center" />
       <colspec colname="c2" colwidth="80*" />
       <thead>
@@ -1912,8 +1912,6 @@ Here are 3 examples showing the automatic range calculation. Each figure
 contains 4 plots showing the cumulative effect of the numbered steps which
 are detailed above: (1) initial range, (2) zero magnet, (3) end adjust /
 increase range, and (4) end adjust / finalize ('Tick' adjust mode).
-Note that the end adjustment amount has been increased to 5% here to make
-it easier to see the effect at step (3).
 </para>
 
 <para>
@@ -2051,13 +2049,13 @@ include 0.5, 0.2, 0.1, 0.05, 0.02, 0.01, etc.
 </para>
 
 <para>
-For example, given the range 0 to 140, and the default min_ticks of 5,
-PHPlot will calculate a tick increment of 20, giving 7 intervals.  A tick
-increment of 50 is not valid because it would result in only 3 intervals (2
-full, 1 partial).
-A tick increment of 10 would result in 14 intervals; while there is no
+For example, given the range 0 to 135, and the default min_ticks of 8,
+PHPlot will calculate a tick increment of 10, giving 14 intervals.  A tick
+increment of 20 is not valid because it would result in only 7 intervals,
+fewer than the minimum of 8.
+A tick increment of 5 would result in 28 intervals; while there is no
 explicit maximum, PHPlot chooses the largest valid increment that produces
-5 or more intervals.
+8 or more intervals.
 </para>
 
 <para>
@@ -2075,10 +2073,10 @@ With the 'date' method, PHPlot never chooses an increment less than 1 second.
 </para>
 
 <para>
-For example, given a date/time range which spans 960 seconds (16 minutes), and
-the default min_ticks of 5, PHPlot will calculate a tick increment of 120
-seconds (2 minutes), which results in 8 intervals. This is the largest
-increment in the list above which results in 5 or more intervals.
+For example, given a date/time range which spans 1020 seconds (17 minutes),
+and the default min_ticks of 8, PHPlot will calculate a tick increment of 120
+seconds (2 minutes), which results in 9 intervals. This is the largest
+increment in the list above which results in 8 or more intervals.
 </para>
 
 <para>
@@ -2108,13 +2106,13 @@ The parameters are described in the next sections.
 <title>Tick Increment parameter: min_ticks</title>
 <para>
 The <varname>min_ticks</varname> parameter sets the minimum number of tick
-intervals along the axis. The default is 5.
+intervals along the axis. The default is 8.
 The maximum number of tick intervals will be about 2.5 times the minimum.
 (The value 2.5 comes from the largest ratio between adjacent acceptable tick
 increment values. This is true for the 'decimal' method choices of 1, 2, 5,
 10, 20, etc., the 'binary' method, and also for the pre-defined list of values
 used with the 'date' method.)
-Therefore, by default, a plot range will have between 5 and 12 tick intervals
+Therefore, by default, a plot range will have between 8 and 20 tick intervals
 inclusive (before possible additional tick intervals resulting from
 adjustment to the range, as described above).
 </para>
@@ -2128,7 +2126,7 @@ methods to calculate the tick increment:
   <informaltable>
     <?dbfo table-width="50%"?> <!-- Table width hint for PDF only -->
     <tgroup cols="2">
-      <?dbhtml table-summary="X axis tick modes"?>
+      <?dbhtml table-summary="Axis tick modes"?>
       <colspec colname="c1" colwidth="20*" />
       <colspec colname="c2" colwidth="80*" />
       <thead>
@@ -2244,13 +2242,13 @@ between 0 and 1.
 </note>
 
 <para>
-For example, if your Y data range is 0 to 2, and you set the
+For example, if your Y data range is 0 to 1.8, and you set the
 <varname>tick_inc_integer</varname> parameter for Y to TRUE,
-then PHPlot will use a tick increment of 1, and you will likely get only
-2 tick intervals.  This is less than the default minimum of 5
+then PHPlot will use a tick increment of 1, and you will get only
+2 tick intervals.  This is less than the default minimum of 8
 tick intervals.
 With <varname>tick_inc_integer</varname> FALSE, PHPlot would use a tick
-increment of 0.2 in 'decimal' mode, or 0.25 in 'binary' mode.
+increment of 0.2 in 'decimal' mode, or 0.125 in 'binary' mode.
 </para>
 
 </sect3>
@@ -2359,11 +2357,11 @@ when no tick anchor has been set.
           <entry>7</entry>
           <entry>123</entry>
           <entry><literal>T</literal> (tick)</entry>
-          <entry>0 to 140</entry>
-          <entry>0, 20, 40, ... 140</entry>
+          <entry>0 to 130</entry>
+          <entry>0, 10, 20, ... 130</entry>
           <entry>
 The bottom of the Y range is extended to zero, and the tick marks are at
-multiples of 20. The top of the Y range is extended to the next tick mark.
+multiples of 10. The top of the Y range is extended to the next tick mark.
           </entry>
         </row>
         <row>
@@ -2371,12 +2369,12 @@ multiples of 20. The top of the Y range is extended to the next tick mark.
           <entry>123</entry>
           <entry><literal>R</literal> (range)</entry>
           <entry>0 to 126.69</entry>
-          <entry>0, 20, 40, ... 120</entry>
+          <entry>0, 10, 20, ... 120</entry>
           <entry>
 With <literal>'R'</literal> adjustment mode, the top of the Y range is
 extended by 3% of the range. The bottom of the Y range was moved to zero
 (due to the <emphasis>zero magnet</emphasis>), so the tick marks are based
-at 0 and positioned at whole multiples of 20. The resulting tick marks
+at 0 and positioned at whole multiples of 10. The resulting tick marks
 are the same as <literal>'T'</literal> mode, except the Y axis does not end
 at a tick mark.
           </entry>
@@ -2386,7 +2384,7 @@ at a tick mark.
           <entry>123</entry>
           <entry><literal>I</literal> (integer)</entry>
           <entry>0 to 127</entry>
-          <entry>0, 20, 40, ... 120</entry>
+          <entry>0, 10, 20, ... 120</entry>
           <entry>
 Here <literal>'I'</literal> adjustment mode is almost the the same as the
 previous case, except the top of the range is adjusted to the next integer.
@@ -2395,34 +2393,34 @@ Since there is no tick mark there, the difference would not be visible.
         </row>
         <row>
           <entry>-17</entry>
-          <entry>35</entry>
+          <entry>33</entry>
           <entry><literal>T</literal> (tick)</entry>
-          <entry>-20 to 40</entry>
-          <entry>-20, -10, 0, 10, 20, 40</entry>
+          <entry>-20 to 35</entry>
+          <entry>-20, -15, -10, -5, 0, 5, 10, ... 35</entry>
           <entry>
 Both ends of plot range are adjusted to a tick position,
 with an implied tick anchor at 0. The resulting tick marks are at
-whole multiples of the tick step 10.
+whole multiples of the tick step 5.
           </entry>
         </row>
         <row>
           <entry>-17</entry>
-          <entry>35</entry>
+          <entry>33</entry>
           <entry><literal>R</literal> (range)</entry>
-          <entry>-18.56 to 36.56</entry>
-          <entry>-18.56, -8.56, 1.44, 11.44, 21.44, 31.44</entry>
+          <entry>-18.5 to 34.5</entry>
+          <entry>-18.5, -13.5, -8.5, 1.5, 6.5, ... 31.5</entry>
           <entry>
 In this mode, the range is simply extended by 3% (by default) at each end,
-where 3% of (35+17) = 1.56. The resulting tick mark positions are probably
+where 3% of (33+17) = 1.5. The resulting tick mark positions are probably
 not ideal.
           </entry>
         </row>
         <row>
           <entry>-17</entry>
-          <entry>35</entry>
+          <entry>33</entry>
           <entry><literal>I</literal> (integer)</entry>
-          <entry>-19 to 37</entry>
-          <entry>-19, -9, 1, 11, 21, 31</entry>
+          <entry>-19 to 35</entry>
+          <entry>-19, -14, -9, -4, 1, 6, ... 31</entry>
           <entry>
 In this mode, the range is extended by 3%, and then the ends are extended
 to the next integer. The tick mark positions are whole numbers now, but
