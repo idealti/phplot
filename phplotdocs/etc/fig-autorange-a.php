@@ -84,7 +84,7 @@ $plot->SetXTitle('(3) End Adjustment');
 $plot->SetPlotAreaWorld(NULL, NULL, NULL, NULL);
 $plot->SetXAxisPosition(NULL);
 #  Set zero magnet on, end adjust on, but leave at mode R - don't go to tick.
-$plot->TuneYAutoRange(1, 'R', 0.05);
+$plot->TuneYAutoRange(1, 'R', 0.03);
 $plot->DrawGraph();
 
 # Sub-plot (4) shows the plot range after end adjust / adjust to tick.
@@ -93,8 +93,8 @@ $plot->SetXTitle('(4) Adjust to Tick');
 #  Reset to auto-range, auto-axis:
 $plot->SetPlotAreaWorld(NULL, NULL, NULL, NULL);
 $plot->SetXAxisPosition(NULL);
-#  Set zero magnet on, end adjust to tick mode with 5% extra.
-$plot->TuneYAutoRange(1, 'T', 0.05);
+#  Set zero magnet on, restore default adjust mode (Ticks) and amount (3%).
+$plot->TuneYAutoRange(1, 'T', 0.03);
 $plot->DrawGraph();
 
 
