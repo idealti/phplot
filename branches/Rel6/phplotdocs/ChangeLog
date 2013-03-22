@@ -3,6 +3,13 @@ This is phplotdocs/ChangeLog, listing changes to the PHPlot Reference Manual
 Note: This is a more complete ChangeLog than the one in Appendix A of the
 manual, which only contains summaries of changes.
 -----------------------------------------------------------------------------
+* 2013-03-22 (/branches/Rel6)
+    * advanced.xml, developer.xml, reference.xml: Documented change in the
+      minimum ticks default (min_ticks) from 5 to 8, including updating
+      the in-line examples.
+    * etc/fig-autorange-a.php, images/fig-autorange-[abc].png: Update
+      figures per new min_ticks, and restore end adjustment to default  3%.
+
 * 2013-03-19 (/branches/Rel6)
     * developer.xml: Documented usage change to internal DrawShape() to
       address bug #166, legend vs 'none' point shape.
