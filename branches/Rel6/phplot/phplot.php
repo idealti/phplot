@@ -294,12 +294,12 @@ class PHPlot
     protected $tick_color;
     protected $tickctl = array( 'x' => array(
                                   'tick_mode' => NULL,
-                                  'min_ticks' => 5,
+                                  'min_ticks' => 8,
                                   'tick_inc_integer' => FALSE,
                                 ),
                                 'y' => array(
                                   'tick_mode' => NULL,
-                                  'min_ticks' => 5,
+                                  'min_ticks' => 8,
                                   'tick_inc_integer' => FALSE,
                                ));
     protected $ticklabel_color;
@@ -3667,7 +3667,7 @@ class PHPlot
         $tick_step = pow(10, $vi);
         $f = $v - $vi;
         if ($f > 0.69897) $tick_step *= 5;   // Note 0.69897 = log10(5)
-        elseif ($f > 0.30103) $tick_step *= 2;  // Note 0.30103 = log10(2)
+        elseif ($f > 0.301) $tick_step *= 2;  // Note 0.30103 = log10(2), truncated to fix edge cases
         return $tick_step;
     }
 
@@ -4524,7 +4524,7 @@ class PHPlot
     /*
      * Internal function to implement TuneXAutoRange() and TuneYAutoRange() : Set range tuning parameters
      *   $which : 'x' or 'y', which axis to adjust parameters for
-     *   $zero_magnet, $adjust_most, $adjust_amount : Parameters to set (if not NULL).
+     *   $zero_magnet, $adjust_mode, $adjust_amount : Parameters to set (if not NULL).
      * Note: Does not report errors - just ignores invalid tuning values.
      */
     protected function TuneAutoRange($which, $zero_magnet, $adjust_mode, $adjust_amount)
