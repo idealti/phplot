@@ -2905,7 +2905,7 @@ The array contains 2 arrays, indexed as <literal>'x'</literal> and
 The keys and values of the second-level arrays are:
 <informaltable>
   <tgroup cols="3">
-    <?dbhtml table-summary="rangectl[] array elements"?>
+    <?dbhtml table-summary="tickctl[] array elements"?>
     <colspec colname="c1" colwidth="30*" />
     <colspec colname="c2" colwidth="30*" />
     <colspec colname="c3" colwidth="40*" />
@@ -2919,7 +2919,7 @@ The keys and values of the second-level arrays are:
     <tbody>
       <row>
         <entry>min_ticks</entry>
-        <entry>5</entry>
+        <entry>8</entry>
         <entry>Minimum number of tick intervals</entry>
       </row>
       <row>
