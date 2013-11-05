@@ -1,14 +1,23 @@
 <?php
-/* $Id$ */
+/**
+ * PHPlot - A class for creating scientific and business graphs, charts, plots
+ *
+ * PHPlot currently requires PHP 5.3 or later.
+ *
+ * $Id$
+ *
+ * @version 6.1.0
+ * @copyright 1998-2013 Afan Ottenheimer
+ * @license GNU Lesser General Public License, version 2.1
+ * @link http://sourceforge.net/projects/phplot/ PHPlot Web Site with downloads, tracker, discussion
+ * @link http://phplot.sourceforge.net PHPlot Project Web Site with links to documentation
+ * @author lbayuk (2006-present) <lbayuk@users.sourceforge.net>
+ * @author Miguel de Benito Delgado (co-author and maintainer, 2003-2005) <nonick@vodafone.es>
+ * @author Afan Ottenheimer (original author)
+ *
+ */
+
 /*
- * PHPLOT Version 6.1.0
- *
- * A PHP class for creating scientific and business charts
- * Visit http://sourceforge.net/projects/phplot/
- * for PHPlot documentation, downloads, and discussions.
- * ---------------------------------------------------------------------
- * Copyright (C) 1998-2013 Afan Ottenheimer
- *
  * This is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation;
@@ -23,19 +32,32 @@
  * License along with this software; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  * ---------------------------------------------------------------------
- *
- * Co-author and maintainer (2003-2005)
- * Miguel de Benito Delgado <nonick AT vodafone DOT es>
- *
- * Maintainer (2006-present)
- * <lbayuk AT users DOT sourceforge DOT net>
- *
- * Requires PHP 5.3 or later.
  */
 
+/**
+ * Class for creating a plot
+ *
+ * The PHPlot class represents a plot (chart, graph) with all associated
+ * parameters. This creates a palette (indexed) color image which is limited
+ * to 256 total colors. For truecolor images (24 bit R, G, B), see the
+ * PHPlot_truecolor class.
+ * 
+ * In most cases, methods of PHPlot just change the internal properties, and
+ * nothing actually happens until the DrawGraph() method is used. Therefore
+ * methods can be used in any order up until DrawGraph(); the order should not
+ * affect the results.
+ * 
+ * Note: Without a background image, the PHPlot class creates a palette
+ * (indexed) color image, and the PHPlot_truecolor class creates a truecolor
+ * image. If a background image is used with the constructor of either class,
+ * the type of image produced matches the type of the background image.
+ * 
+ */
 class PHPlot
 {
+    /** PHPlot version constant as a string */
     const version = '6.1.0';
+    /** PHPlot version constant as a number = major * 10000 + minor * 100 + patch */
     const version_id = 60100;
 
     // All class variables are declared here, and initialized (if applicable).
@@ -216,7 +238,8 @@ class PHPlot
     protected $plot_type = 'linepoints';
     protected $plotbgimg;
     protected $plotbgmode;
-    static protected $plots = array(              // Table of plot types
+    /** Table of known plot types, indexed by plot type. Values tell PHPlot how to scale and draw it. */
+    static protected $plots = array(
         'area' => array(
             'draw_method' => 'DrawArea',
             'abs_vals' => TRUE,
@@ -386,16 +409,13 @@ class PHPlot
     protected $yscale;
     protected $yscale_type = 'linear';
 
-//////////////////////////////////////////////////////
-//BEGIN CODE
-//////////////////////////////////////////////////////
-
-    /*
-     * Constructor: Setup img resource, colors and size of the image, and font sizes.
-     *   $width : Image width in pixels.
-     *   $height : Image height in pixels.
-     *   $output_file : Filename for output. Omit, or NULL, or '' to mean no output file.
-     *   $input_file : Path to a file to be used as background. Omit, NULL, or '' for none.
+    /**
+     * Constructor: Sets up GD palette image resource, and initializes plot style controls
+     *
+     * @param int $width   Image width in pixels
+     * @param int $height  Image height in pixels
+     * @param string $output_file  Path for output file. Omit, or NULL, or '' to mean no output file
+     * @param string $input_file   Path to a file to be used as background. Omit, NULL, or '' for none
      */
     function PHPlot($width=600, $height=400, $output_file=NULL, $input_file=NULL)
     {
@@ -425,12 +445,15 @@ class PHPlot
         $this->SetDefaultFonts();
     }
 
-    /*
-     * Support for serialize/unserialize: Prepare object for serialization.
+    /**
+     * Prepares object for serialization
+     *
      * The image resource cannot be serialized. But rather than try to filter it out from the other
      * properties, just let PHP serialize it (it will become an integer=0), and then fix it in __wakeup.
      * This way the object is still usable after serialize().
      * Note: This does not work if an input file was provided to the constructor.
+     *
+     * @return string[] Array of object property names, as required by PHP spec for __sleep()
      */
     function __sleep()
     {
@@ -439,8 +462,10 @@ class PHPlot
         return array_keys(get_object_vars($this));
     }
 
-    /*
-     * Support for serialize/unserialize: Cleanup after unserialization - recreate the image resource.
+    /**
+     * Cleans up object after unserialization
+     *
+     * Recreates the image resource (which is not serializable), after validating the PHPlot version.
      */
     function __wakeup()
     {
@@ -493,10 +518,12 @@ class PHPlot
         return $img;
     }
 
-    /*
-     * Selects an input file to be used as background for the whole graph.
-     * This resets the graph size to the image's size.
-     * Note: This is used by the constructor. It is deprecated for direct use.
+    /**
+     * Selects an input file to be used as background for the whole graph
+     *
+     * @param string $which_input_file  Pathname to the image file to use as a background
+     * @deprecated for public use, intended for use by the class constructor only.
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetInputFile($which_input_file)
     {
@@ -604,142 +631,197 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the image background color to $which_color.
+    /**
+     * Sets the overall image background color
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetBackgroundColor($which_color)
     {
         return (bool)($this->bg_color = $this->SetRGBColor($which_color));
     }
 
-    /*
-     * Set the plot area background color (if enabled) to $which_color.
+    /**
+     * Sets the plot area background color, which is only drawn if SetDrawPlotAreaBackground is used.
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetPlotBgColor($which_color)
     {
         return (bool)($this->plot_bg_color = $this->SetRGBColor($which_color));
     }
 
-    /*
-     * Set the color of the titles (main, X, and Y) to $which_color.
-     * See also SetXTitleColor and SetYTitleColor.
+    /**
+     * Sets the color of the plot title, and the default color of the X and Y titles.
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetTitleColor($which_color)
     {
         return (bool)($this->title_color = $this->SetRGBColor($which_color));
     }
 
-    /*
-     * Set the color of the X title to $which_color.
-     * This overrides the color set with SetTitleColor.
+    /**
+     * Sets the color of the X title, overriding the color set with SetTitleColor()
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
+     * @since 5.2.0
      */
     function SetXTitleColor($which_color)
     {
         return (bool)($this->x_title_color = $this->SetRGBColor($which_color));
     }
 
-    /*
-     * Set the color of the Y title to $which_color.
-     * This overrides the color set with SetTitleColor.
+    /**
+     * Sets the color of the Y title, overriding the color set with SetTitleColor()
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
+     * @since 5.2.0
      */
     function SetYTitleColor($which_color)
     {
         return (bool)($this->y_title_color = $this->SetRGBColor($which_color));
     }
 
-    /*
-     * Set the color of the axis tick marks to $which_color.
+    /**
+     * Sets the color of the axis tick marks
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetTickColor($which_color)
     {
         return (bool)($this->tick_color = $this->SetRGBColor($which_color));
     }
 
-    /*
-     * Deprecated. Use SetTitleColor()
+    /**
+     * @deprecated  Use SetTitleColor() instead
      */
     function SetLabelColor($which_color)
     {
         return $this->SetTitleColor($which_color);
     }
 
-    /*
-     * Set the general text color (legend, and default for tick and data labels) to $which_color.
+    /**
+     * Sets the general text color, which is the default color for legend text, tick and data labels
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetTextColor($which_color)
     {
         return (bool)($this->text_color = $this->SetRGBColor($which_color));
     }
 
-    /*
-     * Set the color for data labels, overriding the default set with SetTextColor.
+    /**
+     * Sets the color for data labels, overriding the default set with SetTextColor()
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
+     * @since 5.7.0
      */
     function SetDataLabelColor($which_color)
     {
         return (bool)($this->datalabel_color = $this->SetRGBColor($which_color));
     }
 
-    /*
-     * Set the color for data value labels, overriding defaults from SetTextColor and SetDataLabelColor.
-     * Note: These are the labels on and in bars, and above points - within the plot area.
+    /**
+     * Sets the color for data value labels, overriding SetTextColor() and SetDataLabelColor()
+     *
+     * Note: Data Value Labels are the labels within the plot area (not the axis labels).
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
+     * @since 5.7.0
      */
     function SetDataValueLabelColor($which_color)
     {
         return (bool)($this->dvlabel_color = $this->SetRGBColor($which_color));
     }
 
-    /*
-     * Set the color for pie chart data labels. Historically, these used the GridColor.
+    /**
+     * Sets the color for pie chart data labels, overriding the default set with SetGridColor()
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
+     * @since 5.7.0
      */
     function SetPieLabelColor($which_color)
     {
         return (bool)($this->pielabel_color = $this->SetRGBColor($which_color));
     }
 
-    /*
-     * Set the color for pie chart segment borders.
+    /**
+     * Sets the color for pie chart segment borders
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
+     * @since 6.0.0
      */
     function SetPieBorderColor($which_color)
     {
         return (bool)($this->pieborder_color = $this->SetRGBColor($which_color));
     }
 
-    /*
-     * Set the color for tick labels, overriding the default set with SetTextColor.
+    /**
+     * Sets the color for tick labels, overriding the default set with SetTextColor()
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
+     * @since 5.7.0
      */
     function SetTickLabelColor($which_color)
     {
         return (bool)($this->ticklabel_color = $this->SetRGBColor($which_color));
     }
 
-    /*
-     * Set the X and Y grid colors to $which_color. Also sets the data label line color.
+    /**
+     * Sets the X and Y grid colors, and the data label line color
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetLightGridColor($which_color)
     {
         return (bool)($this->light_grid_color = $this->SetRGBColor($which_color));
     }
 
-    /*
-     * Set the color used for the X and Y axis, plot border, legend border to $which_color.
-     * Note: This has nothing to do with the grid, and we don't recall where this name came from.
+    /**
+     * Sets the color used for the X and Y axis lines, plot border, and legend border
+     *
+     * Also sets the default color for the pie chart data labels and pie chart segment borders.
+     * These can be overridden by SetPieLabelColor() and SetPieBorderColor() respectively.
+     * Note: This has nothing to do with the grid, and we don't know where this name came from.
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetGridColor($which_color)
     {
         return (bool)($this->grid_color = $this->SetRGBColor($which_color));
     }
 
-    /*
-     * Set the color used for the image border to $which_color.
+    /**
+     * Sets the color used for the image border, drawn if SetImageBorderType() enables it
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetImageBorderColor($which_color)
     {
         return (bool)($this->i_border = $this->SetRGBColor($which_color));
     }
 
-    /*
-     * Designate color $which_color to be transparent, if supported by the image format.
-     * If $which_color is omitted or empty, reset to "no transparent color".
+    /**
+     * Designates a color to be transparent, if transparency is supported by the image format
+     *
+     * @param mixed $which_color Color to use; empty or omit or NULL to reset to no transparent color
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetTransparentColor($which_color = NULL)
     {
@@ -747,27 +829,37 @@ class PHPlot
         return ($this->transparent_color !== FALSE); // True unless SetRGBColor() returned an error
     }
 
-    /*
-     * Set the color used for the legend background. This will default to the image background color.
+    /**
+     * Sets the color used for the legend background, which defaults to the image background color
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
+     * @since 6.0.0
      */
     function SetLegendBgColor($which_color)
     {
         return (bool)($this->legend_bg_color = $this->SetRGBColor($which_color));
     }
 
-    /*
-     * Set the color used for the legend text. This will default to the general text color.
+    /**
+     * Sets the color used for the legend text, which defaults to the general text color
+     *
+     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @return bool Returns True (False on error if an error handler returns True)
+     * @since 6.0.0
      */
     function SetLegendTextColor($which_color)
     {
         return (bool)($this->legend_text_color = $this->SetRGBColor($which_color));
     }
 
-    /*
+    /**
      * Sets the array of colors to be used. It can be user defined, a small predefined one
      * or a large one included from 'rgb.inc.php'.
      *   $which_color_array : A color array, or 'small' or 'large'.
      * Color arrays map color names into arrays of R, G, B and optionally A values.
+     *
+     * @param mixed $which_color_array Color map spec: array (name=>(R,G,B[,A]), or string 'small' | 'large'
      */
     function SetRGBArray($which_color_array)
     {
@@ -825,23 +917,19 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Parse a color description and return the color component values.
-     * Arguments:
-     *   $color_asked : The desired color description, in one of these forms:
-     *       Component notation: array(R, G, B) or array(R, G, B, A) with each
-     *          in the range described below for the return value.
-     *          Examples: (255,255,0)  (204,0,0,30)
-     *       Hex notation: "#RRGGBB" or "#RRGGBBAA" where each pair is a 2 digit hex number.
-     *          Examples: #FF00FF (magenta)   #0000FF40 (Blue with alpha=64/127)
-     *       Named color in the current colormap, with optional suffix ":alpha" for alpha value.
-     *          Examples:  blue   red:60  yellow:20
-     *   $alpha : optional default alpha value. This is applied to the color if it doesn't
-     *       already have an alpha value. If not supplied, colors are opaque (alpha=0) by default.
+    /**
+     * Parses a color specification and returns the color component values
      *
-     * Returns an array describing a color as (R, G, B, Alpha).
-     * R, G, and B are integers 0-255, and Alpha is 0 (opaque) to 127 (transparent).
-     * Note: This function should be considered 'protected', and is not documented for public use.
+     * Accepted color specification forms are (1) component array: array(R,G,B)
+     * or array(R,G,B,A); (2) component string hexadecimal: "#RRGGBB" or
+     * "#RRGGBBAA"; (3) A color name from the color map array with optional
+     * alpha value suffix as ":alpha".  R, G, and B are integers 0-255, and
+     * Alpha is 0 (opaque) to 127 (transparent).
+     *
+     * @param mixed $color_asked  Color spec to parse (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param int $alpha  Optional default alpha value (0-127, default 0 for opaque)
+     * @return int[]  color component values as array (red, green, blue, alpha)
+     * @deprecated for public use, intended for internal use only
      */
     function SetRGBColor($color_asked, $alpha = 0)
     {
@@ -878,17 +966,21 @@ class PHPlot
         return $ret_val;
     }
 
-    /*
-     * Sets the colors for the data, with optional default alpha value
-     * Cases are:
-     *    SetDataColors(array(...))  : Use the supplied array as the color map.
-     *    SetDataColors(colorname)   : Use an array of just colorname as the color map.
-     *    SetDataColors() or SetDataColors(NULL) : Load default color map if no color map is already set.
-     *    SetDataColors('') or SetDataColors(False) : Load default color map (even if one is already set).
-     *  $which_border is passed to SetDataBorderColors, for backward compatibility.
-     *  $alpha is a default Alpha to apply to all data colors that do not have alpha.
-     *    The default for this is NULL, not 0, so we can tell if it was defaulted. But the effective
-     *    default value is 0 (opaque).
+    /**
+     * Sets the colors used for plotting data sets, with optional default alpha value
+     *
+     * If passed an array, use the values as colors for sequential data sets.
+     * If passed a single color specification, plot all data sets using that
+     * single color.
+     * Special use cases for the $which_data argument: Missing or NULL loads
+     * the default data color map if no map is already set; an empty string or
+     * False loads the default color map even if a color map is already set.
+     * Note:  The default value for $alpha here is NULL, not 0, so we can tell
+     * if it was defaulted. But the effective default value is 0 (opaque).
+     *
+     * @param mixed $which_data  Array of colors specifications, or one color, or empty
+     * @param mixed $which_border  Data border colors, deprecated - use SetDataBorderColors() instead
+     * @param int $alpha  Default alpha to apply to all data colors that do not have an alpha value
      */
     function SetDataColors($which_data = NULL, $which_border = NULL, $alpha = NULL)
     {
@@ -2421,9 +2513,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Control headers for browser-side image caching.
-     *   $which_browser_cache : True to allow browsers to cache the image.
+    /**
+     * Controls browser-side image caching
+     *
+     * @param bool $which_browser_cache  True to allow the browser to cache the image, false to not allow
+     * @return bool  Always returns TRUE
      */
     function SetBrowserCache($which_browser_cache)
     {
@@ -2431,9 +2525,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set whether DrawGraph automatically outputs the image too.
-     *   $which_pi : True to have DrawGraph call PrintImage at the end.
+    /**
+     * Determines whether or not DrawGraph() automatically outputs the image when the plot is drawn
+     *
+     * @param bool $which_pi  True to have DrawGraph() call PrintImage() when done, false to not output
+     * @return bool  Always returns TRUE
      */
     function SetPrintImage($which_pi)
     {
@@ -2441,9 +2537,14 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set border for the plot area.
-     * Accepted values are: left, right, top, bottom, sides, none, full or an array of those.
+    /**
+     * Sets how much of a border is drawn around the plot area
+     *
+     * The argument can be a single value, or any array of values, indicating
+     * which sides should get a border. 'full' means all 4 sides.
+     *
+     * @param mixed $pdt  Where to draw borders:  left | right | top | bottom | sides | none | full, or array
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetPlotBorderType($pbt)
     {
@@ -2452,10 +2553,11 @@ class PHPlot
         return !empty($this->plot_border_type);
     }
 
-    /*
-     * Set border style for the image.
-     * Accepted values are: raised, plain, solid, none
-     *  'solid' is the same as 'plain' except it fixes the color (see DrawImageBorder)
+    /**
+     * Sets the type of border drawn around the image
+     *
+     * @param string $sibt  Border type: raised | solid | plain | none
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetImageBorderType($sibt)
     {
@@ -2463,8 +2565,11 @@ class PHPlot
         return (boolean)$this->image_border_type;
     }
 
-    /*
-     * Set border width for the image to $width in pixels.
+    /**
+     * Sets the width of the image border, if enabled
+     *
+     * @param int $width  Image border width, in pixels
+     * @return bool  Always returns TRUE
      */
     function SetImageBorderWidth($width)
     {
@@ -2472,8 +2577,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Enable or disable drawing of the plot area background color.
+    /**
+     * Enables or disables drawing of the plot area background color
+     *
+     * @param bool $dpab  True to draw the plot area background color, false to not draw it
+     * @return bool  Always returns TRUE
      */
     function SetDrawPlotAreaBackground($dpab)
     {
@@ -2481,8 +2589,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Enable or disable drawing of the X grid lines.
+    /**
+     * Enables or disables drawing of the X (vertical) grid lines
+     *
+     * @param bool $dxg  True to draw the X grid lines, false to not draw them; or NULL to restore default
+     * @return bool  Always returns TRUE
      */
     function SetDrawXGrid($dxg = NULL)
     {
@@ -2490,8 +2601,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Enable or disable drawing of the Y grid lines.
+    /**
+     * Enables or disables drawing of the Y grid lines
+     *
+     * @param bool $dyg  True to draw the Y grid lines, false to not draw them; or NULL to restore default
+     * @return bool  Always returns TRUE
      */
     function SetDrawYGrid($dyg = NULL)
     {
@@ -2499,9 +2613,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Select dashed or solid grid lines.
-     *   $ddg : True for dashed grid lines, false for solid grid lines.
+    /**
+     * Select dashed or solid grid lines
+     *
+     * @param bool $ddg  True to draw the grid with dashed lines, false to use solid lines
+     * @return bool  Always returns TRUE
      */
     function SetDrawDashedGrid($ddg)
     {
@@ -2509,8 +2625,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Enable or disable drawing of X Data Label Lines.
+    /**
+     * Enables or disables drawing of X data label lines
+     *
+     * @param bool $dxdl  True to draw the X data label lines, false to not draw them
+     * @return bool  Always returns TRUE
      */
     function SetDrawXDataLabelLines($dxdl)
     {
@@ -2518,8 +2637,12 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Enable or disable drawing of Y Data Label Lines (horizontal plots only)
+    /**
+     * Enables or disables drawing of Y data label Lines (horizontal plots only)
+     *
+     * @param bool $dydl  True to draw the Y data label lines, false to not draw them
+     * @return bool  Always returns TRUE
+     * @since 6.0.0
      */
     function SetDrawYDataLabelLines($dydl)
     {
@@ -2527,8 +2650,12 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Enable or disable drawing of borders around pie chart segments.
+    /**
+     * Enables or disables drawing of borders around pie chart segments
+     *
+     * @param bool $dpb  True to draw the pie chart segment borders, false to not draw them
+     * @return bool  Always returns TRUE
+     * @since 6.0.0
      */
     function SetDrawPieBorders($dpb)
     {
@@ -2536,8 +2663,12 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Enable or disable drawing of data borders, for bars and stackedbars.
+    /**
+     * Enables or disables drawing of data borders, for bars and stackedbars plots
+     *
+     * @param bool $ddb  True to draw the data borders, false to not draw them
+     * @return bool  Always returns TRUE
+     * @since 6.0.0
      */
     function SetDrawDataBorders($ddb)
     {
@@ -2545,8 +2676,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the main title text for the plot.
+    /**
+     * Sets the main title text for the plot
+     *
+     * @param string $which_title  The text to use for the main plot title. Can contain multiple lines
+     * @return bool  Always returns TRUE
      */
     function SetTitle($which_title)
     {
@@ -2554,8 +2688,16 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the X axis title and position.
+    /**
+     * Sets the X axis title, and optionally its position
+     *
+     * Sets the text to be displayed as the X axis title. Optionally, it
+     * also sets the position of the title and the axis itself: below the
+     * graph (the usual place), above the graph, both, or neither. 
+     *
+     * @param string $which_xtitle The text string to use for the X axis title. Can contain multiple lines
+     * @param string $which_xpos   Optional position for the X axis and title: plotdown plotup both none
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetXTitle($which_xtitle, $which_xpos = 'plotdown')
     {
@@ -2568,8 +2710,16 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the Y axis title and position.
+    /**
+     * Sets the Y axis title, and optionally its position
+     *
+     * Sets the text to be displayed as the Y axis title. Optionally, it
+     * also sets the position of the title and the axis itself: on the left
+     * side of the graph (the usual place), on the right side, both, or neither. 
+     *
+     * @param string $which_ytitle The text string to use for the Y axis title. Can contain multiple lines
+     * @param string $which_ypos   Optional position for the X axis and title: plotleft plotright both none
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetYTitle($which_ytitle, $which_ypos = 'plotleft')
     {
@@ -2582,9 +2732,15 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the size of the drop shadow for bar and pie charts.
-     *   $which_s : Size of the drop shadow in pixels.
+    /**
+     * Sets the size of the drop shadow for bar and pie charts
+     *
+     * Sets the size in pixels of the drop shadow used to give bar and pie
+     * charts a 3-D look. The 3-D look can be disabled by setting the shading
+     * to zero.
+     *
+     * @param int $which_s Size of the drop shadow in pixels
+     * @return bool  Always returns TRUE
      */
     function SetShading($which_s)
     {
@@ -2592,8 +2748,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the plot type (bars, points, ...)
+    /**
+     * Selects the type of plot - how the data will be graphed
+     *
+     * @param string $which_pt  The plot type, such as bars, lines, pie, ...
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetPlotType($which_pt)
     {
@@ -7582,8 +7741,8 @@ class PHPlot
      * should not be used.
      */
 
-    /*
-     * Deprecated, use SetYTickPos()
+    /**
+     * @deprecated  Use SetYTickPos() instead
      */
     function SetDrawVertTicks($which_dvt)
     {
@@ -7592,8 +7751,8 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Deprecated, use SetXTickPos()
+    /**
+     * @deprecated  Use SetXTickPos() instead
      */
     function SetDrawHorizTicks($which_dht)
     {
@@ -7602,64 +7761,64 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Deprecated - use SetNumXTicks()
+    /**
+     * @deprecated  Use SetNumXTicks() instead
      */
     function SetNumHorizTicks($n)
     {
         return $this->SetNumXTicks($n);
     }
 
-    /*
-     * Deprecated - use SetNumYTicks()
+    /**
+     * @deprecated  Use SetNumYTicks() instead
      */
     function SetNumVertTicks($n)
     {
         return $this->SetNumYTicks($n);
     }
 
-    /*
-     * Deprecated - use SetXTickIncrement()
+    /**
+     * @deprecated  Use SetXTickIncrement() instead
      */
     function SetHorizTickIncrement($inc)
     {
         return $this->SetXTickIncrement($inc);
     }
 
-    /*
-     * Deprecated - use SetYTickIncrement()
+    /**
+     * @deprecated  Use SetYTickIncrement() instead
      */
     function SetVertTickIncrement($inc)
     {
         return $this->SetYTickIncrement($inc);
     }
 
-    /*
-     * Deprecated - use SetYTickPos()
+    /**
+     * @deprecated  Use SetYTickPos() instead
      */
     function SetVertTickPosition($which_tp)
     {
         return $this->SetYTickPos($which_tp);
     }
 
-    /*
-     * Deprecated - use SetXTickPos()
+    /**
+     * @deprecated  Use SetXTickPos() instead
      */
     function SetHorizTickPosition($which_tp)
     {
         return $this->SetXTickPos($which_tp);
     }
 
-    /*
-     * Deprecated - use SetFont()
+    /**
+     * @deprecated  Use SetFont() instead
      */
     function SetTitleFontSize($which_size)
     {
         return $this->SetFont('title', $which_size);
     }
 
-    /*
-     * Deprecated - use SetFont()
+    /**
+     * @deprecated  Use SetFont() instead
      */
     function SetAxisFontSize($which_size)
     {
@@ -7667,48 +7826,48 @@ class PHPlot
         $this->SetFont('y_label', $which_size);
     }
 
-    /*
-     * Deprecated - use SetFont()
+    /**
+     * @deprecated  Use SetFont() instead
      */
     function SetSmallFontSize($which_size)
     {
         return $this->SetFont('generic', $which_size);
     }
 
-    /*
-     * Deprecated - use SetFont()
+    /**
+     * @deprecated  Use SetFont() instead
      */
     function SetXLabelFontSize($which_size)
     {
         return $this->SetFont('x_title', $which_size);
     }
 
-    /*
-     * Deprecated - use SetFont()
+    /**
+     * @deprecated  Use SetFont() instead
      */
     function SetYLabelFontSize($which_size)
     {
         return $this->SetFont('y_title', $which_size);
     }
 
-    /*
-     * Deprecated - use SetXTitle()
+    /**
+     * @deprecated  Use SetXTitle() instead
      */
     function SetXLabel($which_xlab)
     {
         return $this->SetXTitle($which_xlab);
     }
 
-    /*
-     * Deprecated - use SetYTitle()
+    /**
+     * @deprecated  Use SetYTitle() instead
      */
     function SetYLabel($which_ylab)
     {
         return $this->SetYTitle($which_ylab);
     }
 
-    /*
-     * Deprecated - use SetXTickLength() and SetYTickLength() instead.
+    /**
+     * @deprecated  Use SetXTickLength() and SetYTickLength() instead
      */
     function SetTickLength($which_tl)
     {
@@ -7717,38 +7876,40 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Deprecated - use SetYLabelType()
+    /**
+     * @deprecated  Use SetYLabelType() instead
      */
     function SetYGridLabelType($which_yglt)
     {
         return $this->SetYLabelType($which_yglt);
     }
 
-    /*
-     * Deprecated - use SetXLabelType()
+    /**
+     * @deprecated  Use SetXLabelType() instead
      */
     function SetXGridLabelType($which_xglt)
     {
         return $this->SetXLabelType($which_xglt);
     }
-    /*
-     * Deprecated - use SetYTickLabelPos()
+
+    /**
+     * @deprecated  Use SetYTickLabelPos() instead
      */
     function SetYGridLabelPos($which_yglp)
     {
         return $this->SetYTickLabelPos($which_yglp);
     }
-    /*
-     * Deprecated - use SetXTickLabelPos()
+
+    /**
+     * @deprecated  Use SetXTickLabelPos() instead
      */
     function SetXGridLabelPos($which_xglp)
     {
         return $this->SetXTickLabelPos($which_xglp);
     }
 
-    /*
-     * Deprecated - use SetXtitle()
+    /**
+     * @deprecated  Use SetXtitle() instead
      */
     function SetXTitlePos($xpos)
     {
@@ -7756,8 +7917,8 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Deprecated - use SetYTitle()
+    /**
+     * @deprecated  Use SetYTitle() instead
      */
     function SetYTitlePos($xpos)
     {
@@ -7765,8 +7926,8 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Deprecated - use SetXDataLabelPos()
+    /**
+     * @deprecated  Use SetXDataLabelPos() instead
      */
     function SetDrawXDataLabels($which_dxdl)
     {
@@ -7776,16 +7937,16 @@ class PHPlot
             $this->SetXDataLabelPos('none');
     }
 
-    /*
-     * Deprecated - use SetPlotAreaPixels()
+    /**
+     * @deprecated  Use SetPlotAreaPixels() instead
      */
     function SetNewPlotAreaPixels($x1, $y1, $x2, $y2)
     {
         return $this->SetPlotAreaPixels($x1, $y1, $x2, $y2);
     }
 
-    /*
-     * Deprecated - use SetLineWidths().
+    /**
+     * @deprecated  Use SetLineWidths() instead
      */
     function SetLineWidth($which_lw)
     {
@@ -7798,8 +7959,8 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Deprecated - use SetPointShapes().
+    /**
+     * @deprecated  Use SetPointShapes() instead
      */
     function SetPointShape($which_pt)
     {
@@ -7807,8 +7968,8 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Deprecated - use SetPointSizes().
+    /**
+     * @deprecated  Use SetPointSizes() instead
      */
     function SetPointSize($which_ps)
     {
@@ -7816,8 +7977,8 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Deprecated - use PrintError(). $where_x, $where_y are ignored.
+    /**
+     * @deprecated  Use PrintError() instead
      */
     protected function DrawError($error_message, $where_x = NULL, $where_y = NULL)
     {
@@ -7826,20 +7987,29 @@ class PHPlot
 
 }
 
-/*
- * The PHPlot_truecolor class extends PHPlot to use GD truecolor images.
+/**
+ * Class for creating a plot using a truecolor (24-bit R,G,B) image
+ *
+ * The PHPlot_truecolor class extends the PHPlot class to use GD truecolor
+ * images. Unlike PHPlot which usually creates indexed RGB files limited to
+ * 256 total colors, PHPlot_truecolor objects use images which do not have a
+ * limit on the number of colors.
+ * 
+ * Note: Without a background image, the PHPlot class creates a palette
+ * (indexed) color image, and the PHPlot_truecolor class creates a truecolor
+ * image. If a background image is used with the constructor of either class,
+ * the type of image produced matches the type of the background image.
+ *
  */
-
 class PHPlot_truecolor extends PHPlot
 {
-    /*
-     * PHPlot Truecolor variation constructor: Create a PHPlot_truecolor object and initialize it.
+    /**
+     * Constructor: Sets up GD truecolor image resource, and initializes plot style controls
      *
-     * Parameters are the same as PHPlot:
-     *   $width : Image width in pixels.
-     *   $height : Image height in pixels.
-     *   $output_file : Filename for output.
-     *   $input_file : Path to a file to be used as background.
+     * @param int $width   Image width in pixels
+     * @param int $height  Image height in pixels
+     * @param string $output_file  Path for output file. Omit, or NULL, or '' to mean no output file
+     * @param string $input_file   Path to a file to be used as background. Omit, NULL, or '' for none
      */
     function __construct($width=600, $height=400, $output_file=NULL, $input_file=NULL)
     {
