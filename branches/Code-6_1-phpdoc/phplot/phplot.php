@@ -14,7 +14,6 @@
  * @author lbayuk (2006-present) <lbayuk@users.sourceforge.net>
  * @author Miguel de Benito Delgado (co-author and maintainer, 2003-2005) <nonick@vodafone.es>
  * @author Afan Ottenheimer (original author)
- *
  */
 
 /*
@@ -860,6 +859,7 @@ class PHPlot
      * Color arrays map color names into arrays of R, G, B and optionally A values.
      *
      * @param mixed $which_color_array Color map spec: array (name=>(R,G,B[,A]), or string 'small' | 'large'
+     * @return bool  Always returns TRUE
      */
     function SetRGBArray($which_color_array)
     {
@@ -981,6 +981,7 @@ class PHPlot
      * @param mixed $which_data  Array of colors specifications, or one color, or empty
      * @param mixed $which_border  Data border colors, deprecated - use SetDataBorderColors() instead
      * @param int $alpha  Default alpha to apply to all data colors that do not have an alpha value
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetDataColors($which_data = NULL, $which_border = NULL, $alpha = NULL)
     {
@@ -1021,9 +1022,15 @@ class PHPlot
         return $this->SetDataBorderColors($which_border);
     }
 
-    /*
-     * Set the colors for the bars and stacked bars outlines.
-     * Argument usage is similar to SetDataColors(), except the default is just black.
+    /**
+     * Sets the rectangular border colors for bars and stacked bars
+     *
+     * Special cases: If $which_br is missing or NULL, use the default of all
+     * black if colors were not already set; if an empty string or False then
+     * set the default of all black regardless.
+     *
+     * @param mixed $which_br  Array of colors specifications, or one color, or empty
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetDataBorderColors($which_br = NULL)
     {
@@ -1047,9 +1054,15 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Sets the colors for the data error bars.
-     * Argument usage is the same as SetDataColors().
+    /**
+     * Sets the colors used for data error bars
+     *
+     * Special cases: If $which_err is missing or NULL, use the default colors
+     * (same as default data colors) is set, if colors were not already set; if
+     * an empty string or False then the default colors are set regardless.
+     *
+     * @param mixed $which_err  Array of colors specifications, or one color, or empty
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetErrorBarColors($which_err = NULL)
     {
@@ -1073,14 +1086,18 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Sets the default dashed line style.
-     *   $which_style : A string specifying the dashed line style, as alternating numbers
-     *         of the length (in pixels) of lines and spaces, separated by dashes.
-     *   For example: '2-3-1-2' means 2 dots of color, 3 transparent, 1 color, then 2 transparent.
-     *   This builds a string which will evaluate to an array of integers. Each colored dot
-     *   is  '$which_ndxcol' and each transparent dot is 'IMG_COLOR_TRANSPARENT'. When SetDashedStyle()
-     *   eval's this with $which_ndxcol set, the result is a GD line style array.
+    /**
+     * Sets the default dashed line style (on/off pattern for dashed lines)
+     *
+     * For example: SetDashedStyle('2-3-1-2') means 2 dots of color, 3
+     * transparent, 1 color, then 2 transparent.
+     * This builds a string $this->default_dashed_style which will evaluate to
+     * an array of integers. Each colored dot is '$which_ndxcol' and each
+     * transparent dot is 'IMG_COLOR_TRANSPARENT'. When SetDashedStyle() eval's
+     * this with $which_ndxcol set, the result is a GD line style array.
+     *
+     * @param string $which_style  Dashed line specification, in the form <pixels_on>-<pixels_off>...
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetDefaultDashedStyle($which_style)
     {
@@ -1120,9 +1137,11 @@ class PHPlot
         return $which_ndxcol; // Styles are off; use original color for drawing
     }
 
-    /*
-     * Set line widths for each data set.
-     *   $which_lw : Array of line widths in pixels, or a single value to use for all data sets.
+    /**
+     * Sets line widths (thickness) for each data set
+     *
+     * @param mixed $which_lw  Array of line widths in pixels, or a single value to use for all data sets
+     * @return bool  Always returns TRUE
      */
     function SetLineWidths($which_lw=NULL)
     {
@@ -1134,9 +1153,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set line style ('solid' or 'dashed') for each data set.
-     *   $which_ls : Array of keywords, or a single keyword to use for all data sets.
+    /**
+     * Sets the line style (solid or dashed) for each data set
+     *
+     * @param mixed $which_ls Array of (solid | dashed | none), or a single keyword to use for all data sets
+     * @return bool  Always returns TRUE
      */
     function SetLineStyles($which_ls=NULL)
     {
@@ -1152,12 +1173,11 @@ class PHPlot
 //////////////                 TEXT and FONTS
 /////////////////////////////////////////////
 
-    /*
-     * Controls the line spacing of multi-line labels.
-     *   $which_spc : Line spacing factor for text
-     * For GD text, this is the number of pixels between lines.
-     * For TTF text, it controls line spacing in proportion to the normal
-     * spacing defined by the font.
+    /**
+     * Sets spacing between lines of multi-line labels
+     *
+     * @param int $which_spc Text line spacing factor (pixels for GD text, scale control for TTF text)
+     * @return bool  Always returns TRUE
      */
     function SetLineSpacing($which_spc)
     {
@@ -1165,10 +1185,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Select the default font type to use.
-     *   $which_ttf : True to default to TrueType, False to default to GD (fixed) fonts.
-     * This also resets all font settings to the defaults.
+    /**
+     * Sets the default font type
+     *
+     * @param bool $which_ttf  True to default to TrueType fonts, False to default to GD (fixed) fonts
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetUseTTF($which_ttf)
     {
@@ -1176,8 +1197,11 @@ class PHPlot
         return $this->SetDefaultFonts();
     }
 
-    /*
-     * Sets the directory name to look into for TrueType fonts.
+    /**
+     * Sets the default TrueType font directory
+     *
+     * @param string $which_path  Full path to a directory containing TrueType fonts
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetTTFPath($which_path)
     {
@@ -1188,10 +1212,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Sets the default TrueType font and updates all fonts to that.
-     *  $which_font : Font filename or path. Missing or NULL to use a default (see GetDefaultTTFont).
-     * Also enables use of TrueType fonts as the default font type, and resets all font settings.
+    /**
+     * Sets the default TrueType font, and resets all elements to use that TrueType font and default sizes
+     *
+     * @param string $which_font  Font filename or path; omit or NULL to use a default font
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetDefaultTTFont($which_font = NULL)
     {
@@ -1258,13 +1283,16 @@ class PHPlot
             && $this->SetFontGD('y_title', 3);
     }
 
-    /*
-     * Select a fixed (GD) font for an element.
-     * This allows using a fixed font, even with SetUseTTF(True).
-     *    $which_elem : The element whose font is to be changed.
-     *       One of: title legend generic x_label y_label x_title y_title
-     *    $which_font : A GD font number 1-5
-     *    $which_spacing (optional) : Line spacing factor
+    /**
+     * Selects a GD (fixed) font to use for a plot element
+     *
+     * Available element names are: title legend generic x_label y_label x_title y_title
+     *
+     * @param string $which_elem  Name of the element to change the font for
+     * @param int|string $which_font  GD font number: 1 2 3 4 or 5
+     * @param int $which_spacing  Optional spacing in pixels between text lines
+     * @return bool Returns True (False on error if an error handler returns True)
+     * @since 5.0.6
      */
     function SetFontGD($which_elem, $which_font, $which_spacing = NULL)
     {
@@ -1286,14 +1314,17 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Select a TrueType font for an element.
-     * This allows using a TrueType font, even with SetUseTTF(False).
-     *    $which_elem : The element whose font is to be changed.
-     *       One of: title legend generic x_label y_label x_title y_title
-     *    $which_font : A TrueType font filename or pathname.
-     *    $which_size : Font point size.
-     *    $which_spacing (optional) : Line spacing factor
+    /**
+     * Selects a TrueType font for to use for a plot element
+     *
+     * Available element names are: title legend generic x_label y_label x_title y_title
+     *
+     * @param string $which_elem  Name of the element to change the font for
+     * @param string $which_font  TrueType font file or pathname; empty or NULL for the default font
+     * @param int $which_size  Optional font size in points (default 12)
+     * @param int $which_spacing  Optional line spacing adjustment factor
+     * @return bool Returns True (False on error if an error handler returns True)
+     * @since 5.0.6
      */
     function SetFontTTF($which_elem, $which_font, $which_size = 12, $which_spacing = NULL)
     {
@@ -1341,17 +1372,19 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Select Fixed/TrueType font for an element. Which type of font is
-     * selected depends on the $use_ttf class variable (see SetUseTTF()).
-     * Before PHPlot supported mixing font types, only this function and
-     * SetUseTTF were available to select an overall font type, but now
-     * SetFontGD() and SetFontTTF() can be used for mixing font types.
-     *    $which_elem : The element whose font is to be changed.
-     *       One of: title legend generic x_label y_label x_title y_title
-     *    $which_font : A number 1-5 for fixed fonts, or a TrueType font.
-     *    $which_size : Ignored for Fixed fonts, point size for TrueType.
-     *    $which_spacing (optional) : Line spacing factor
+    /**
+     * Select which font to use for a plot element
+     *
+     * This uses either GD (fixed) or TrueType fonts, depending on the default text
+     * font type as set with SetUseTTF().
+     *
+     * Available element names are: title legend generic x_label y_label x_title y_title
+     *
+     * @param string $which_elem  Name of the element to change the font for
+     * @param int|string $which_font  For GD fonts, a font number; for TrueType, a font filename or pathname
+     * @param int $which_size  Optional font size in points for TrueType fonts, ignored for GD fonts
+     * @param int $line_spacing  Optional line spacing adjustment factor
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetFont($which_elem, $which_font, $which_size = 12, $line_spacing = NULL)
     {
@@ -1775,16 +1808,21 @@ class PHPlot
         return $this->ProcessTextGD($draw_it, $font, $angle, $x, $y, $color, $text, $h_factor, $v_factor);
     }
 
-    /*
-     * Draws a block of text. See comments above before ProcessText().
-     *    $which_font : PHPlot text element name, font array, or NULL or empty string to use 'generic'
-     *    $which_angle : Text angle in degrees
-     *    $which_xpos, $which_ypos: Reference point for the text
-     *    $which_color : GD color index to use for drawing the text
-     *    $which_text :  The text to draw, with newlines (\n) between lines.
-     *    $which_halign : Horizontal (relative to the image) alignment: left, center, or right.
-     *    $which_valign : Vertical (relative to the image) alignment: top, center, or bottom.
-     * Note: This function should be considered 'protected', and is not documented for public use.
+    /**
+     * Draws a string of text on the plot
+     *
+     * Note: This function is mostly for internal use, and is not documented
+     * for public use. But it can be legitimately used from a PHPlot callback.
+     *
+     * @param mixed $which_font  Font selector: Text element, empty or NULL for 'generic', or font array
+     * @param float $which_angle  Text angle in degrees
+     * @param int $which_xpos  Reference point X coordinate for the text
+     * @param int $which_ypos  Reference point Y coordinate for the text
+     * @param int $which_color  GD color index to use for drawing the text
+     * @param string $which_text  The text to draw, with newlines (\n) between lines
+     * @param string $which_halign  Horizontal alignment (relative to the image): left | center | right
+     * @param string $which_valign  Vertical alignment (relative to the image: top | center | bottom
+     * @return bool  Always returns TRUE
      */
     function DrawText($which_font, $which_angle, $which_xpos, $which_ypos, $which_color, $which_text,
                       $which_halign = 'left', $which_valign = 'bottom')
@@ -1794,17 +1832,20 @@ class PHPlot
                            $which_color, $which_text, $which_halign, $which_valign);
     }
 
-    /*
-     * Returns the size of block of text. This is the orthogonal width and height of a bounding
-     * box aligned with the X and Y axes of the text. Only for angle=0 is this the actual
-     * width and height of the text block, but for any angle it is the amount of space needed
-     * to contain the text.
-     *    $which_font : PHPlot text element name, font array, or NULL or empty string to use 'generic'
-     *    $which_angle : Text angle in degrees
-     *    $which_text :  The text to draw, with newlines (\n) between lines.
-     * Returns a two element array with: $width, $height.
-     * This is just a wrapper for ProcessText() - see above.
-     * Note: This function should be considered 'protected', and is not documented for public use.
+    /**
+     * Calculates the size of block of text
+     *
+     * The returned size is the orthogonal width and height of a bounding
+     * box aligned with the X and Y axes of the text. Only for angle=0 is
+     * this the actual width and height of the text block, but for any angle
+     * it is the amount of space needed to contain the text.
+     * Note: This function is mostly for internal use, and is not documented
+     * for public use. But it can be legitimately used from a PHPlot callback.
+     *
+     * @param mixed $which_font  Font selector: Text element, empty or NULL for 'generic', or font array
+     * @param float $which_angle  Text angle in degrees
+     * @param string $which_text  The text to calculate size of
+     * @return int[]  Returns a two element array ($width, $height) of the text
      */
     function SizeText($which_font, $which_angle, $which_text)
     {
@@ -1817,8 +1858,11 @@ class PHPlot
 ///////////            INPUT / OUTPUT CONTROL
 /////////////////////////////////////////////
 
-    /*
-     * Sets output file format to $format (jpg, png, ...)
+    /**
+     * Selects the graphic image format generated by DrawGraph()
+     *
+     * @param string $format  The format to use: jpg | png | gif | wbmp
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetFileFormat($format)
     {
@@ -1845,11 +1889,12 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Selects an input file to be used as graph background and scales or tiles this image
-     * to fit the sizes.
-     *   $input_file : Path to the file to be used (jpeg, png and gif accepted)
-     *   $mode : 'centeredtile', 'tile', or 'scale' (the image to the graph's size)
+    /**
+     * Sets an image file to be used as the image background
+     *
+     * @param string $input_file  Path to the file to be used (jpeg, png or gif)
+     * @param string $mode   Optional method for the background: centeredtile | tile | scale
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetBgImage($input_file, $mode='centeredtile')
     {
@@ -1858,11 +1903,12 @@ class PHPlot
         return (boolean)$this->bgmode;
     }
 
-    /*
-     * Selects an input file to be used as plot area background and scales or tiles this image
-     * to fit the sizes.
-     *   $input_file : Path to the file to be used (jpeg, png and gif accepted)
-     *   $mode : 'centeredtile', 'tile', or 'scale' (the image to the graph's size)
+    /**
+     * Sets an image file to be used as the plot area background 
+     *
+     * @param string $input_file  Path to the file to be used (jpeg, png or gif)
+     * @param string $mode   Optional method for the background: centeredtile | tile | scale
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetPlotAreaBgImage($input_file, $mode='tile')
     {
@@ -1871,8 +1917,13 @@ class PHPlot
         return (boolean)$this->plotbgmode;
     }
 
-    /*
-     * Sets the name of the file to be used as output file.
+    /**
+     * Redirect PHPlot output to a file
+     *
+     * Note: Output file has no effect unless SetIsInline(TRUE) is called.
+     *
+     * @param string $which_output_file  Pathname of the file to write the image data into
+     * @return bool  Always returns TRUE
      */
     function SetOutputFile($which_output_file)
     {
@@ -1883,9 +1934,13 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Sets the output image as 'inline', that is: no Content-Type headers are sent
-     * to the browser. Needed if you want to embed the images.
+    /**
+     * Sets the output image to be inline, without HTTP headers
+     *
+     * This will suppress the Content-Type headers that would otherwise be sent.
+     *
+     * @param bool $which_ii  True to suppress HTTP headers, False to include the headers
+     * @return bool  Always returns TRUE
      */
     function SetIsInline($which_ii)
     {
