@@ -1918,7 +1918,7 @@ class PHPlot
     }
 
     /**
-     * Redirect PHPlot output to a file
+     * Redirects PHPlot output to a file
      *
      * Note: Output file has no effect unless SetIsInline(TRUE) is called.
      *
@@ -1990,8 +1990,12 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Output the generated image to standard output or to a file.
+    /**
+     * Outputs the generated image to standard output or to a file
+     *
+     * This is automatically called by DrawGraph(), unless SetPrintImage(False) was used.
+     *
+     * @return bool  Always returns TRUE
      */
     function PrintImage()
     {
@@ -2012,8 +2016,12 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Return the image data, as raw data, base64 encoded, or data URL (see RFC2397).
+    /**
+     * Returns the image data as raw data, base64 encoded, or data URL (see RFC2397)
+     *
+     * @param string $encoding  Optional encoding to use: dataurl (default) | raw | base64
+     * @return string  Encoded image data (False on error if error handler returns True) 
+     * @since 5.5.0
      */
     function EncodeImage($encoding = 'dataurl')
     {
@@ -2031,12 +2039,18 @@ class PHPlot
         }
     }
 
-    /*
-     * Replace the image with a message. This is used for error handling, and is also available
-     * as a public function for special purposes.
-     *   $text : Text of the message to display in the image
-     *   $options : Optional associative array of control options. See defaults below.
-     * Default options are chosen for the error-handling case, which should be as fail-safe as possible.
+    /**
+     * Draw a text message on the image, replacing the plot
+     *
+     * This is used for PHPlot error handling, and is available for
+     * application-level error handling or other special purposes.
+     * Options (keys in $options) are: draw_background draw_border force_print
+     *   reset_font text_color text_wrap wrap_width.
+     * Default option values were chosen for fail-safe error-handling.
+     *
+     * @param string $text  Text of the message to display in the image
+     * @param string[] $options  Optional associative array of control options
+     * @since 5.7.0
      */
     function DrawMessage($text, $options = NULL)
     {
@@ -2106,8 +2120,12 @@ class PHPlot
         return FALSE;  // In case error handler returns, rather than doing exit().
     }
 
-    /*
-     * Set error behavior. On failure, PHPlot normally creates an error image.
+    /**
+     * Enables or disables error image production on failure
+     *
+     * @param bool $error_image  True to enable the error image, False to disable it.
+     * @return bool  Always returns TRUE
+     * @since 5.7.0
      */
     function SetFailureImage($error_image)
     {
@@ -2115,8 +2133,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Begin a Motion-JPEG (or other type) stream
+    /**
+     * Begins a Motion-JPEG (or other type) plot stream
+     *
+     * @return bool  Always returns TRUE
+     * @since 5.8.0
      */
     function StartStream()
     {
@@ -2128,8 +2149,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * End a Motion-JPEG (or other type) stream
+    /**
+     * Ends a Motion-JPEG (or other type) plot stream
+     *
+     * @return bool  Always returns TRUE
+     * @since 5.8.0
      */
     function EndStream()
     {
@@ -2138,8 +2162,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Output a plot as a frame in a Motion JPEG (or other type) stream, and set up for another.
+    /**
+     * Outputs the generated plot as one frame in a plot stream
+     *
+     * @return bool  Always returns TRUE
+     * @since 5.8.0
      */
     function PrintImageFrame()
     {
@@ -2158,12 +2185,16 @@ class PHPlot
 ///////////                            LABELS
 /////////////////////////////////////////////
 
-    /*
-     * Sets position for X data labels.
+    /**
+     * Position and control X data labels
+     *
      * For vertical plots, these are X axis data labels, showing label strings from the data array.
-     *    Accepted positions are: plotdown, plotup, both, none.
-     * For horizontal plots (where available), these are X data value labels, show the data values.
-     *    Accepted positions are: plotin, plotstack, none.
+     * Accepted positions are: plotdown, plotup, both, none.
+     * For horizontal plots, these are X data value labels, show the data values.
+     * Accepted positions are: plotin, plotstack, none.
+     *
+     * @param string $which_xdlp  Desired label position: plotdown | plotup | both | none | plotin | plotstack
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetXDataLabelPos($which_xdlp)
     {
@@ -2175,12 +2206,16 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Sets position for Y data labels.
-     * For vertical plots (where available), these are Y data value labels, showing the data values.
-     *    Accepted positions are: plotin, plotstack, none.
+    /**
+     * Position and control Y data labels
+     *
+     * For vertical plots, these are Y data value labels, showing the data values.
+     * Accepted positions are: plotin, plotstack, none.
      * For horizontal plots, these are Y axis data labels, showing label strings from the data array.
-     *    Accepted positions are: plotleft, plotright, both, none.
+     * Accepted positions are: plotleft, plotright, both, none.
+     *
+     * @param string $which_ydlp  Desired label position: plotleft | plotright | both | none | ...
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetYDataLabelPos($which_ydlp)
     {
@@ -2192,8 +2227,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set position for X tick labels.
+    /**
+     * Position the X tick labels
+     *
+     * @param string $which_xtlp  Desired label position: plotdown | plotup | both | none | xaxis
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetXTickLabelPos($which_xtlp)
     {
@@ -2205,8 +2243,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set position for Y tick labels.
+    /**
+     * Position the Y tick labels
+     *
+     * @param string $which_ytlp  Desired label position: plotleft | plotright | both | none | yaxis
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetYTickLabelPos($which_ytlp)
     {
@@ -2292,53 +2333,70 @@ class PHPlot
         return (boolean)$type;
     }
 
-    /*
-     * Select label formating for X tick labels, and for X data labels
-     * (unless SetXDataLabelType was called).
-     * See SetLabelType() for details.
+    /**
+     * Sets formatting mode for X tick labels, and default for X data labels
+     *
+     * @param string $type  Formatting mode: data | time | printf | custom, or '' to reset to default
+     * @param mixed $varargs  One or more additional arguments that depend on $type
+     * @return bool Returns True (False on error if an error handler returns True)
      */
-    function SetXLabelType()  // Variable arguments: $type, ...
+    function SetXLabelType($type=NULL, $varargs=NULL)  // Variable arguments
     {
         $args = func_get_args();
         return $this->SetLabelType('x', $args);
     }
 
-    /*
-     * Select label formatting for X data labels, overriding SetXLabelType.
+    /**
+     * Sets formatting mode for X data labels (overriding any mode set with SetXLabelType)
+     *
+     * @param string $type  Formatting mode: data | time | printf | custom, or '' to reset to default
+     * @param mixed $varargs  One or more additional arguments that depend on $type
+     * @return bool Returns True (False on error if an error handler returns True)
+     * @since 5.1.0
      */
-    function SetXDataLabelType()  // Variable arguments: $type, ...
+    function SetXDataLabelType($type=NULL, $varargs=NULL)  // Variable arguments, named params are unused
     {
         $args = func_get_args();
         return $this->SetLabelType('xd', $args);
     }
 
-    /*
-     * Select label formating for Y tick labels, and for Y data labels
-     * (unless SetYDataLabelType was called).
-     * See SetLabelType() for details.
+    /**
+     * Sets formatting mode for Y tick labels, and default for Y data labels
+     *
+     * @param string $type  Formatting mode: data | time | printf | custom, or '' to reset to default
+     * @param mixed $varargs  One or more additional arguments that depend on $type
+     * @return bool Returns True (False on error if an error handler returns True)
      */
-    function SetYLabelType()  // Variable arguments: $type, ...
+    function SetYLabelType($type=NULL, $varargs=NULL)  // Variable arguments, named params are unused
     {
         $args = func_get_args();
         return $this->SetLabelType('y', $args);
     }
 
-    /*
-     * Select label formatting for Y data labels, overriding SetYLabelType.
+    /**
+     * Sets formatting mode for Y data labels (overriding any mode set with SetYLabelType)
+     *
+     * @param string $type  Formatting mode: data | time | printf | custom, or '' to reset to default
+     * @param mixed $varargs  One or more additional arguments that depend on $type
+     * @return bool Returns True (False on error if an error handler returns True)
+     * @since 5.1.0
      */
-    function SetYDataLabelType()  // Variable arguments: $type, ...
+    function SetYDataLabelType($type=NULL, $varargs=NULL)  // Variable arguments, named params are unused
     {
         $args = func_get_args();
         return $this->SetLabelType('yd', $args);
     }
 
-    /*
-     * Select label source and formating for pie chart labels.
-     *   $source - What to use for labels (string or array): percent, value, label, index, or empty string.
-     *             Empty string (or NULL, False, or 0) means to restore the default.
-     *   ... - Additional arguments telling how to format the label. See SetLabelType() for details.
+    /**
+     * Sets type and formatting mode for pie chart labels.
+     *
+     * @param mixed $source_  Source for labels (string or array): percent | value | label | index | ''
+     * @param string $type  Optional formatting mode: data | printf | custom
+     * @param mixed $varargs  Zero or more additional arguments telling how to format the label
+     * @return bool Returns True (False on error if an error handler returns True)
+     * @since 5.6.0
      */
-    function SetPieLabelType()  // Variable arguments: $source, $type, ....
+    function SetPieLabelType($source_, $type=NULL, $varargs=NULL)  // Variable arguments, named params unused
     {
         $args = func_get_args();
         $source = array_shift($args);
