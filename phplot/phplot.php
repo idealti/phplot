@@ -12,7 +12,7 @@
  * @link http://sourceforge.net/projects/phplot/ PHPlot Web Site with downloads, tracker, discussion
  * @link http://phplot.sourceforge.net PHPlot Project Web Site with links to documentation
  * @author lbayuk (2006-present) <lbayuk@users.sourceforge.net>
- * @author Miguel de Benito Delgado (co-author and maintainer, 2003-2005) <nonick@vodafone.es>
+ * @author Miguel de Benito Delgado (co-author and maintainer, 2003-2005)
  * @author Afan Ottenheimer (original author)
  */
 
@@ -2125,7 +2125,7 @@ class PHPlot
      *
      * @param bool $error_image  True to enable the error image, False to disable it.
      * @return bool  Always returns TRUE
-     * @since 5.7.0
+     * @since 5.5.0
      */
     function SetFailureImage($error_image)
     {
@@ -2411,10 +2411,15 @@ class PHPlot
         return $this->SetLabelType('p', $args);
     }
 
-    /*
-     * Set the date/time format code for X labels.
-     * Note: Use of SetXLabelType('time', $which_xtf) is preferred, because
-     * SetXTimeFormat does not also enable date/time formatting.
+    /**
+     * Sets the date/time formatting string for X labels
+     *
+     * This does not enable date/time formatting. For that you need to use
+     * SetXLabelType('time'). But since you can pass the formatting string
+     * to SetXLabelType() also, there is no need to use SetXTimeFormat().
+     *
+     * @param string $which_xtf  Formatting string to use (see PHP function strftime())
+     * @return bool  Always returns TRUE
      */
     function SetXTimeFormat($which_xtf)
     {
@@ -2422,10 +2427,15 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the date/time format code for Y labels.
-     * Note: Use of SetYLabelType('time', $which_ytf) is preferred, because
-     * SetYTimeFormat does not also enable date/time formatting.
+    /**
+     * Sets the date/time formatting string for Y labels
+     *
+     * This does not enable date/time formatting. For that you need to use
+     * SetYLabelType('time'). But since you can pass the formatting string
+     * to SetYLabelType() also, there is no need to use SetYTimeFormat().
+     *
+     * @param string $which_ytf  Formatting string (see PHP function strftime())
+     * @return bool  Always returns TRUE
      */
     function SetYTimeFormat($which_ytf)
     {
@@ -2433,9 +2443,16 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set number format parameters (decimal point and thousands separator) for
-     * 'data' mode label formatting, overriding the locale-defaults.
+    /**
+     * Sets the separators used when formatting number labels
+     *
+     * Separators are used with 'data' label formatting. The defaults
+     * are set from the system locale (if available).
+     *
+     * @param string $decimal_point  The character to use as a decimal point
+     * @param string $thousands_sep  The character to use as a thousands grouping separator
+     * @return bool  Always returns TRUE
+     * @since 5.0.4
      */
     function SetNumberFormat($decimal_point, $thousands_sep)
     {
@@ -2444,8 +2461,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the text angle for X labels to $which_xla degrees.
+    /**
+     * Sets the text angle for X tick labels, and the default angle for X data labels
+     *
+     * @param float $which_xla  Desired angle for label text, in degrees
+     * @return bool  Always returns TRUE
      */
     function SetXLabelAngle($which_xla)
     {
@@ -2453,8 +2473,13 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the text angle for Y labels to $which_xla degrees.
+    /**
+     * Sets the text angle for Y tick labels
+     *
+     * Note: Unlike SetXLabelAngle(), this does not also apply to data labels.
+     *
+     * @param float $which_yla  Desired angle for label text, in degrees
+     * @return bool  Always returns TRUE
      */
     function SetYLabelAngle($which_yla)
     {
@@ -2462,11 +2487,12 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the angle for X Data Labels to $which_xdla degrees.
-     * If not used, this defaults to the value set with SetXLabelAngle.
-     * Separate variables (x_data_label_angle_u, x_data_label_angle) are used so a new
-     * default can be calculated for subsequent plots if not set here. See CheckLabels().
+    /**
+     * Sets the text angle for X data labels (overriding an angle set with SetXLabelAngle)
+     *
+     * @param float $which_xdla  Desired angle for label text, in degrees
+     * @return bool  Always returns TRUE
+     * @since 5.1.0
      */
     function SetXDataLabelAngle($which_xdla)
     {
@@ -2474,9 +2500,12 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the angle for Y Data Labels to $which_ydla degrees.
-     * If not used, this defaults to zero (unlike X data labels).
+    /**
+     * Sets the angle for Y data labels
+     *
+     * @param float $which_ydla  Desired angle for label text, in degrees
+     * @return bool  Always returns TRUE
+     * @since 5.1.0
      */
     function SetYDataLabelAngle($which_ydla)
     {
@@ -2683,6 +2712,7 @@ class PHPlot
      *
      * @param int $width  Image border width, in pixels
      * @return bool  Always returns TRUE
+     * @since 5.1.2
      */
     function SetImageBorderWidth($width)
     {
@@ -2874,9 +2904,11 @@ class PHPlot
         return (boolean)$this->plot_type;
     }
 
-    /*
-     * Set the position of the X axis.
-     *  $pos : Axis position in world coordinates (as an integer), or '' or omit for default.
+    /**
+     * Sets the position of the X axis
+     *
+     * @param mixed $pos  Axis position as an integer Y world coordinate; '' or omit for default
+     * @return bool  Always returns TRUE
      */
     function SetXAxisPosition($pos='')
     {
@@ -2884,9 +2916,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the position of the Y axis.
-     *  $pos : Axis position in world coordinates (as an integer), or '' or omit for default.
+    /**
+     * Sets the position of the Y axis
+     *
+     * @param mixed $pos  Axis position as an integer X world coordinate; '' or omit for default
+     * @return bool  Always returns TRUE
      */
     function SetYAxisPosition($pos='')
     {
@@ -2894,10 +2928,14 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Enable or disable drawing of the X axis line.
-     *  $draw : True to draw the axis (default if not called), False to suppress it.
-     * This controls drawing of the axis line only, and not the ticks, labels, or grid.
+    /**
+     * Enables or disables drawing of the X axis line
+     *
+     * Note: This controls drawing of the axis line only, and not the ticks, labels, or grid.
+     *
+     * @param bool $draw  True to draw the axis line, False to not draw it
+     * @return bool  Always returns TRUE
+     * @since 5.3.0
      */
     function SetDrawXAxis($draw)
     {
@@ -2905,10 +2943,14 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Enable or disable drawing of the Y axis line.
-     *  $draw : True to draw the axis (default if not called), False to suppress it.
-     * This controls drawing of the axis line only, and not the ticks, labels, or grid.
+    /**
+     * Enables or disables drawing of the Y axis line
+     *
+     * Note: This controls drawing of the axis line only, and not the ticks, labels, or grid.
+     *
+     * @param bool $draw  True to draw the axis line, False to not draw it
+     * @return bool  Always returns TRUE
+     * @since 5.3.0
      */
     function SetDrawYAxis($draw)
     {
@@ -2916,8 +2958,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Select linear or log scale for the X axis.
+    /**
+     * Selects linear or logarithmic scale for the X axis
+     *
+     * @param string $which_xst  The scale type: linear | log
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetXScaleType($which_xst)
     {
@@ -2925,8 +2970,11 @@ class PHPlot
         return (boolean)$this->xscale_type;
     }
 
-    /*
-     * Select linear or log scale for the Y axis.
+    /**
+     * Selects linear or logarithmic scale for the Y axis
+     *
+     * @param string $which_yst  The scale type: linear | log
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetYScaleType($which_yst)
     {
@@ -2934,28 +2982,37 @@ class PHPlot
         return (boolean)$this->yscale_type;
     }
 
-    /*
-     * Set the precision for numerically formatted X labels.
-     *   $which_prec : Number of digits to display.
-     * Note: This is equivalent to: SetXLabelType('data', $which_prec)
+    /**
+     * Sets the precision for numerically formatted X labels
+     *
+     * Note: Use of the equivalent SetXLabelType('data', $which_prec) is preferred.
+     *
+     * @param int $which_prec  Number of digits to display
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetPrecisionX($which_prec)
     {
         return $this->SetXLabelType('data', $which_prec);
     }
 
-    /*
-     * Set the precision for numerically formatted Y labels.
-     *   $which_prec : Number of digits to display.
-     * Note: This is equivalent to: SetYLabelType('data', $which_prec)
+    /**
+     * Sets the precision for numerically formatted Y labels
+     *
+     * Note: Use of the equivalent SetYLabelType('data', $which_prec) is preferred.
+     *
+     * @param int $which_prec  Number of digits to display
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetPrecisionY($which_prec)
     {
         return $this->SetYLabelType('data', $which_prec);
     }
 
-    /*
-     * Set the line width (in pixels) for error bars.
+    /**
+     * Sets the line width used for error bars
+     *
+     * @param int $which_seblw  Desired width in pixels of the lines used to draw error bars
+     * @return bool  Always returns TRUE
      */
     function SetErrorBarLineWidth($which_seblw)
     {
@@ -2963,11 +3020,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the position for pie chart percentage labels.
-     *   $which_blb : Real number between 0 and 1.
-     *      Smaller values move the labels in towards the center.
-     *      Using 0 or FALSE results in no labels.
+    /**
+     * Sets the position for pie chart labels
+     *
+     * @param mixed $which_blb  Label position factor (float between 0 and 1.0); 0 or False for no labels
+     * @return bool  Always returns TRUE
      */
     function SetLabelScalePosition($which_blp)
     {
@@ -2975,8 +3032,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the size (in pixels) of the "T" in error bars.
+    /**
+     * Sets the size of the error bar tee
+     *
+     * @param int $which_ebs  Length in pixels of the error bar "T"
+     * @return bool  Always returns TRUE
      */
     function SetErrorBarSize($which_ebs)
     {
@@ -2984,9 +3044,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the shape of the in error bars.
-     *   $which_ebs : Error bar shape, 'tee' or 'line'.
+    /**
+     * Selects the shape of the error bars
+     *
+     * @param string $which_ebs  Error bar shape: tee | line
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetErrorBarShape($which_ebs)
     {
@@ -3401,6 +3463,7 @@ class PHPlot
      * Enable or disable automatic pie size calculations.
      * If disabled, PHPlot uses the full plot area (like PHPlot-5.5.0 and earlier always did).
      * Note the flag pie_full_size is unset by default, and stores the complement of $enable.
+     * @since 5.6.0
      */
     function SetPieAutoSize($enable)
     {
@@ -3410,6 +3473,7 @@ class PHPlot
 
     /*
      * Set the start angle for the first pie sector to $angle degrees.
+     * @since 6.0.0
      */
     function SetPieStartAngle($angle)
     {
@@ -3420,6 +3484,7 @@ class PHPlot
     /*
      * Set the direction of the pie segments: clockwise or counter-clockwise.
      *  $which : 'clockwise' or 'CW', or 'counterclockwise' or 'CCW' (case insensitive).
+     * @since 6.0.0
      */
     function SetPieDirection($which)
     {
@@ -4511,6 +4576,7 @@ class PHPlot
     /* A public interface to xtr and ytr. Translates (x,y) in world coordinates
      * to (x,y) in device coordinates and returns them as an array.
      * Usage is: list($x_pixel, $y_pixel) = $plot->GetDeviceXY($x_world, $y_world)
+     * @since 5.1.0
      */
     function GetDeviceXY($x_world, $y_world)
     {
@@ -4818,6 +4884,7 @@ class PHPlot
 
     /*
      * Set tuning variables for range calculations on X axis. See TuneAutoRange() above.
+     * @since 6.0.0
      */
     function TuneXAutoRange($zero_magnet = NULL, $adjust_mode = NULL, $adjust_amount = NULL)
     {
@@ -4826,6 +4893,7 @@ class PHPlot
 
     /*
      * Set tuning variables for range calculations on Y axis. See TuneAutoRange() above.
+     * @since 6.0.0
      */
     function TuneYAutoRange($zero_magnet = NULL, $adjust_mode = NULL, $adjust_amount = NULL)
     {
@@ -4855,6 +4923,7 @@ class PHPlot
 
     /*
      * Set tuning variables for tick calculations on X axis. See TuneAutoTicks() above.
+     * @since 6.0.0
      */
     function TuneXAutoTicks($min_ticks = NULL, $tick_mode = NULL, $tick_inc_integer = NULL)
     {
@@ -4863,6 +4932,7 @@ class PHPlot
 
     /*
      * Set tuning variables for tick calculations on Y axis. See TuneAutoTicks() above.
+     * @since 6.0.0
      */
     function TuneYAutoTicks($min_ticks = NULL, $tick_mode = NULL, $tick_inc_integer = NULL)
     {
@@ -5011,6 +5081,7 @@ class PHPlot
     /*
      * Set an anchor point for X tick marks. There will be an X tick mark at
      * this exact value (if the data range were extended to include it).
+     * @since 5.4.0
      */
     function SetXTickAnchor($xta = NULL)
     {
@@ -5021,6 +5092,7 @@ class PHPlot
     /*
      * Set an anchor point for Y tick marks. There will be a Y tick mark at
      * this exact value (if the data range were extended to include it).
+     * @since 5.4.0
      */
     function SetYTickAnchor($yta = NULL)
     {
@@ -5759,6 +5831,7 @@ class PHPlot
      *  of the element (legend, image, plot, or title area), regardless of its size. These are floating
      *  point values, each usually in the range [0,1], but they can be negative or greater than 1.
      *  If any of x, y, x_offset, or y_offset are NULL, default legend positioning is restored.
+     * @since 5.4.0
      */
     function SetLegendPosition($x, $y, $relative_to, $x_base, $y_base, $x_offset = 0, $y_offset = 0)
     {
@@ -5780,6 +5853,7 @@ class PHPlot
      *   $text_align : Alignment of the text, 'left' or 'right'.
      *   $colorbox_align : Alignment of the color boxes, 'left', 'right', 'none', or missing/empty.
      *       If missing or empty, the same alignment as $text_align is used. Color box is positioned first.
+     * @since 5.0.4
      */
     function SetLegendStyle($text_align, $colorbox_align = '')
     {
@@ -5796,6 +5870,7 @@ class PHPlot
      * Use color boxes or alternative shapes in the legend.
      * For points and linepoints plots you get point shapes; for line-type plots you get line segments.
      *   $use_shapes : True to use shapes or lines, false to use color boxes.
+     * @since 5.4.0
      */
     function SetLegendUseShapes($use_shapes)
     {
@@ -5806,6 +5881,7 @@ class PHPlot
     /*
      * Reverse the order of legend lines. This is useful with stackedbars and stackedarea
      * plots, so the legend entries are ordered the same way as the plot sections.
+     * @since 5.5.0
      */
     function SetLegendReverse($reversal = False)
     {
@@ -5816,6 +5892,7 @@ class PHPlot
     /*
      * Control the borders around the color-boxes in the legend: Off, On using TextColor, or
      * on using the corresponding DataBorder color.
+     * @since 6.0.0
      */
     function SetLegendColorboxBorders($cbbmode = 'textcolor')
     {
@@ -5889,6 +5966,7 @@ class PHPlot
      * Get legend box size. This can be used to adjust the plot margins, for example.
      * Returns: Array of ($width, $height) of the legend box in pixels.
      *   FALSE if there is no legend configured.
+     * @since 5.4.0
      */
     function GetLegendSize()
     {
