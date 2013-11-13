@@ -858,7 +858,7 @@ class PHPlot
      *   $which_color_array : A color array, or 'small' or 'large'.
      * Color arrays map color names into arrays of R, G, B and optionally A values.
      *
-     * @param mixed $which_color_array Color map spec: array (name=>(R,G,B[,A]), or string 'small' | 'large'
+     * @param array|string $which_color_array  Color map array (name=>(R,G,B[,A]), or keyword small | large
      * @return bool  Always returns TRUE
      */
     function SetRGBArray($which_color_array)
@@ -3077,11 +3077,15 @@ class PHPlot
         }
     }
 
-    /*
-     * Set the point shape for each data set.
-     *   $which_pt : Array (or single value) of valid point shapes. See also DrawDot() for valid shapes.
+    /**
+     * Selects the point shape for each data set
+     *
+     * Valid point shapes are known here and in DrawShape(). Includes: circle | dot | diamond | ...
      * The point shape and point sizes arrays are synchronized before drawing a graph
      * that uses points. See CheckPointParams()
+     *
+     * @param string|string[] $which_pt  Array (or single value) of valid point shapes
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetPointShapes($which_pt)
     {
@@ -3091,11 +3095,14 @@ class PHPlot
         return !empty($this->point_shapes);
     }
 
-    /*
-     * Set the point size for point plots.
-     *   $which_ps : Array (or single value) of point sizes in pixels.
+    /**
+     * Sets the point size for each data set
+     *
      * The point shape and point sizes arrays are synchronized before drawing a graph
      * that uses points. See CheckPointParams()
+     *
+     * @param string[]|string $which_ps  Array (or single value) of point sizes in pixels
+     * @return bool  Always returns TRUE
      */
     function SetPointSizes($which_ps)
     {
@@ -3109,10 +3116,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Sets whether lines should be broken at missing data.
-     *   $bl : True to break the lines, false to connect around missing data.
-     * This only works with 'lines' and 'squared' plots.
+    /**
+     * Sets whether lines should be broken at missing data, for 'lines' and 'squared' plots.
+     *
+     * @param bool $bl  True to break the lines, false to connect around missing data
+     * @return bool  Always returns TRUE
      */
     function SetDrawBrokenLines($bl)
     {
@@ -3120,8 +3128,13 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the data type, which defines the structure of the data array. See static $datatypes at top.
+    /**
+     * Sets the data type, which defines the structure of the data array
+     *
+     * For a list of available data types, see the static arrays $datatypes and $datatypes_map.
+     *
+     * @param string $which_dt  The data array format type: text-data | data-data | ...
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetDataType($which_dt)
     {
@@ -3134,10 +3147,16 @@ class PHPlot
         return (boolean)$this->data_type;
     }
 
-    /*
-     * Copy the array of data values, converting rows to numerical indexes.
-     * Also validates that the array uses 0-based sequential integer indexes, and that each
-     * array value (row) is another array. Other validation is deferred to CheckDataArray().
+    /**
+     * Sets the data array for plotting
+     *
+     * This copy the array of data values, converting rows to numerical indexes.
+     * It also validates that the array uses 0-based sequential integer indexes,
+     * and that each array value (row) is another array. Other validation is
+     * deferred to CheckDataArray().
+     *
+     * @param array $which_dv  The data array, an array of row arrays, interpreted per SetDataType()
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetDataValues($which_dv)
     {
@@ -3233,14 +3252,16 @@ class PHPlot
         return number_format($number, $decimals, $this->decimal_point, $this->thousands_sep);
     }
 
-    /*
-     * Register a callback (hook) function
-     *   $reason : A pre-defined name where a callback can be defined.
-     *   $function : The name of a function to register for callback, or an instance/method
-     *      pair in an array (see 'callbacks' in the PHP reference manual).
-     *   $arg : Optional argument to supply to the callback function when it is triggered.
-     *      (Often called "clientData")
-     *   Returns True if the callback reason is valid, else False.
+    /**
+     * Registers a callback (hook) function
+     *
+     * See the $callbacks array (class property) for the available callback names
+     *
+     * @param string $reason  A pre-defined name where a callback can be defined
+     * @param callback $function  Function or method to register for callback
+     * @param mixed $arg  Optional opaque argument to supply to the callback function when called
+     * @return bool  Returns True if the callback reason is valid, else False
+     * @since 5.0.4
      */
     function SetCallback($reason, $function, $arg = NULL)
     {
@@ -3251,14 +3272,16 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Return the name of a function registered for callback. See SetCallBack.
-     *   $reason - A pre-defined name where a callback can be defined.
-     *   Returns the current callback function (name or array) for the given reason,
-     *   or False if there was no active callback or the reason is not valid.
-     * Note you can safely test the return value with a simple 'if', as
-     * no valid function name evaluates to false. Testing the return value, without saving
-     * it, is used within PHPlot to avoid preparing arguments to an unused callback.
+    /**
+     * Returns the current callback function registered for the given reason
+     *
+     * Note you can safely test the return value with a simple 'if', as no valid
+     * function name evaluates to false. PHPlot uses if (GetCallback(...)) to
+     * to avoid preparing arguments to an unused callback.
+     *
+     * @param string $reason  A pre-defined name where a callback can be defined
+     * @return callback|false  Returns the current callback for the reason; False if none or invalid
+     * @since 5.0.4
      */
     function GetCallback($reason)
     {
@@ -3267,11 +3290,15 @@ class PHPlot
         return FALSE;
     }
 
-    /*
-     * Un-register (remove) a function registered for callback.
-     *   $reason - A pre-defined name where a callback can be defined.
-     *   Returns: True if it was a valid callback reason, else False.
-     * Note: Returns True whether or not there was a callback registered.
+    /**
+     * Un-registers any callback registered for the given reason
+     *
+     * Note: A True return means $reason is valid; it does not mean a callback
+     * was actually registered for that reason.
+     *
+     * @param string $reason  A pre-defined name where a callback can be defined
+     * @return bool  Returns True if it was a valid callback reason, else False
+     * @since 5.0.4
      */
     function RemoveCallback($reason)
     {
@@ -3459,10 +3486,15 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Enable or disable automatic pie size calculations.
-     * If disabled, PHPlot uses the full plot area (like PHPlot-5.5.0 and earlier always did).
-     * Note the flag pie_full_size is unset by default, and stores the complement of $enable.
+    /**
+     * Enables or disables automatic pie chart size calculation
+     *
+     * If autosize is disabled, PHPlot uses the full plot area (as PHPlot-5.5.0
+     * and earlier always did). Note the flag pie_full_size is unset by default,
+     * and stores the complement of $enable.
+     *
+     * @param bool $enable  True to enable automatic size calculation, False to use the maximum area
+     * @return bool  Always returns TRUE
      * @since 5.6.0
      */
     function SetPieAutoSize($enable)
@@ -3471,8 +3503,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the start angle for the first pie sector to $angle degrees.
+    /**
+     * Sets the starting angle for pie chart segments
+     *
+     * @param float $angle  Starting angle in degrees
+     * @return bool  Always returns TRUE
      * @since 6.0.0
      */
     function SetPieStartAngle($angle)
@@ -3481,9 +3516,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the direction of the pie segments: clockwise or counter-clockwise.
-     *  $which : 'clockwise' or 'CW', or 'counterclockwise' or 'CCW' (case insensitive).
+    /**
+     * Sets the direction for pie chart segments
+     *
+     * @param string $which  Direction for pie segments: clockwise | cw | counterclockwise | ccw
+     * @return bool  Returns True (False on error if an error handler returns True)
      * @since 6.0.0
      */
     function SetPieDirection($which)
