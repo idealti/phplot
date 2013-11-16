@@ -3999,10 +3999,17 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the margins in pixels (left, right, top, bottom)
-     * This determines the plot area, equivalent to SetPlotAreaPixels().
-     * Deferred calculations now occur in CalcPlotAreaPixels().
+    /**
+     * Sets the margins around the plot area
+     *
+     * This determines the plot area, equivalent to SetPlotAreaPixels()
+     * but instead of giving the plot area size, you give the margin sizes.
+     *
+     * @param int $which_lm  Left margin in pixels; omit or NULL to auto-calculate
+     * @param int $which_rm  Right margin in pixels; omit or NULL to auto-calculate
+     * @param int $which_tm  Top margin in pixels; omit or NULL to auto-calculate
+     * @param int $which_bm  Bottom margin in pixels; omit or NULL to auto-calculate
+     * @return bool  Always returns TRUE
      */
     function SetMarginsPixels($which_lm = NULL, $which_rm = NULL, $which_tm = NULL, $which_bm = NULL)
     {
@@ -4010,19 +4017,25 @@ class PHPlot
         $this->x_right_margin = $which_rm;
         $this->y_top_margin = $which_tm;
         $this->y_bot_margin = $which_bm;
-
         return TRUE;
     }
 
-    /*
-     * Sets the limits for the plot area.
-     * This stores the margins, not the area. That may seem odd, but
-     * the idea is to make SetPlotAreaPixels and SetMarginsPixels two
-     * ways to accomplish the same thing, and the deferred calculations
-     * in CalcMargins and CalcPlotAreaPixels don't need to know which
-     * was used.
-     *   (x1, y1) - Upper left corner of the plot area
-     *   (x2, y2) - Lower right corner of the plot area
+    /**
+     * Sets the limits for the plot area, in device coordinates
+     *
+     * This determines the plot area, equivalent to SetMarginsPixels()
+     * but instead of giving the margin sizes, you give the plot area size,
+     *
+     * This stores the margins, not the area. That may seem odd, but the idea is
+     * to make SetPlotAreaPixels and SetMarginsPixels two ways to accomplish the
+     * same thing, and the deferred calculations in CalcMargins and
+     * CalcPlotAreaPixels don't need to know which was used.
+     *
+     * @param int $x1  Top left corner X coordinate in pixels; omit or NULL to auto-calculate
+     * @param int $y1  Top left corner Y coordinate in pixels; omit or NULL to auto-calculate
+     * @param int $x2  Bottom right corner X coordinate in pixels; omit or NULL to auto-calculate
+     * @param int $y2  Bottom right corner Y coordinate in pixels; omit or NULL to auto-calculate
+     * @return bool  Always returns TRUE
      */
     function SetPlotAreaPixels($x1 = NULL, $y1 = NULL, $x2 = NULL, $y2 = NULL)
     {
@@ -4389,11 +4402,20 @@ class PHPlot
         return isset($this->x_tick_inc, $this->y_tick_inc); // Pass thru FALSE return from CalcPlotRange()
     }
 
-    /*
-     * Fix one or more ends of the World Coordinate range of the plot.
-     *   $xmin, $ymin, $xmax, $ymax : world coordinates limits, or NULL.
-     * Anything not set or set to NULL will be calculated in CalcPlotAreaWorld().
-     * If both ends of either range are supplied, the range is validated to ensure min < max.
+    /**
+     * Overrides automatic data scaling to device coordinates
+     *
+     * This fixes one or more ends of the range of the plot to specific
+     * value(s), given in World Coordinates.
+     * Any limit not set or set to NULL will be calculated in
+     * CalcPlotAreaWorld().  If both ends of either X or Y range are
+     * supplied, the range is validated to ensure min < max.
+     *
+     * @param float $xmin  X data range minimum; omit or NULL to auto-calculate
+     * @param float $ymin  Y data range minimum; omit or NULL to auto-calculate
+     * @param float $xmax  X data range maximum; omit or NULL to auto-calculate
+     * @param float $ymax  Y data range maximum; omit or NULL to auto-calculate
+     * @return bool  Returns True (False on error if an error handler returns True)
      */
     function SetPlotAreaWorld($xmin=NULL, $ymin=NULL, $xmax=NULL, $ymax=NULL)
     {
@@ -4577,11 +4599,12 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Translate X world coordinate into pixel coordinate
-     * See CalcTranslation() for calculation of xscale.
-     * Note: This function should be 'protected', but is left public for historical reasons.
-     * See GetDeviceXY() for a preferred public method.
+    /**
+     * Translates an X world coordinate value into a pixel coordinate value
+     *
+     * @param float $x_world  X world coordinate value to translate
+     * @return int  Translated X device (pixel) coordinate
+     * @deprecated for public use; use GetDeviceXY() instead
      */
     function xtr($x_world)
     {
@@ -4593,11 +4616,12 @@ class PHPlot
         return round($x_pixels);
     }
 
-    /*
-     * Translate Y world coordinate into pixel coordinate.
-     * See CalcTranslation() for calculation of yscale.
-     * Note: This function should be 'protected', but is left public for historical reasons.
-     * See GetDeviceXY() for a preferred public method.
+    /**
+     * Translates a Y world coordinate value into a pixel coordinate value
+     *
+     * @param float $y_world  Y world coordinate value to translate
+     * @return int  Translated Y device (pixel) coordinate
+     * @deprecated for public use; use GetDeviceXY() instead
      */
     function ytr($y_world)
     {
@@ -4610,9 +4634,21 @@ class PHPlot
         return round($y_pixels);
     }
 
-    /* A public interface to xtr and ytr. Translates (x,y) in world coordinates
-     * to (x,y) in device coordinates and returns them as an array.
-     * Usage is: list($x_pixel, $y_pixel) = $plot->GetDeviceXY($x_world, $y_world)
+    /**
+     * Translate world coordinates into device coordinates
+     *
+     * This is a public interface to xtr() and ytr(), which are left as public
+     * for historical reasons but deprecated for public use. It maps (x,y) in
+     * world coordinates to (x,y) into device (pixel) coordinates. Typical usage
+     * is: list($x_pixel, $y_pixel) = $plot->GetDeviceXY($x_world, $y_world)
+     *
+     * Note: This only works after scaling has been set up, which happens in
+     * DrawGraph(). So it is only useful from a drawing callback, or if
+     * SetPrintImage(False) was used and after DrawGraph().
+     *
+     * @param float $x_world  X world coordinate value to translate
+     * @param float $y_world  Y world coordinate value to translate
+     * @return int[]  Array of ($x, $y) device coordinates; False on error if error handler returns True
      * @since 5.1.0
      */
     function GetDeviceXY($x_world, $y_world)
@@ -4919,8 +4955,15 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set tuning variables for range calculations on X axis. See TuneAutoRange() above.
+    /**
+     * Adjusts tuning parameters for X axis range calculation
+     *
+     * See TuneAutoRange() above, which implements this function.
+     *
+     * @param float $zero_magnet  Optional X axis zero magnet value, controlling range extension to include 0
+     * @param string $adjust_mode  Optional X axis range extension mode: T | R | I (Tick, Range, Integer)
+     * @param float $adjust_amount  Optional X axis range extension amount
+     * @return bool  Always returns TRUE
      * @since 6.0.0
      */
     function TuneXAutoRange($zero_magnet = NULL, $adjust_mode = NULL, $adjust_amount = NULL)
@@ -4928,8 +4971,15 @@ class PHPlot
         return $this->TuneAutoRange('x', $zero_magnet, $adjust_mode, $adjust_amount);
     }
 
-    /*
-     * Set tuning variables for range calculations on Y axis. See TuneAutoRange() above.
+    /**
+     * Adjusts tuning parameters for Y axis range calculation
+     *
+     * See TuneAutoRange() above, which implements this function.
+     *
+     * @param float $zero_magnet  Optional Y axis zero magnet value, controlling range extension to include 0
+     * @param string $adjust_mode  Optional Y axis range extension mode: T | R | I (Tick, Range, Integer)
+     * @param float $adjust_amount  Optional Y axis range extension amount
+     * @return bool  Always returns TRUE
      * @since 6.0.0
      */
     function TuneYAutoRange($zero_magnet = NULL, $adjust_mode = NULL, $adjust_amount = NULL)
@@ -4958,8 +5008,15 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set tuning variables for tick calculations on X axis. See TuneAutoTicks() above.
+    /**
+     * Adjusts tuning parameters for X axis tick increment calculation
+     *
+     * See TuneAutoTicks() above, which implements this function.
+     *
+     * @param int $min_ticks  Minimum number of tick intervals along the axis
+     * @param string $tick_mode  Tick increment calculation mode: decimal | binary | date
+     * @param bool $tick_inc_integer  True to always use integer tick increments, false to allow fractions
+     * @return bool  Returns True (False on error if an error handler returns True)
      * @since 6.0.0
      */
     function TuneXAutoTicks($min_ticks = NULL, $tick_mode = NULL, $tick_inc_integer = NULL)
@@ -4967,8 +5024,15 @@ class PHPlot
         return $this->TuneAutoTicks('x', $min_ticks, $tick_mode, $tick_inc_integer);
     }
 
-    /*
-     * Set tuning variables for tick calculations on Y axis. See TuneAutoTicks() above.
+    /**
+     * Adjusts tuning parameters for Y axis tick increment calculation
+     *
+     * See TuneAutoTicks() above, which implements this function.
+     *
+     * @param int $min_ticks  Minimum number of tick intervals along the axis
+     * @param string $tick_mode  Tick increment calculation mode: decimal | binary | date
+     * @param bool $tick_inc_integer  True to always use integer tick increments, false to allow fractions
+     * @return bool  Returns True (False on error if an error handler returns True)
      * @since 6.0.0
      */
     function TuneYAutoTicks($min_ticks = NULL, $tick_mode = NULL, $tick_inc_integer = NULL)
@@ -4981,8 +5045,11 @@ class PHPlot
 ///////////////                         TICKS
 /////////////////////////////////////////////
 
-    /*
-     * Set the step (interval) between X ticks. If not set, it is calculated.
+    /**
+     * Sets the length of the interval between X ticks
+     *
+     * @param float $which_ti  X tick increment in world coordinates; omit or '' for default auto-calculate
+     * @return bool  Always returns TRUE
      */
     function SetXTickIncrement($which_ti='')
     {
@@ -4990,8 +5057,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the step (interval) between Y ticks. If not set, it is calculated.
+    /**
+     * Sets the length of the interval between Y ticks
+     *
+     * @param float $which_ti  Y tick increment in world coordinates; omit or '' for default auto-calculate
+     * @return bool  Always returns TRUE
      */
     function SetYTickIncrement($which_ti='')
     {
@@ -4999,8 +5069,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the number of X tick marks. (Actually the number of intervals)
+    /**
+     * Sets the number of X tick intervals
+     *
+     * @param int $which_nt  Number of X tick intervals; omit or '' for default auto-calculate
+     * @return bool  Always returns TRUE
      */
     function SetNumXTicks($which_nt='')
     {
@@ -5008,8 +5081,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the number of Y tick marks. (Actually the number of intervals)
+    /**
+     * Sets the number of Y tick intervals
+     *
+     * @param int $which_nt  Number of Y tick intervals; omit or '' for default auto-calculate
+     * @return bool  Always returns TRUE
      */
     function SetNumYTicks($which_nt='')
     {
@@ -5017,9 +5093,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the position for the X tick marks.
-     * These can be above the plot, below, both positions, at the X axis, or suppressed.
+    /**
+     * Positions the X tick marks (above the plot, below, both above and below; at the X axis, or suppressed)
+     *
+     * @param string $which_tp  Tick mark position: plotdown | plotup | both | xaxis | none
+     * @return bool  Returns True (False on error if an error handler returns True)
      */
     function SetXTickPos($which_tp)
     {
@@ -5028,9 +5106,11 @@ class PHPlot
         return (boolean)$this->x_tick_pos;
     }
 
-    /*
-     * Set the position for the Y tick marks.
-     * These can be left of the plot, right, both positions, at the Y axis, or suppressed.
+    /**
+     * Positions the Y tick marks (left, right, or both sides; at the Y axis, or suppressed)
+     *
+     * @param string $which_tp  Tick mark position: plotleft | plotright | both | yaxis | none
+     * @return bool  Returns True (False on error if an error handler returns True)
      */
     function SetYTickPos($which_tp)
     {
@@ -5039,8 +5119,11 @@ class PHPlot
         return (boolean)$this->y_tick_pos;
     }
 
-    /*
-     * Skip the top-most Y axis tick mark and label if $skip is true.
+    /**
+     * Suppress the top Y axis tick mark and label
+     *
+     * @param bool $skip  True to skip the tick mark and label; false to draw them
+     * @return bool  Always returns TRUE
      */
     function SetSkipTopTick($skip)
     {
@@ -5048,8 +5131,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Skip the bottom-most Y axis tick mark and label if $skip is true.
+    /**
+     * Suppress the bottom Y axis tick mark and label
+     *
+     * @param bool $skip  True to skip the tick mark and label; false to draw them
+     * @return bool  Always returns TRUE
      */
     function SetSkipBottomTick($skip)
     {
@@ -5057,8 +5143,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Skip the left-most X axis tick mark and label if $skip is true.
+    /**
+     * Suppress the left-most (first) X axis tick mark and label
+     *
+     * @param bool $skip  True to skip the tick mark and label; false to draw them
+     * @return bool  Always returns TRUE
      */
     function SetSkipLeftTick($skip)
     {
@@ -5066,8 +5155,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Skip the right-most X axis tick mark and label if $skip is true.
+    /**
+     * Suppress the right-most (last) X axis tick mark and label
+     *
+     * @param bool $skip  True to skip the tick mark and label; false to draw them
+     * @return bool  Always returns TRUE
      */
     function SetSkipRightTick($skip)
     {
@@ -5075,9 +5167,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the outer length of X tick marks to $which_xln pixels.
-     * This is the part of the tick mark that sticks out from the plot area.
+    /**
+     * Sets the outer length of X tick marks (the part that sticks out from the plot area)
+     *
+     * @param int $which_xln  Outer length of the tick marks, in pixels
+     * @return bool  Always returns TRUE
      */
     function SetXTickLength($which_xln)
     {
@@ -5085,9 +5179,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the outer length of Y tick marks to $which_yln pixels.
-     * This is the part of the tick mark that sticks out from the plot area.
+    /**
+     * Sets the outer length of Y tick marks (the part that sticks out from the plot area)
+     *
+     * @param int $which_yln  Outer length of the tick marks, in pixels
+     * @return bool  Always returns TRUE
      */
     function SetYTickLength($which_yln)
     {
@@ -5095,9 +5191,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the crossing length of X tick marks to $which_xc pixels.
-     * This is the part of the tick mark that sticks into the plot area.
+    /**
+     * Sets the crossing length of X tick marks (the part that sticks into the plot area)
+     *
+     * @param int $which_xc  Crossing length of the tick marks, in pixels
+     * @return bool  Always returns TRUE
      */
     function SetXTickCrossing($which_xc)
     {
@@ -5105,9 +5203,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set the crossing length of Y tick marks to $which_yc pixels.
-     * This is the part of the tick mark that sticks into the plot area.
+    /**
+     * Sets the crossing length of Y tick marks (the part that sticks into the plot area)
+     *
+     * @param int $which_yc  Crossing length of the tick marks, in pixels
+     * @return bool  Always returns TRUE
      */
     function SetYTickCrossing($which_yc)
     {
@@ -5115,9 +5215,13 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set an anchor point for X tick marks. There will be an X tick mark at
-     * this exact value (if the data range were extended to include it).
+    /**
+     * Sets an anchor point for X tick marks
+     *
+     * A tick anchor forces a tick mark at that exact value (if the data range were extended to include it).
+     *
+     * @param float $xta  Tick anchor position in World Coordinates; omit or NULL for no anchor
+     * @return bool  Always returns TRUE
      * @since 5.4.0
      */
     function SetXTickAnchor($xta = NULL)
@@ -5126,9 +5230,13 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set an anchor point for Y tick marks. There will be a Y tick mark at
-     * this exact value (if the data range were extended to include it).
+    /**
+     * Sets an anchor point for Y tick marks
+     *
+     * A tick anchor forces a tick mark at that exact value (if the data range were extended to include it).
+     *
+     * @param float $yta  Tick anchor position in World Coordinates; omit or NULL for no anchor
+     * @return bool  Always returns TRUE
      * @since 5.4.0
      */
     function SetYTickAnchor($yta = NULL)
