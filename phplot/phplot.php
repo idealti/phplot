@@ -5926,11 +5926,16 @@ class PHPlot
 ///////////////                        LEGEND
 /////////////////////////////////////////////
 
-    /*
-     * Set text to display in the graph's legend.
-     *   $which_leg : Array of strings for the complete legend, or a single string
-     *                to be appended to the legend.
-     *                Or NULL (or an empty array) to cancel the legend.
+    /**
+     * Adds text to a legend box
+     *
+     * The legend can be set up with a single call by passing an array of
+     * strings (1 string per legend line/data set), or it can be built up
+     * one line at a time with repeated calls passing a single string.
+     * NULL (or an empty array) can be passed to cancel the legend.
+     *
+     * @param string|string[] $which_leg  Array of strings for the legend, or a single string to append
+     * @return bool  Always returns TRUE
      */
     function SetLegend($which_leg)
     {
@@ -5945,37 +5950,54 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Specifies the position of the legend's upper/leftmost corner, in pixel (device) coordinates.
-     * Both X and Y must be provided, or both omitted (or use NULL) to restore auto-positioning.
+    /**
+     * Positions the legend on the image, using device coordinates
+     *
+     * @param int $which_x  X coordinate in pixels of the upper left corner of the legend box
+     * @param int $which_y  Y coordinate in pixels of the upper left corner of the legend box
+     * @return bool  Returns True (False on error if an error handler returns True)
      */
     function SetLegendPixels($which_x=NULL, $which_y=NULL)
     {
         return $this->SetLegendPosition(0, 0, 'image', 0, 0, $which_x, $which_y);
     }
 
-    /*
-     * Specifies the position of the legend's upper/leftmost corner, in world (data space) coordinates.
+    /**
+     * Positions the legend on the image, using world coordinates
+     *
+     * @param int $which_x  World coordinate X of the upper left corner of the legend box
+     * @param int $which_y  World coordinate Y of the upper left corner of the legend box
+     * @return bool  Returns True (False on error if an error handler returns True)
      */
     function SetLegendWorld($which_x, $which_y)
     {
         return $this->SetLegendPosition(0, 0, 'world', $which_x, $which_y);
     }
 
-    /*
-     * Specifies the position of the legend. This includes SetLegendWorld(), SetLegendPixels(), and
-     * additional choices using relative coordinates, with optional pixel offset.
-     *   $x, $y : Relative coordinates of a point on the legend box. (See below)
-     *   $relative_to : What to position the legend relative to: 'image', 'plot', 'world', or 'title'.
-     *   $x_base, $y_base : Base point for positioning.
-     *      If $relative_to is 'world', then this is a world coordinate position.
-     *      Otherwise, this is a relative coordinate position on the $relative_to element.
-     *   $x_offset, $y_offset : Additional legend box offset in device coordinates (pixels).
-     *  The legend is positioned so that point ($x,$y) is at ($x_base, $y_base).
-     *  'Relative coordinates' means: (0,0) is the upper left corner, and (1,1) is the lower right corner
-     *  of the element (legend, image, plot, or title area), regardless of its size. These are floating
-     *  point values, each usually in the range [0,1], but they can be negative or greater than 1.
-     *  If any of x, y, x_offset, or y_offset are NULL, default legend positioning is restored.
+    /**
+     * Positions the legend
+     *
+     * This implements SetLegendWorld(), SetLegendPixels(), and also allows use
+     * of relative coordinates, with optional pixel offset.
+     *
+     * 'Relative coordinates' means: (0,0) is the upper left corner, and (1,1)
+     * is the lower right corner of the element (legend, image, plot, or title
+     * area), regardless of its size. These are floating point values, each
+     * usually in the range [0,1], but they can be negative or greater than 1.
+     *
+     * If any of x, y, x_offset, or y_offset are NULL, the default legend
+     * positioning is restored.
+     *
+     * Note: This only stores the parameters. The real work is in GetLegendPosition().
+     *
+     * @param float $x  Relative coordinate X indicating an anchor point on the legend box
+     * @param float $y  Relative coordinate X indicating an anchor point on the legend box
+     * @param string $relative_to  Position is relative to: image | plot | world | title
+     * @param float $x_base  Base point X for positioning to the anchor point
+     * @param float $y_base  Base point Y for positioning to the anchor point
+     * @param int $x_offset  Additional legend box offset X value in pixels
+     * @param int $y_offset  Additional legend box offset Y value in pixels
+     * @return bool  Returns True (False on error if an error handler returns True)
      * @since 5.4.0
      */
     function SetLegendPosition($x, $y, $relative_to, $x_base, $y_base, $x_offset = 0, $y_offset = 0)
@@ -5993,11 +6015,12 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set legend text alignment, color box alignment, and style options.
-     *   $text_align : Alignment of the text, 'left' or 'right'.
-     *   $colorbox_align : Alignment of the color boxes, 'left', 'right', 'none', or missing/empty.
-     *       If missing or empty, the same alignment as $text_align is used. Color box is positioned first.
+    /**
+     * Controls the appearance of the legend
+     *
+     * @param string $text_align  How to align the text in the legend: left | right
+     * @param string $colorbox_align  How to align the color boxes or shape markers: left | right | none | ''
+     * @return bool  Returns True (False on error if an error handler returns True)
      * @since 5.0.4
      */
     function SetLegendStyle($text_align, $colorbox_align = '')
@@ -6011,10 +6034,11 @@ class PHPlot
         return ($this->legend_text_align && $this->legend_colorbox_align);
     }
 
-    /*
-     * Use color boxes or alternative shapes in the legend.
-     * For points and linepoints plots you get point shapes; for line-type plots you get line segments.
-     *   $use_shapes : True to use shapes or lines, false to use color boxes.
+    /**
+     * Selects use of color boxes or alternative shapes (point shapes or line segments) in the legend
+     *
+     * @param bool $use_shapes  True to use shapes or lines, false to use color boxes
+     * @return bool  Always returns TRUE
      * @since 5.4.0
      */
     function SetLegendUseShapes($use_shapes)
@@ -6023,9 +6047,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Reverse the order of legend lines. This is useful with stackedbars and stackedarea
-     * plots, so the legend entries are ordered the same way as the plot sections.
+    /**
+     * Controls the order of text lines in the legend (e.g. for Stackedbar plots)
+     *
+     * @param bool $reversal  True to reverse the order - bottom up; False for default top down
+     * @return bool  Always returns TRUE
      * @since 5.5.0
      */
     function SetLegendReverse($reversal = False)
@@ -6034,9 +6060,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Control the borders around the color-boxes in the legend: Off, On using TextColor, or
-     * on using the corresponding DataBorder color.
+    /**
+     * Controls the borders around the color boxes in the legend
+     *
+     * @param string $cbbmode  Color box mode: none | textcolor | databordercolor
+     * @return bool  Returns True (False on error if an error handler returns True)
      * @since 6.0.0
      */
     function SetLegendColorboxBorders($cbbmode = 'textcolor')
@@ -6107,10 +6135,10 @@ class PHPlot
                        'colorbox_mode', 'dot_height', 'colorbox_width');
     }
 
-    /*
-     * Get legend box size. This can be used to adjust the plot margins, for example.
-     * Returns: Array of ($width, $height) of the legend box in pixels.
-     *   FALSE if there is no legend configured.
+    /**
+     * Gets the legend box size (can be used to adjust the plot margins, for example)
+     *
+     * @return int[]  Legend box size as array of (width, height) in pixels, False if no legend defined.
      * @since 5.4.0
      */
     function GetLegendSize()
@@ -7966,12 +7994,15 @@ class PHPlot
     }
 
 
-    /*
-     * Draw the graph.
-     * This is the function that performs the actual drawing, after all
-     * the parameters and data are set up.
-     * It also outputs the finished image, unless told not to.
-     * Note: It is possible for this to be called multiple times.
+    /**
+     * Draws the current graph onto the image
+     *
+     * This is the function that performs the actual drawing, after all the
+     * parameters and data are set up. It also outputs the finished image,
+     * unless told not to with SetPrintImage(False).
+     * Note: It is possible for this to be called multiple times (multi-plot).
+     *
+     * @return bool  Returns True (False on error if an error handler returns True)
      */
     function DrawGraph()
     {
