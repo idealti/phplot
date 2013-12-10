@@ -521,7 +521,7 @@ class PHPlot
      * Selects an input file to be used as background for the whole graph
      *
      * @param string $which_input_file  Pathname to the image file to use as a background
-     * @deprecated for public use, intended for use by the class constructor only.
+     * @deprecated  Public use discouraged; intended for use by class constructor
      * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetInputFile($which_input_file)
@@ -633,7 +633,7 @@ class PHPlot
     /**
      * Sets the overall image background color
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetBackgroundColor($which_color)
@@ -644,7 +644,7 @@ class PHPlot
     /**
      * Sets the plot area background color, which is only drawn if SetDrawPlotAreaBackground is used.
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetPlotBgColor($which_color)
@@ -655,7 +655,7 @@ class PHPlot
     /**
      * Sets the color of the plot title, and the default color of the X and Y titles.
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetTitleColor($which_color)
@@ -666,7 +666,7 @@ class PHPlot
     /**
      * Sets the color of the X title, overriding the color set with SetTitleColor()
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      * @since 5.2.0
      */
@@ -678,7 +678,7 @@ class PHPlot
     /**
      * Sets the color of the Y title, overriding the color set with SetTitleColor()
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      * @since 5.2.0
      */
@@ -690,7 +690,7 @@ class PHPlot
     /**
      * Sets the color of the axis tick marks
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetTickColor($which_color)
@@ -709,7 +709,7 @@ class PHPlot
     /**
      * Sets the general text color, which is the default color for legend text, tick and data labels
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetTextColor($which_color)
@@ -720,7 +720,7 @@ class PHPlot
     /**
      * Sets the color for data labels, overriding the default set with SetTextColor()
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      * @since 5.7.0
      */
@@ -734,7 +734,7 @@ class PHPlot
      *
      * Note: Data Value Labels are the labels within the plot area (not the axis labels).
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      * @since 5.7.0
      */
@@ -746,7 +746,7 @@ class PHPlot
     /**
      * Sets the color for pie chart data labels, overriding the default set with SetGridColor()
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      * @since 5.7.0
      */
@@ -758,7 +758,7 @@ class PHPlot
     /**
      * Sets the color for pie chart segment borders
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      * @since 6.0.0
      */
@@ -770,7 +770,7 @@ class PHPlot
     /**
      * Sets the color for tick labels, overriding the default set with SetTextColor()
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      * @since 5.7.0
      */
@@ -782,7 +782,7 @@ class PHPlot
     /**
      * Sets the X and Y grid colors, and the data label line color
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetLightGridColor($which_color)
@@ -797,7 +797,7 @@ class PHPlot
      * These can be overridden by SetPieLabelColor() and SetPieBorderColor() respectively.
      * Note: This has nothing to do with the grid, and we don't know where this name came from.
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetGridColor($which_color)
@@ -808,7 +808,7 @@ class PHPlot
     /**
      * Sets the color used for the image border, drawn if SetImageBorderType() enables it
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetImageBorderColor($which_color)
@@ -819,7 +819,7 @@ class PHPlot
     /**
      * Designates a color to be transparent, if transparency is supported by the image format
      *
-     * @param mixed $which_color Color to use; empty or omit or NULL to reset to no transparent color
+     * @param string|int[]|null $which_color  Color to make transparent; empty|omit|NULL to reset to none
      * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetTransparentColor($which_color = NULL)
@@ -831,7 +831,7 @@ class PHPlot
     /**
      * Sets the color used for the legend background, which defaults to the image background color
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      * @since 6.0.0
      */
@@ -843,7 +843,7 @@ class PHPlot
     /**
      * Sets the color used for the legend text, which defaults to the general text color
      *
-     * @param mixed $which_color Color to use (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
      * @return bool Returns True (False on error if an error handler returns True)
      * @since 6.0.0
      */
@@ -926,10 +926,10 @@ class PHPlot
      * alpha value suffix as ":alpha".  R, G, and B are integers 0-255, and
      * Alpha is 0 (opaque) to 127 (transparent).
      *
-     * @param mixed $color_asked  Color spec to parse (color name, (R,G,B) array, #rrggbb string, etc)
+     * @param string|int[] $color_asked  Color spec to parse (color name, #rrggbb, (r,g,b) array, etc)
      * @param int $alpha  Optional default alpha value (0-127, default 0 for opaque)
      * @return int[]  color component values as array (red, green, blue, alpha)
-     * @deprecated for public use, intended for internal use only
+     * @deprecated  Public use discouraged; intended for class internal use
      */
     function SetRGBColor($color_asked, $alpha = 0)
     {
@@ -978,8 +978,8 @@ class PHPlot
      * Note:  The default value for $alpha here is NULL, not 0, so we can tell
      * if it was defaulted. But the effective default value is 0 (opaque).
      *
-     * @param mixed $which_data  Array of colors specifications, or one color, or empty
-     * @param mixed $which_border  Data border colors, deprecated - use SetDataBorderColors() instead
+     * @param array|string $which_data  Array of color specifications, or one color, or empty
+     * @param array|string $which_border  Data border colors, deprecated - use SetDataBorderColors() instead
      * @param int $alpha  Default alpha to apply to all data colors that do not have an alpha value
      * @return bool Returns True (False on error if an error handler returns True)
      */
@@ -1029,7 +1029,7 @@ class PHPlot
      * black if colors were not already set; if an empty string or False then
      * set the default of all black regardless.
      *
-     * @param mixed $which_br  Array of colors specifications, or one color, or empty
+     * @param array|string $which_br  Array of color specifications, or one color, or empty
      * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetDataBorderColors($which_br = NULL)
@@ -1057,11 +1057,11 @@ class PHPlot
     /**
      * Sets the colors used for data error bars
      *
-     * Special cases: If $which_err is missing or NULL, use the default colors
-     * (same as default data colors) is set, if colors were not already set; if
-     * an empty string or False then the default colors are set regardless.
+     * Special cases for $which_err: Missing or NULL loads the default colors
+     * (same as default data colors) if no colors are aleady set; an empty
+     * string or False loads the default colors even if colors were already set.
      *
-     * @param mixed $which_err  Array of colors specifications, or one color, or empty
+     * @param array|string $which_err  Array of color specifications, or one color, or empty
      * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetErrorBarColors($which_err = NULL)
@@ -1140,7 +1140,7 @@ class PHPlot
     /**
      * Sets line widths (thickness) for each data set
      *
-     * @param mixed $which_lw  Array of line widths in pixels, or a single value to use for all data sets
+     * @param int[]|int $which_lw  Array of line widths in pixels, or a single value to use for all data sets
      * @return bool  Always returns TRUE
      */
     function SetLineWidths($which_lw=NULL)
@@ -1156,7 +1156,7 @@ class PHPlot
     /**
      * Sets the line style (solid or dashed) for each data set
      *
-     * @param mixed $which_ls Array of (solid | dashed | none), or a single keyword to use for all data sets
+     * @param string[]|string $which_ls  Array or single keyword: solid | dashed | none
      * @return bool  Always returns TRUE
      */
     function SetLineStyles($which_ls=NULL)
@@ -1814,7 +1814,7 @@ class PHPlot
      * Note: This function is mostly for internal use, and is not documented
      * for public use. But it can be legitimately used from a PHPlot callback.
      *
-     * @param mixed $which_font  Font selector: Text element, empty or NULL for 'generic', or font array
+     * @param string|array|null $which_font  Text element name, empty or NULL for 'generic', or font array
      * @param float $which_angle  Text angle in degrees
      * @param int $which_xpos  Reference point X coordinate for the text
      * @param int $which_ypos  Reference point Y coordinate for the text
@@ -1842,7 +1842,7 @@ class PHPlot
      * Note: This function is mostly for internal use, and is not documented
      * for public use. But it can be legitimately used from a PHPlot callback.
      *
-     * @param mixed $which_font  Font selector: Text element, empty or NULL for 'generic', or font array
+     * @param string|array|null $which_font  Text element name, empty or NULL for 'generic', or font array
      * @param float $which_angle  Text angle in degrees
      * @param string $which_text  The text to calculate size of
      * @return int[]  Returns a two element array ($width, $height) of the text
@@ -2050,6 +2050,7 @@ class PHPlot
      *
      * @param string $text  Text of the message to display in the image
      * @param string[] $options  Optional associative array of control options
+     * @return bool  Always returns TRUE
      * @since 5.7.0
      */
     function DrawMessage($text, $options = NULL)
@@ -2390,7 +2391,7 @@ class PHPlot
     /**
      * Sets type and formatting mode for pie chart labels.
      *
-     * @param mixed $source_  Source for labels (string or array): percent | value | label | index | ''
+     * @param string|string[] $source_  Label source keyword or array: percent | value | label | index | ''
      * @param string $type  Optional formatting mode: data | printf | custom
      * @param mixed $varargs  Zero or more additional arguments telling how to format the label
      * @return bool Returns True (False on error if an error handler returns True)
@@ -2685,7 +2686,7 @@ class PHPlot
      * The argument can be a single value, or any array of values, indicating
      * which sides should get a border. 'full' means all 4 sides.
      *
-     * @param mixed $pdt  Where to draw borders:  left | right | top | bottom | sides | none | full, or array
+     * @param string|string[] $pdt  Border control keyword(s):  left|right|top|bottom|sides|none|full
      * @return bool Returns True (False on error if an error handler returns True)
      */
     function SetPlotBorderType($pbt)
@@ -2907,7 +2908,7 @@ class PHPlot
     /**
      * Sets the position of the X axis
      *
-     * @param mixed $pos  Axis position as an integer Y world coordinate; '' or omit for default
+     * @param float $pos  Axis position as an integer Y world coordinate; '' or omit for default
      * @return bool  Always returns TRUE
      */
     function SetXAxisPosition($pos='')
@@ -2919,7 +2920,7 @@ class PHPlot
     /**
      * Sets the position of the Y axis
      *
-     * @param mixed $pos  Axis position as an integer X world coordinate; '' or omit for default
+     * @param float $pos  Axis position as an integer X world coordinate; '' or omit for default
      * @return bool  Always returns TRUE
      */
     function SetYAxisPosition($pos='')
@@ -3023,7 +3024,7 @@ class PHPlot
     /**
      * Sets the position for pie chart labels
      *
-     * @param mixed $which_blb  Label position factor (float between 0 and 1.0); 0 or False for no labels
+     * @param float $which_blp  Label position factor (0 <= blp <= 1); 0 or False for no labels
      * @return bool  Always returns TRUE
      */
     function SetLabelScalePosition($which_blp)
@@ -4604,7 +4605,7 @@ class PHPlot
      *
      * @param float $x_world  X world coordinate value to translate
      * @return int  Translated X device (pixel) coordinate
-     * @deprecated for public use; use GetDeviceXY() instead
+     * @deprecated  Public use discouraged; use GetDeviceXY() instead
      */
     function xtr($x_world)
     {
@@ -4621,7 +4622,7 @@ class PHPlot
      *
      * @param float $y_world  Y world coordinate value to translate
      * @return int  Translated Y device (pixel) coordinate
-     * @deprecated for public use; use GetDeviceXY() instead
+     * @deprecated  Public use discouraged; use GetDeviceXY() instead
      */
     function ytr($y_world)
     {
