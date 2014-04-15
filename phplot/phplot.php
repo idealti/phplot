@@ -421,8 +421,14 @@ class PHPlot
         $this->initialize('imagecreate', $width, $height, $output_file, $input_file);
     }
 
-    /*
-     * Initialize a PHPlot object. This is used by both PHPlot and PHPlot_truecolor constructors.
+    /**
+     * Initialize a PHPlot object (used by PHPlot and PHPlot_truecolor constructors)
+     *
+     * @param string $imagecreate_function  GD function to use: imagecreate or imagecreatetruecolor
+     * @param int $width  Image width in pixels
+     * @param int $height  Image height in pixels
+     * @param string $output_file  Path for output file. Omit, or NULL, or '' to mean no output file
+     * @param string $input_file   Path to a file to be used as background. Omit, NULL, or '' for none
      */
     protected function initialize($imagecreate_function, $width, $height, $output_file, $input_file)
     {
@@ -477,10 +483,13 @@ class PHPlot
         unset($this->truecolor, $this->saved_version);
     }
 
-    /*
-     * Reads an image file. Stores width and height, and returns the image
-     * resource. On error, calls PrintError and returns False.
-     * This is used by the constructor via SetInputFile, and by tile_img().
+    /**
+     * Reads an image file (used by constructor via SetInput file, and by tile_img for backgrounds)
+     *
+     * @param string $image_filename  Filename of the image file to read
+     * @param int $width  Reference variable for width of the image in pixels
+     * @param int $height  Reference variable for height of the image in pixels
+     * @return resource  Image resource (False on error if an error handler returns True)
      */
     protected function GetImage($image_filename, &$width, &$height)
     {
@@ -6075,17 +6084,22 @@ class PHPlot
         return (boolean)$this->legend_colorbox_borders;
     }
 
-    /*
-     * Get legend sizing parameters. Must not be called if $this->legend is empty.
-     * This is used internally by DrawLegend(), and also by the public GetLegendSize().
+    /**
+     * Calculates legend sizing parameters
+     *
+     * Used by DrawLegend() and the public GetLegendSize().
      * It returns information based on any SetLegend*() calls already made. It does not use
      * legend position or data scaling, so it can be called before data scaling is set up.
+     * It must not be called if $this->legend is empty.
+     *
      * Returns an associative array with these entries describing legend sizing:
      *    'width', 'height' : Overall legend box size in pixels.
      *    'char_w', 'char_h' : Width and height of 'E' in legend text font. (Used to size color boxes)
      *    'v_margin' : Inside margin for legend
      *    'dot_height' : Height of color boxes (even if not drawn), for line spacing.
      *    'colorbox_mode', 'colorbox_width' : Colorbox/shape mode and width factor.
+     *
+     * @return array  Legend sizing parameter associative array
      */
     protected function GetLegendSizeParams()
     {
@@ -6150,11 +6164,15 @@ class PHPlot
         return array($params['width'], $params['height']);
     }
 
-    /*
-     * Get legend location in device coordinates. This is a helper for DrawLegend, and is only
-     * called if there is a legend. See SetLegendWorld(), SetLegendPixels(), SetLegendPosition().
-     *   $width, $height : Width and height of the legend box.
-     * Returns: coordinates of the upper left corner of the legend box as an array ($x, $y)
+    /**
+     * Calculates the legend location in device coordinates
+     *
+     * This is a helper for DrawLegend, and is only called if there is a legend.
+     * See SetLegendWorld(), SetLegendPixels(), SetLegendPosition().
+     *
+     * @param int $width  Width of the legend box
+     * @param int $height  Height of the legend box
+     * @return int[]  Coordinates of the upper left corner of the legend box as an array ($x, $y)
      */
     protected function GetLegendPosition($width, $height)
     {
