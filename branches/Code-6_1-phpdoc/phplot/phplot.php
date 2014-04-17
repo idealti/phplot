@@ -555,14 +555,16 @@ class PHPlot
 //////////////                         COLORS
 /////////////////////////////////////////////
 
-    /*
-     * Allocate a GD color index for a color specified by a 4 component array.
-     * When a color is requested, it is parsed and checked by SetRGBColor, and then saved as an array
-     * of (R,G,B,A) components. At graph drawing time, this function is used to allocate the color.
-     *   $color : The color specification as a 4 component array: R, G, B, A. This is passed as
-     *            a reference argument because it might be unset (see next argument).
-     *   $default_color_index : An already-allocated GD color index to use as default, if $color is unset.
-     * Returns: A GD color index that can be used when drawing.
+    /**
+     * Allocates a GD color index for a color specified as an array (R,G,B,A)
+     *
+     * At drawing time, this allocates a GD color index for the specified color, which
+     * is specified as a 4 component array. Earlier, when a color is specified,
+     * SetRGBColor() parsed and checked it and converted it to this component array form.
+     *
+     * @param int[] $color  Color specification as (R, G, B, A), or unset variable
+     * @param int $default_color_index  An already-allocated GD color index to use if $color is unset
+     * @return int  A GD color index that can be used when drawing
      */
     protected function GetColorIndex(&$color, $default_color_index = 0)
     {
@@ -571,13 +573,15 @@ class PHPlot
         return imagecolorresolvealpha($this->img, $r, $g, $b, $a);
     }
 
-    /*
-     * Allocate an array of GD color indexes for an array of color specifications.
+    /**
+     * Allocates an array of GD color indexes from an array of color specification arrays
+     *
      * This is used for the data_colors array, for example.
-     *  $color_array : Array of color specifications, each an array of R,G,B,A components.
-     *     This must use 0-based sequential integer indexes.
-     *  $max_colors : Limit color allocation to no more than this.
-     * Returns an array of GD color indexes.
+     * Note: $color_array must use 0-based sequential integer indexes.
+     *
+     * @param array $color_array  Array of color specifications, each an array (R,G,B,A)
+     * @param int $max_colors  Limit color allocation to no more than this number of colors
+     * @return int[]  Array of GD color indexes that can be used when drawing
      */
     protected function GetColorIndexArray($color_array, $max_colors)
     {
@@ -588,11 +592,14 @@ class PHPlot
         return $result;
     }
 
-    /*
-     * Allocate an array of GD color indexes for darker shades of an array of color specifications.
-     *  $color_array : Array of color specifications, each an array of R,G,B,A components.
-     *  $max_colors : Limit color allocation to this many colors from the array.
-     * Returns an array of GD color indexes.
+    /**
+     * Allocates an array of GD color indexes for darker shades from an array of color specifications
+     *
+     * This is used for shadow colors such as those in bar charts with shading.
+     *
+     * @param array $color_array  Array of color specifications, each an array (R,G,B,A)
+     * @param int $max_colors  Limit color allocation to no more than this number of colors
+     * @return int[]  Array of GD color indexes that can be used when drawing shadow colors
      */
     protected function GetDarkColorIndexArray($color_array, $max_colors)
     {
@@ -603,11 +610,13 @@ class PHPlot
         return $result;
     }
 
-    /*
-     * Allocate a GD color index for a darker shade of a color specified by a 4 component array.
-     * See notes for GetColorIndex() above.
-     *   $color : The color specification as a 4 component array: R, G, B, A.
-     * Returns: A GD color index that can be used when drawing.
+    /**
+     * Allocates a GD color index for a darker shade of a color specified as an array (R,G,B,A)
+     *
+     * See notes on GetColorIndex() above.
+     *
+     * @param int[] $color  Color specification as (R, G, B, A)
+     * @return int  A GD color index that can be used when drawing a shadow color
      */
     protected function GetDarkColorIndex($color)
     {
@@ -618,8 +627,10 @@ class PHPlot
         return imagecolorresolvealpha($this->img, $r, $g, $b, $a);
     }
 
-    /*
-     * Sets/reverts all colors and styles to their defaults.
+    /**
+     * Sets or reverts all colors and styles to their defaults
+     *
+     *  @return bool  Always returns TRUE
      */
     protected function SetDefaultStyles()
     {
@@ -862,10 +873,11 @@ class PHPlot
     }
 
     /**
-     * Sets the array of colors to be used. It can be user defined, a small predefined one
-     * or a large one included from 'rgb.inc.php'.
-     *   $which_color_array : A color array, or 'small' or 'large'.
-     * Color arrays map color names into arrays of R, G, B and optionally A values.
+     * Sets the array of colors to be used (the color map)
+     *
+     * The color map maps color names into arrays of R, G, B and optionally A values.
+     * The selected color map can be user defined, a small predefined one,
+     * or a large one included from the file 'rgb.inc.php'.
      *
      * @param array|string $which_color_array  Color map array (name=>(R,G,B[,A]), or keyword small | large
      * @return bool  Always returns TRUE
@@ -1130,11 +1142,15 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Sets the style before drawing a dashed line. See SetDefaultDashedStyle() for explanation.
-     *    $which_ndxcol : Color index to be used. (This name is known to SetDefaultDashedStyle)
-     *    $use_style : Optional flag to enable dashed lines.
-     * Returns a color to use for drawing: either $which_ndxcol or IMG_COLOR_STYLED.
+    /**
+     * Returns a GD line style for drawing patterned or solid lines
+     *
+     * See SetDefaultDashedStyle() for an explanation of how this works. The parameter
+     * name $which_ndxcol is known by that function and must be kept consistent.
+     *
+     * @param int $which_ndxcol  Color index to be used for drawing
+     * @param bool $use_style  TRUE or omit for dashed lines, FALSE for solid lines
+     * @return int  A GD color index for drawing: either $which_ndxcol or IMG_COLOR_STYLED
      */
     protected function SetDashedStyle($which_ndxcol, $use_style = TRUE)
     {
@@ -1233,12 +1249,16 @@ class PHPlot
         return $this->SetUseTTF(TRUE);
     }
 
-    /*
-     * Return the default TrueType font name. If no default has been set,
-     * this tries some likely candidates for a font which can be loaded.
-     * If it finds one that works, that becomes the default TT font.
-     * If there is no default and it cannot find a working font, it falls
-     * back to the original PHPlot default (which will not likely work either).
+    /**
+     * Returns the default TrueType font name, searching for one if necessary
+     *
+     * If no default has been set, this tries some likely candidates for a font which
+     * can be loaded. If it finds one that works, that becomes the default TT font.
+     * If there is no default and it cannot find a working font, it falls back to
+     * the original PHPlot default (which will not likely work either).
+     *
+     * @return string  Default TrueType font filename or pathname 
+     * @since 5.1.3
      */
     protected function GetDefaultTTFont()
     {
@@ -1267,8 +1287,10 @@ class PHPlot
         return $this->default_ttfont;
     }
 
-    /*
-     * Sets fonts to their defaults
+    /**
+     * Selects all the default font values and sizes
+     *
+     * @return bool Returns True (False on error if an error handler returns True)
      */
     protected function SetDefaultFonts()
     {
@@ -1402,11 +1424,11 @@ class PHPlot
         return $this->SetFontGD($which_elem, $which_font, $line_spacing);
     }
 
-    /*
-     * Return the inter-line spacing for a font.
-     * This is an internal function, used by ProcessText* and DrawLegend.
-     *   $font : A font array variable.
-     * Returns: Spacing, in pixels, between text lines.
+    /**
+     * Returns the inter-line spacing for a font
+     *
+     * @param $font array  The font, specified as a PHPlot font array
+     * @return int  Spacing between text lines in pixels for text using this font
      */
     protected function GetLineSpacing($font)
     {
@@ -1488,18 +1510,25 @@ class PHPlot
      *
      */
 
-    /*
-     * ProcessTextGD() - Draw or size GD fixed-font text.
-     * This is intended for use only by ProcessText().
-     *    $draw_it : True to draw the text, False to just return the orthogonal width and height.
-     *    $font : PHPlot font array (with 'ttf' = False) - see SetFontGD()
-     *    $angle : Text angle in degrees. GD only supports 0 and 90. We treat >= 45 as 90, else 0.
-     *    $x, $y : Reference point for the text (ignored if !$draw_it)
-     *    $color : GD color index to use for drawing the text (ignored if !$draw_it)
-     *    $text : The text to draw or size. Put a newline between lines.
-     *    $h_factor : Horizontal alignment factor: 0(left), .5(center), or 1(right) (ignored if !$draw_it)
-     *    $v_factor : Vertical alignment factor: 0(top), .5(center), or 1(bottom) (ignored if !$draw_it)
-     * Returns: True, if drawing text, or an array of ($width, $height) if not.
+    /**
+     * Draws or returns the size of a text string using GD fixed fonts
+     *
+     * This is intended for use only by ProcessText(). See notes there, but note that
+     * the $font and alignment parameters are pre-processed there and differ here.
+     * GD text only supports 0 and 90 degrees. This function treats an angle >= 45
+     * as 90 degrees, and < 45 as 0 degrees.
+     *
+     * @param bool $draw_it  True to draw the text, False to just return the orthogonal width and height
+     * @param array $font  A PHPlot font array (with 'ttf' = False)
+     * @param double $angle  Text angle in degrees. GD only supports 0 and 90.
+     * @param int $x  Reference point X coordinate for the text (ignored if $draw_it is False)
+     * @param int $y  Reference point Y coordinate for the text (ignored if $draw_it is False)
+     * @param int $color  GD color index to use for drawing the text (ignored if $draw_it is False)
+     * @param string $text  The text to draw or size (can have newlines \n within)
+     * @param double $h_factor  Horizontal alignment factor: 0=left 0.5=center or 1=right
+     * @param double $v_factor  Vertical alignment factor: 0=top .5=center or 1=bottom
+     * @return bool|int[]  Returns True, if drawing text; an array of ($width, $height) if not.
+     * @since 5.0.5
      */
     protected function ProcessTextGD($draw_it, $font, $angle, $x, $y, $color, $text, $h_factor, $v_factor)
     {
@@ -1773,20 +1802,23 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * ProcessText() - Wrapper for ProcessTextTTF() and ProcessTextGD(). See notes above.
-     * This is intended for use from within PHPlot only, and only by DrawText() and SizeText().
-     *    $draw_it : True to draw the text, False to just return the orthogonal width and height.
-     *    $font_id : PHPlot text element name, or font array, or NULL or empty string to use 'generic'
-     *            Font array is for backward compatibility (via DrawText or SizeText).
-     *    $angle : Text angle in degrees
-     *    $x, $y : Reference point for the text (ignored if !$draw_it)
-     *    $color : GD color index to use for drawing the text (ignored if !$draw_it)
-     *    $text : The text to draw or size. Put a newline between lines.
-     *    $halign : Horizontal alignment: left, center, or right (ignored if !$draw_it)
-     *    $valign : Vertical alignment: top, center, or bottom (ignored if !$draw_it)
-     *      Note: Alignment is relative to the image, not the text.
-     * Returns: True, if drawing text, or an array of ($width, $height) if not.
+    /**
+     * Draws or returns the size of a text string
+     *
+     * This is intended for use by DrawText() and SizeText() exclusively. It hides the
+     * differences between GD and TTF text from those and higher level functions. It uses
+     * either ProcessTextTTF() or ProcessTextGD() to do the actual drawing or sizing.
+     *
+     * @param bool $draw_it  True to draw the text, False to just return the orthogonal width and height
+     * @param string|array|null $font_id  Text element name, empty or NULL for 'generic', or font array
+     * @param double $angle  Text angle in degrees
+     * @param int $x  Reference point X coordinate for the text (ignored if $draw_it is False)
+     * @param int $y  Reference point Y coordinate for the text (ignored if $draw_it is False)
+     * @param int $color  GD color index to use for drawing the text (ignored if $draw_it is False)
+     * @param string $text  The text to draw or size (can have newlines \n within)
+     * @param string $halign  Horizontal alignment: left |  center | right (ignored if $draw_it is False)
+     * @param string $valign  Vertical alignment: top | center | bottom (ignored if $draw_it is False)
+     * @return bool|int[]  Returns True, if drawing text; an array of ($width, $height) if not.
      */
     protected function ProcessText($draw_it, $font_id, $angle, $x, $y, $color, $text, $halign, $valign)
     {
@@ -1830,7 +1862,7 @@ class PHPlot
      * @param int $which_color  GD color index to use for drawing the text
      * @param string $which_text  The text to draw, with newlines (\n) between lines
      * @param string $which_halign  Horizontal alignment (relative to the image): left | center | right
-     * @param string $which_valign  Vertical alignment (relative to the image: top | center | bottom
+     * @param string $which_valign  Vertical alignment (relative to the image): top | center | bottom
      * @return bool  Always returns TRUE
      */
     function DrawText($which_font, $which_angle, $which_xpos, $which_ypos, $which_color, $which_text,
