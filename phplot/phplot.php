@@ -411,7 +411,7 @@ class PHPlot
     /**
      * Constructor: Sets up GD palette image resource, and initializes plot style controls
      *
-     * @param int $width   Image width in pixels
+     * @param int $width  Image width in pixels
      * @param int $height  Image height in pixels
      * @param string $output_file  Path for output file. Omit, or NULL, or '' to mean no output file
      * @param string $input_file   Path to a file to be used as background. Omit, NULL, or '' for none
@@ -1427,7 +1427,7 @@ class PHPlot
     /**
      * Returns the inter-line spacing for a font
      *
-     * @param $font array  The font, specified as a PHPlot font array
+     * @param array $font  The font, specified as a PHPlot font array
      * @return int  Spacing between text lines in pixels for text using this font
      */
     protected function GetLineSpacing($font)
@@ -1465,8 +1465,7 @@ class PHPlot
      * Original vertical code submitted by Marlin Viss.
      *
      * Text routines rewritten by ljb to fix alignment and position problems.
-     * Here is my explanation and notes. More information and pictures will be
-     * placed in the PHPlot Reference Manual.
+     * Here is my explanation and notes.
      *
      *    + Process TTF text one line at a time, not as a block. (See below)
      *    + Flipped top vs bottom vertical alignment. The usual interpretation
@@ -1496,8 +1495,7 @@ class PHPlot
      *  Multi-line or single line text works with any of the 9 alignment modes.
      *
      *    TTF text can be at any angle. The 9 alignment modes work for all angles,
-     *  but the results might not be what you expect for multi-line text. See
-     *  the PHPlot Reference Manual for pictures and details. In short, alignment
+     *  but the results might not be what you expect for multi-line text.  Alignment
      *  applies to the orthogonal (aligned with X and Y axes) bounding box that
      *  contains the text, and to each line in the multi-line text box. Since
      *  alignment is relative to the image, 45 degree multi-line text aligns
@@ -1520,13 +1518,13 @@ class PHPlot
      *
      * @param bool $draw_it  True to draw the text, False to just return the orthogonal width and height
      * @param array $font  A PHPlot font array (with 'ttf' = False)
-     * @param double $angle  Text angle in degrees. GD only supports 0 and 90.
+     * @param float $angle  Text angle in degrees. GD only supports 0 and 90.
      * @param int $x  Reference point X coordinate for the text (ignored if $draw_it is False)
      * @param int $y  Reference point Y coordinate for the text (ignored if $draw_it is False)
      * @param int $color  GD color index to use for drawing the text (ignored if $draw_it is False)
      * @param string $text  The text to draw or size (can have newlines \n within)
-     * @param double $h_factor  Horizontal alignment factor: 0=left 0.5=center or 1=right
-     * @param double $v_factor  Vertical alignment factor: 0=top .5=center or 1=bottom
+     * @param float $h_factor  Horizontal alignment factor: 0=left|0.5=center|1=right (ignored if !$draw_it)
+     * @param float $v_factor  Vertical alignment factor: 0=top|0.5=center|1=bottom (ignored if !$draw_it)
      * @return bool|int[]  Returns True, if drawing text; an array of ($width, $height) if not.
      * @since 5.0.5
      */
@@ -1621,18 +1619,23 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * ProcessTextTTF() - Draw or size TTF text.
-     * This is intended for use only by ProcessText().
-     *    $draw_it : True to draw the text, False to just return the orthogonal width and height.
-     *    $font : PHPlot font array (with 'ttf' = True) - see SetFontTTF()
-     *    $angle : Text angle in degrees.
-     *    $x, $y : Reference point for the text (ignored if !$draw_it)
-     *    $color : GD color index to use for drawing the text (ignored if !$draw_it)
-     *    $text : The text to draw or size. Put a newline between lines.
-     *    $h_factor : Horizontal alignment factor: 0(left), .5(center), or 1(right) (ignored if !$draw_it)
-     *    $v_factor : Vertical alignment factor: 0(top), .5(center), or 1(bottom) (ignored if !$draw_it)
-     * Returns: True, if drawing text, or an array of ($width, $height) if not.
+    /**
+     * Draws or returns the size of a text string using TrueType fonts (TTF)
+     *
+     * This is intended for use only by ProcessText(). See notes there, but note that
+     * the $font and alignment parameters are pre-processed there and differ here.
+     *
+     * @param bool $draw_it  True to draw the text, False to just return the orthogonal width and height
+     * @param array $font  A PHPlot font array (with 'ttf' = True)
+     * @param float $angle  Text angle in degrees
+     * @param int $x  Reference point X coordinate for the text (ignored if $draw_it is False)
+     * @param int $y  Reference point Y coordinate for the text (ignored if $draw_it is False)
+     * @param int $color  GD color index to use for drawing the text (ignored if $draw_it is False)
+     * @param string $text  The text to draw or size (can have newlines \n within)
+     * @param float $h_factor  Horizontal alignment factor: 0=left|0.5=center|1=right (ignored if !$draw_it)
+     * @param float $v_factor  Vertical alignment factor: 0=top|0.5=center|1=bottom (ignored if !$draw_it)
+     * @return bool|int[]  Returns True, if drawing text; an array of ($width, $height) if not.
+     * @since 5.0.5
      */
     protected function ProcessTextTTF($draw_it, $font, $angle, $x, $y, $color, $text, $h_factor, $v_factor)
     {
@@ -1811,7 +1814,7 @@ class PHPlot
      *
      * @param bool $draw_it  True to draw the text, False to just return the orthogonal width and height
      * @param string|array|null $font_id  Text element name, empty or NULL for 'generic', or font array
-     * @param double $angle  Text angle in degrees
+     * @param float $angle  Text angle in degrees
      * @param int $x  Reference point X coordinate for the text (ignored if $draw_it is False)
      * @param int $y  Reference point Y coordinate for the text (ignored if $draw_it is False)
      * @param int $color  GD color index to use for drawing the text (ignored if $draw_it is False)
@@ -1989,8 +1992,13 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Get the MIME type and GD output function name for the current file type.
+    /**
+     * Gets the MIME type and GD output function name for the current file type
+     *
+     * @param string $mime_type  Reference variable where the MIME type is returned
+     * @param string $output_f  Reference variable where the GD output function name is returned
+     * @return bool Returns True (False on error if an error handler returns True)
+     * @since 5.5.0
      */
     protected function GetImageType(&$mime_type, &$output_f)
     {
@@ -2018,9 +2026,14 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Helper for PrintImage() : tell browser not to cache the page.
-     * Originally submitted by Thiemo Nagel; modified to add more options based on mjpg-streamer.
+    /**
+     * Tells the browser not to cache the image
+     *
+     * This is used by PrintImage, depending on SetBrowserCache(). It sends
+     * HTTP headers that discourage browser-side caching.
+     * Originally submitted by Thiemo Nagel. Modified to add more options based on mjpg-streamer.
+     *
+     * @return bool  Always returns TRUE
      */
     protected function DisableCaching()
     {
@@ -2134,13 +2147,20 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     *  Error handling for 'fatal' errors:
-     *   $error_message : Text of the error message
-     *  Produce an image containing the error message, output the image, and then trigger
-     *  a user-level error with the message. If no error handler is set up, PHP will log
-     *  the message and exit. If there is an error handler, and it returns, PrintError
-     *  returns FALSE.
+    /**
+     * Handles a fatal error in PHPlot
+     *
+     * When a fatal error occurs (most often a parameter error in a function call),
+     * PHPlot will normally produce an image containing the error message,
+     * output the image, and then trigger a user-level error with the message.
+     * (The error message has to be presented as an image, because the browser is
+     * expecting an image.)
+     * If no error handler is set up, PHP will log the message and exit.
+     * If there is an error handler, and it returns TRUE, PrintError returns FALSE,
+     * and this will be passed back up to the calling code as a FALSE return.
+     *
+     * @param string $error_message  Text of the error message
+     * @return bool  False, but only if there is an error handler that returned TRUE.
      */
     protected function PrintError($error_message)
     {
@@ -2158,8 +2178,9 @@ class PHPlot
             }
         }
         trigger_error($error_message, E_USER_ERROR);
+        // This is only reached if the error handler returns TRUE
         unset($this->in_error);
-        return FALSE;  // In case error handler returns, rather than doing exit().
+        return FALSE;
     }
 
     /**
@@ -2301,27 +2322,30 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Set formatting type for tick and data labels on X or Y axis, or pie labels.
-     * This implements Set[XY]LabelType(), Set[XY]DataLabelType(), and part of SetPieLabelType().
-     *    $mode  : 'x', 'y', 'xd', 'yd', or 'p' - which type of label to configure.
-     *        'x' and 'y' set the type for tick labels, and the default type for data labels
-     *        if they are not separately configured. 'xd' and 'yd' set the type for data labels.
-     *        'p' sets the type for pie chart labels.
-     *    $args  : Variable arguments, passed as an array.
-     *       [0] = $type : Label format type: 'data', 'time', 'printf', 'custom', or empty.
-     *             If this is missing or empty, the default formatting for $mode is restored.
-     *     For type 'data':
-     *       [1] = $precision (optional). Numeric precision. Can also be set by SetPrecision[XY]().
-     *       [2] = $prefix (optional) - prefix string for labels.
-     *       [3] = $suffix (optional) - suffix string for labels. This replaces data_units_text.
-     *     For type 'time':
-     *       [1] = $format for strftime (optional). Can also be set by Set[XY]TimeFormat().
-     *     For type 'printf':
-     *       [1] = $format (optional) for sprintf.
-     *     For type 'custom':
-     *       [1] = $callback (required) - Custom function or array of (instance,method) to call.
-     *       [2] = $argument (optional) - Pass-through argument for the formatting function.
+    /**
+     * Sets the formatting type for tick, data, or pie chart labels
+     *
+     * This implements SetXLabelType(), SetYLabelType(), SetXYDataLabelType(), SetYDataLabelType(),
+     * and part of SetPieLabelType(). Those functions combine their arguments into an array and
+     * pass the array to this function as $args.
+     *
+     * $mode='x' or 'y' set the type for tick labels, and the default type for data labels
+     * if they are not separately configured.  $mode='xd' or 'yd' set the type for data labels.
+     * $mode='p' sets the type for pie chart labels.
+     *
+     * $args[0] sets the formatting type: 'data' | 'time' | 'printf' | 'custom' | empty.
+     *     If this is missing or empty, the default formatting for $mode is restored.
+     * Additional values in $args[] depend on the formatting type. All further paramters except
+     * for the callback are optional.
+     * For type='data': $args[1] = precision, $args[2] = prefix, $args[3] = suffix.
+     * For type 'time': $args[1] = format string for strftime().
+     * For type 'printf': $args[1] = format string for sprintf().
+     * For type 'custom': $args[1] = the callback (required), $args[2] = pass-through argument.
+     *
+     * @param string $mode  Which label type to configure: x | y | xd | yd | p
+     * @param array $args  Additional, variable arguments controlling the format type
+     * @return bool Returns True (False on error if an error handler returns True)
+
      */
     protected function SetLabelType($mode, $args)
     {
@@ -2559,14 +2583,13 @@ class PHPlot
 ///////////                              MISC
 /////////////////////////////////////////////
 
-    /*
-     * Checks the validity of an option.
-     *   $which_opt  String to check, such as the provided value of a function argument.
-     *   $which_acc  String of accepted choices. Must be lower-case, and separated
-     *               by exactly ', ' (comma, space).
-     *   $which_func Name of the calling function, for error messages.
-     * Returns the supplied option value, downcased and trimmed, if it is valid.
-     * Reports an error if the supplied option is not valid.
+    /**
+     * Checks the validity of an option (a multiple-choice function parameter)
+     *
+     * @param string $which_opt  String to check, usually the provided value of a function argument
+     * @param string $which_acc  String of accepted choices, lower-case, choices separated by comma space
+     * @param string $which_func  Name of the calling function, for error messages, usually __FUNCTION__
+     * @return string|null  Downcased/trimmed option value if valid; NULL on error if error handler returns
      */
     protected function CheckOption($which_opt, $which_acc, $which_func)
     {
@@ -2580,14 +2603,16 @@ class PHPlot
         return NULL;
     }
 
-    /*
-     * Checks the validity of an array of options.
-     *   $opt  Array or string to check.
-     *   $acc  String of accepted choices. Must be lower-case, and separated
-     *               by exactly ', ' (comma, space).
-     *   $func Name of the calling function, for error messages.
-     * Returns an array of option value(s), downcased and trimmed, if all entries in $opt are valid.
-     * Reports an error if any supplied option is not valid. Returns NULL if the error handler returns.
+    /**
+     * Checks the validity of an array of options (multiple-choice function parameters)
+     *
+     * This is used to validate arguments to functions that accept either a single value
+     * or an array of values (example: SetPlotBorderType).
+     *
+     * @param string|string[] $opt  String or array of strings to check
+     * @param string $acc  String of accepted choices, lower-case, choices separated by comma space
+     * @param string $func  Name of the calling function, for error messages, usually __FUNCTION__
+     * @return string[]|null  Downcased/trimmed option values if valid; NULL on error if error handler returns
      */
     protected function CheckOptionArray($opt, $acc, $func)
     {
@@ -2601,14 +2626,15 @@ class PHPlot
         return $result;
     }
 
-    /*
-     * Check compatibility of a plot type and data type.
-     * This is called by the plot-type-specific drawing functions.
-     *   $valid_types  String of supported data types. Multiple values must be
-     *      separated by exactly ', ' (comma, space).
-     * Returns True if the type is valid for this plot.
-     * Reports an error if the data type is not value. If the error is handled and
-     *   the handler returns, this returns False.
+    /**
+     * Checks for compatibility of the plot type and data type
+     *
+     * This is called by the plot-type-specific drawing functions, such as DrawBars().
+     * It checks to make sure that the current data type is supported by the
+     * drawing function.
+     *
+     * @param string $valid_types  Valid data types, separated by comma space
+     * @return bool Returns True if data type is valid; False on error if an error handler returns True
      */
     protected function CheckDataType($valid_types)
     {
@@ -2620,9 +2646,12 @@ class PHPlot
         return FALSE;
     }
 
-    /*
-     * Decode the data type into variables used to determine how to process a data array.
-     * This sets the $datatype_* flags for use by other member functions.
+    /**
+     * Decodes the data type into variables used to determine how to process a data array
+     *
+     * This sets the 'datetype_*' class variables, which are used by other functions
+     * that need to access the data array. This keeps the information about the meaning
+     * of each data type in a single place (the datatypes static array).
      */
     protected function DecodeDataType()
     {
@@ -2634,15 +2663,21 @@ class PHPlot
         $this->datatype_yz =         !empty($v['yz']);          // Has a Z value for each Y
     }
 
-    /*
-     * Make sure the data array is populated, and calculate the number of columns.
-     * This is called from DrawGraph. Calculates data_columns, which is the
-     * maximum number of dependent variable values (usually Y) in the data array rows.
-     * (For pie charts, this is the number of slices.)
-     * This depends on the data_type, unlike records_per_group (which was
-     * previously used to pad style arrays, but is not accurate).
-     * Returns True if the data array is OK, else reports an error (and may return False).
+    /**
+     * Validates the data array, making sure it is properly structured
+     *
+     * This function is used by DrawGraph() to make sure the data array is populated
+     * and each row is structured correctly, according to the data type.
+     * 
+     * It also calculates data_columns, which is the maximum number of dependent
+     * variable values (usually Y) in the data array rows.  (For pie charts, this is
+     * the number of slices.) It depends on the data_type, unlike records_per_group
+     * (which was previously used to pad style arrays, but is not accurate).
+     * 
      * Note error messages refer to the caller, the public DrawGraph().
+     *
+     * @return bool Returns True (False on error if an error handler returns True)
+     * @since 5.1.3
      */
     protected function CheckDataArray()
     {
@@ -2752,7 +2787,7 @@ class PHPlot
     /**
      * Sets the width of the image border, if enabled
      *
-     * @param int $width  Image border width, in pixels
+     * @param int $width  Image border width in pixels
      * @return bool  Always returns TRUE
      * @since 5.1.2
      */
@@ -3098,13 +3133,14 @@ class PHPlot
         return (boolean)$this->error_bar_shape;
     }
 
-    /*
-     * Synchronize the point shape and point size arrays.
-     * This is called just before drawing any plot that needs 'points'.
+    /**
+     * Synchronizes the lengths of the point shapes and point sizes arrays
+     *
+     * This pads the smaller of $point_shapes[] and $point_sizes[], making them the same size.
+     * It is called just before drawing any plot that needs 'points'.
      */
     protected function CheckPointParams()
     {
-        // Make both point_shapes and point_sizes the same size, by padding the smaller.
         $ps = count($this->point_sizes);
         $pt = count($this->point_shapes);
 
@@ -3221,12 +3257,15 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Pad styles arrays for later use by plot drawing functions:
-     * This removes the need for $max_data_colors, etc. and $color_index = $color_index % $max_data_colors
-     * in DrawBars(), DrawLines(), etc.
-     * The arrays are padded to data_columns which is the maximum number of data sets.
-     * See CheckDataArray() for the calculation.
+    /**
+     * Pads the style arrays so they are large enough for the number of data sets
+     *
+     * The style arrays to be padded are line_widths, line_styles, data_colors, data_border_colors.
+     * This ensures they have at least $data_columns entries (maximum number of data sets), which
+     * simplifies the plot drawing functions.
+     * Other data color arrays are handled in the Need*Colors() functions instead (if needed).
+     *
+     * @return bool  Always returns TRUE
      */
     protected function PadArrays()
     {
@@ -3234,18 +3273,18 @@ class PHPlot
         $this->pad_array($this->line_styles, $this->data_columns);
         $this->pad_array($this->ndx_data_colors, $this->data_columns);
         $this->pad_array($this->ndx_data_border_colors, $this->data_columns);
-        // Other data color arrays are handled in the Need*Colors() functions.
-
         return TRUE;
     }
 
-    /*
-     * Pads an array with itself. This only works on 0-based sequential integer indexed arrays.
-     *    $arr : The array (or scalar) to pad. This argument is modified.
-     *    $size : Minimum size of the resulting array.
-     * If $arr is a scalar, it will be converted first to a single element array.
-     * If $arr has at least $size elements, it is unchanged.
-     * Otherwise, append elements of $arr to itself until it reaches $size elements.
+    /**
+     * Pads an array with copies of itself until it reaches the given size
+     *
+     * pad_array only works on 0-based sequential integer indexed arrays. It also
+     * accepts a scalar, which is first converted to a single element array.
+     * Elements of the array are appended until it reaches the given size.
+     *
+     * @param array|mixed $arr  Reference variable for the array (or scalar) to pad
+     * @param int $size  Minimum size of the resulting array
      */
     protected function pad_array(&$arr, $size)
     {
@@ -3257,17 +3296,19 @@ class PHPlot
         while ($n < $size) $arr[$n++] = $arr[$base++];
     }
 
-    /*
-     * Format a floating-point number.
-     *   $number : A floating point number to format
-     *   $decimals : Number of decimal places in the result
-     *   Returns the formatted result.
-     * This is like PHP's number_format, but uses class variables for separators.
-     * The separators will default to locale-specific values, if available.
+    /**
+     * Formats a floating point number, with decimal separator and thousands groups separator
+     *
+     * This is like PHP's number_format, but uses class variables for separators, and tries to
+     * get the separators from the current locale.
      * Note: The locale is saved and reset after getting the values. This is needed due to an issue with
      * PHP (see PHP bug 45365 and others): It uses a locale-specific decimal separator when converting
-     * numbers to strings, but fails to convert back if the separator is other than dot. This causes pie
-     * chart labels to fail with "A non well formed numeric value encountered".
+     * numbers to strings, but fails to convert back if the separator is other than dot. This would cause
+     * pie chart labels to fail with "A non well formed numeric value encountered".
+     *
+     * @param float $number  A floating point number to format
+     * @param int $decimals  Number of decimal places in the result
+     * @return string  Returns the formatted result
      */
     protected function number_format($number, $decimals=0)
     {
@@ -3350,30 +3391,35 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Invoke a callback, if one is registered.
-     * Accepts a variable number of arguments >= 1:
-     *   $reason : A string naming the callback.
-     *   ... : Zero or more additional arguments to be passed to the
-     *         callback function, after the passthru argument:
-     *           callback_function($image, $passthru, ...)
-     *   Returns: whatever value (if any) was returned by the callback.
+    /**
+     * Invokes a callback function, if one is registered
+     *
+     * Callbacks are called like this: callback_function($image, $passthru, [$arg,...])
+     * Here $passthru is the argument specified when the callback was defined by SetCallback()
+     * and is under control of the application. $arg... is zero or more additional arguments
+     * specified when then callback is called. These are under control of PHPlot itself.
+     *
+     * @param string $reason  A string naming one of the pre-defined callback reasons
+     * @param mixed $varargs  Zero or more additional arguments to be passed to the callback
+     * @return mixed  Returns whatever value is returned by the callback function (if any)
      */
-    protected function DoCallback() // Note: Variable arguments
+    protected function DoCallback($reason, $varargs = NULL)
     {
-        $args = func_get_args();
-        $reason = $args[0];
         if (!isset($this->callbacks[$reason]))
             return;
+        $args = func_get_args();
+        // Make the argument vector $args[] look like:  $image, $passthru, [$arg...]
         list($function, $args[0]) = $this->callbacks[$reason];
         array_unshift($args, $this->img);
-        // Now args[] looks like: img, passthru, extra args...
         return call_user_func_array($function, $args);
     }
 
-    /*
-     * Allocate background and border colors for the plot.
-     * This is split off from SetColorIndexes() [see below] for use by DrawMessage().
+    /**
+     * Allocates colors for the image background and image border
+     *
+     * This is separate from SetColorIndexes() below so that DrawMessage can use it.
+     *
+     * @since 5.7.0
      */
     protected function SetBgColorIndexes()
     {
@@ -3385,8 +3431,9 @@ class PHPlot
         }
     }
 
-    /*
-     * Allocate colors for the plot.
+    /**
+     * Allocates all the colors needed for the plot
+     *
      * This is called by DrawGraph to allocate the colors needed for the plot.  Each selectable
      * color has already been validated, parsed into an array (r,g,b,a), and stored into a member
      * variable. Now the GD color indexes are assigned and stored into the ndx_*_color variables.
@@ -3401,6 +3448,8 @@ class PHPlot
      * defined data colors (because the callback can use them however it wants). Otherwise, only allocate
      * the number of colors that will be used. This is the larger of the number of data sets and the
      * number of legend lines.
+     *
+     * @since 5.2.0
      */
     protected function SetColorIndexes()
     {
@@ -3447,8 +3496,12 @@ class PHPlot
         }
     }
 
-    /*
-     * Allocate dark-shade data colors. Called if needed by graph drawing functions.
+    /**
+     * Allocates dark-shade data colors used for shading
+     *
+     * This is called if needed by graph drawing functions that need shading.
+     *
+     * @since 5.2.0
      */
     protected function NeedDataDarkColors()
     {
@@ -3462,8 +3515,12 @@ class PHPlot
         $this->pad_array($this->ndx_data_dark_colors, $this->data_columns);
     }
 
-    /*
-     * Allocate error bar colors. Called if needed by graph drawing functions.
+    /**
+     * Allocates error bar colors
+     *
+     * This is called if needed by graph drawing functions that draw error bars.
+     *
+     * @since 5.2.0
      */
     protected function NeedErrorBarColors()
     {
@@ -3477,17 +3534,25 @@ class PHPlot
         $this->pad_array($this->ndx_error_bar_colors, $this->data_columns);
     }
 
-    /*
-     * Select the best alignment for text, based on its vector angle from a point.
-     *   $sin_t, $cost_t : sin() and cos() of the angle of the text offset from a reference point.
-     *   $h_align, $v_align : Returned values, to be passed to DrawText(). E.g. 'left', 'bottom'.
-     *     There are 8 possibilities, since 'center','center' is never returned.
-     *   $reverse : Optional argument. If TRUE, reverse the usual returns. For text inside a circle.
+    /**
+     * Selects the best alignment for text, based on its vector angle from a point
+     *
+     * This picks one of 8 alignments (horizontal = left, center, or right; vertical = top, center
+     * or bottom; but never center/center) for text that needs to be close to a point but directed
+     * away from the point. The angle of the vector from the reference point determines the alignment.
+     *
      * How it works: Picture a unit circle with 16 slices of 22.5 degrees each.
-     *    Draw horizontal lines at the 22.5 degree and -22.5 degree positions on the circle.
-     *    Text above the upper line will have 'bottom' vertical alignment; below the lower line will
-     *    have 'top' vertical alignment, and between the lines will have 'center' vertical alignment.
-     *    Horizontal alignment is similar, using +/- 22.5 degrees from vertical.
+     * Draw horizontal lines at the 22.5 degree and -22.5 degree positions on the circle.
+     * Text above the upper line will have 'bottom' vertical alignment; below the lower line will
+     * have 'top' vertical alignment, and between the lines will have 'center' vertical alignment.
+     * Horizontal alignment is similar, using +/- 22.5 degrees from vertical.
+     *
+     * @param float $sin_t  sin() of the angle of the text offset from a reference point
+     * @param float $cos_t  cos() of the angle of the text offset from a reference point
+     * @param string $h_align  Reference variable to get the horizontal alignment, for DrawText()
+     * @param string $v_align  Reference variable to get the vertical alignment, for DrawText()
+     * @param bool $reverse  True to reverse the alignment, e.g. for text inside an ellipse
+     * @since 5.6.0
      */
     protected function GetTextAlignment($sin_t, $cos_t, &$h_align, &$v_align, $reverse = FALSE)
     {
@@ -3503,15 +3568,21 @@ class PHPlot
         else $h_align = 'right';
     }
 
-    /*
-     * Determine if, and where, to draw Data Value Labels.
-     *   $label_control : Label position control. Either x_data_label_pos or y_data_label_pos.
-     *   &$dvl : Returns an array with position and alignment information for DrawDataValueLabel();
-     *  The array has these keys:  x_offset y_offset h_align v_align
-     * Returns True if data value labels should be drawn (based on $label_control), else False.
-     * This is used for plot types other than bars/stackedbars (which have their own way of doing it).
+    /**
+     * Determines if and where to draw Data Value Labels
+     *
+     * This is called by plot drawing functions that support Data Value Labels (other
+     * than bars and stackedbars, which have their own way of doing it). If those
+     * labels are on, it returns True and sets 4 keys in $dvl[] which are used by
+     * DrawDataValueLabel to position the label: x_offset, y_offset = pixel offsets
+     * for the label; h_align, v_align = text alignment choices.
      * It uses two member variables: data_value_label_angle and data_value_label_distance
-     * to define the vector to the label. Default is 90 degrees at 5 pixels.
+     * to define the vector to the label.
+     *
+     * @param string $label_control  Label position control; either $x_data_label_pos or $y_data_label_pos
+     * @param array $dvl  Reference argument for result parameters for DrawDataValueLabel()
+     * @return bool  Returns False if data value labels are off; True if on and $dvl is set
+     * @since 5.3.0
      */
     protected function CheckDataValueLabels($label_control, &$dvl)
     {
@@ -3577,20 +3648,25 @@ class PHPlot
 ///////////         DATA ANALYSIS, SCALING AND TRANSLATION
 //////////////////////////////////////////////////////////
 
-    /*
-     * Analyzes the data array and calculates the minimum and maximum values.
-     * In this function, IV refers to the independent variable, and DV the dependent variable.
-     * For most plots, IV is X and DV is Y. For swapped X/Y plots, IV is Y and DV is X.
-     * At the end of the function, IV and DV ranges get assigned into X or Y.
+    /**
+     * Analyzes the data array and calculates the minimum and maximum values
      *
-     * The data type mostly determines the data array structure, but some plot types do special
-     * things such as sum the values in a row. This information is in the plots[] array.
-     *
+     * In this function, IV refers to the independent variable, and DV the dependent
+     * variable.  For vertical plots (most common), IV is X and DV is Y. For
+     * horizontal plots (swapped X/Y), IV is Y and DV is X.  At the end of the
+     * function, IV and DV ranges get assigned into X or Y variables.
+     * 
+     * The data type mostly determines the data array structure, but some plot types
+     * do special things such as sum the values in a row. This information is in the
+     * plots[] array.
+     * 
      * This calculates min_x, max_x, min_y, and max_y. It also calculates two arrays
      * data_min[] and data_max[] with per-row min and max values. These are used for
-     * data label lines. For normal (unswapped) data, these are the Y range for each X.
-     * For swapped X/Y data, they are the X range for each Y.
-     * For X/Y/Z plots, it also calculates min_z and max_z.
+     * data label lines. For vertical plots, these are the Y range for each X. For
+     * vertical (swapped X/Y) plots, they are the X range for each Y.  For X/Y/Z
+     * plots, it also calculates min_z and max_z.
+     *
+     * @return bool  Always returns TRUE
      */
     protected function FindDataLimits()
     {
@@ -3698,42 +3774,36 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Calculates image margins on the fly from title positions and sizes,
-     * and tick labels positions and sizes.
+    /**
+     * Calculates the plot area margin size and related positions and offsets
+     *
+     * Calculates the title sizes: title_height, x_title_height, and y_title_width.
+     * These are local, not class variables, since they are only used here.
+     * The X and Y title size variables are 0 if there is no corresponding title.
+     * 
+     * Calculates the tick label and axis data label offsets, relative to the plot
+     * area: x_label_top_offset, x_label_bot_offset, x_label_axis_offset,
+     * y_label_left_offset, y_label_right_offset, and y_label_axis_offset.
+     * 
+     * Calculates the title position offsets, relative to the plot area:
+     * x_title_top_offset, x_title_bot_offset, y_title_left_offset, and
+     * y_title_left_offset. Also calculates the main title offset, which is relative
+     * to the top of the image.
+     * 
+     * Finally, calculates the plot area margins using the above to figure out how
+     * much space outside the plot area is needed. The class variables are:
+     * y_top_margin, y_bot_margin, x_left_margin, and x_right_margin.  All 4 margins
+     * are calculated, but only those not set with SetPlotAreaPixels() or
+     * SetMarginsPixels() are stored into the class variables.
+     * 
+     * A plot with $minimize True, such as a pie chart, does not have an X or Y axis
+     * or X/Y titles, and so can use more of the image space.
      *
      * A picture of the locations of elements and spacing can be found in the
      * PHPlot Reference Manual.
      *
-     * Calculates the following (class variables unless noted):
-     *
-     * Plot area margins (see note below):
-     *     y_top_margin
-     *     y_bot_margin
-     *     x_left_margin
-     *     x_right_margin
-     *
-     * Title sizes (these are now local, not class variables, since they are not used elsewhere):
-     *     title_height : Height of main title
-     *     x_title_height : Height of X axis title, 0 if no X title
-     *     y_title_width : Width of Y axis title, 0 if no Y title
-     *
-     * Tick/Data label offsets, relative to plot_area:
-     *     x_label_top_offset, x_label_bot_offset, x_label_axis_offset
-     *     y_label_left_offset, y_label_right_offset, y_label_axis_offset
-     *
-     * Title offsets, relative to plot area:
-     *     x_title_top_offset, x_title_bot_offset
-     *     y_title_left_offset, y_title_left_offset
-     *     title_offset (for main title, relative to image edge)
-     *
-     *  Note: The margins are calculated, but not stored, if margins or plot area were
-     *  set by the user with SetPlotAreaPixels or SetMarginsPixels. The margin
-     *  calculation is mixed in with the offset variables, so it doesn't seem worth the
-     *  trouble to separate them.
-     *
-     * If the $maximize argument is true, we use the full image size, minus safe_margin
-     * and main title, for the plot. This is for pie charts which have no axes or X/Y titles.
+     * @param bool $maximize  If True, use full image area (less margins and title space)
+     * @return bool  Always returns TRUE
      */
     protected function CalcMargins($maximize)
     {
@@ -4023,11 +4093,15 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Calculate the plot area (device coordinates) from the margins.
-     * (This used to be part of SetPlotAreaPixels.)
-     * The margins might come from SetMarginsPixels, SetPlotAreaPixels,
-     * or CalcMargins.
+    /**
+     * Calculates the plot area (in pixels) from the margins
+     *
+     * This does the deferred calculation of class variables plot_area,
+     * plot_area_width, and plot_area_height. The margins might come
+     * from SetMarginsPixels(), SetPlotAreaPixels(), or CalcMargins().
+     *
+     * @return bool  Always returns TRUE
+     * @since 5.0.5
      */
     protected function CalcPlotAreaPixels()
     {
@@ -4088,12 +4162,17 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Calculate a 'decimal' mode (the default) tick step. This is used by CalcStep().
-     * Returns the largest value that is 1, 2, or 5 times an integer power of 10 which
-     * divides the data range into no fewer than min_ticks tick intervals.
-     *   $range : The data range (max - min), already checked as > 0.
-     *   $min_ticks : is the smallest number of intervals allowed, already checked > 0.
+    /**
+     * Calculates an appropriate tick increment in 'decimal' mode
+     *
+     * This is used by CalcStep().  It returns the largest value that is 1, 2, or 5
+     * times an integer power of 10, and which divides the data range into no fewer
+     * than min_ticks tick intervals.
+     *
+     * @param float $range  The data range (max - min), already checked as > 0
+     * @param int $min_ticks  Smallest number of intervals allowed, already checked > 0
+     * @return float  Returns the calculated tick increment
+     * @since 6.0.0
      */
     protected function CalcStep125($range, $min_ticks)
     {
@@ -4106,15 +4185,20 @@ class PHPlot
         return $tick_step;
     }
 
-    /*
-     * Calculate a tick step to use for a date/time interval. This is used by CalcStep().
-     * Unlike CalcStep125(), there is no equation to compute this, so an array $datetime_steps is used.
-     * The values are "natural" time intervals, keeping the ratio between adjacent entries <= 2.5
-     * (so that max_ticks <= 2.5*min_ticks). For seconds or minutes, it uses: 1 2 5 10 15 30. For hours,
-     * it uses 1 2 4 8 12 24 48 96 and 168 (=7 days). Above that, it falls back to CalcStep125 using days.
-     *   $range : The data range (max - min).
-     *   $min_ticks : is the smallest number of intervals allowed, already checked > 0.
-     * Returns the calculated tick step. This will always be >= 1 second.
+    /**
+     * Calculates an appropriate tick increment in 'date/time' mode
+     *
+     * This is used by CalcStep() when the axis values use date/time units.
+     * Unlike in CalcStep125(), there is no equation to compute this, so an array
+     * $datetime_steps is used.  The values are "natural" time intervals, keeping
+     * the ratio between adjacent entries <= 2.5 (so that max_ticks <= 2.5*min_ticks).
+     * For seconds or minutes, it uses: 1 2 5 10 15 30. For hours, it uses 1 2 4 8 12
+     * 24 48 96 and 168 (=7 days). Above that, it falls back to CalcStep125 using days.
+     *
+     * @param float $range  The data range (max - min), already checked as > 0
+     * @param int $min_ticks  Smallest number of intervals allowed, already checked > 0
+     * @return int  Returns the calculated tick increment. This will always be >= 1 second
+     * @since 6.0.0
      */
     protected function CalcStepDatetime($range, $min_ticks)
     {
@@ -4138,16 +4222,22 @@ class PHPlot
         return $tick_step;
     }
 
-    /*
-     * Calculate a 'binary' mode tick step.  This is used by CalcStep().
-     * Returns the largest integer power of 2 that divides the range into at least min_ticks intervals.
-     *   $range : The data range (max - min), already checked as > 0.
-     *   $min_ticks : is the smallest number of intervals allowed, already checked > 0.
-     * Note: This contains an ugly work-around to a round-off problem. Using floor(log2(2^N))
-     * should produce N for all integer N, but with glibc, it turns out that log2(8) is slightly < 8,
-     * and also for a few other values (64, 4096, 8192). So they truncate to N-1. Other tested values,
-     * and all negative values, and all values on Windows, were found to truncate with floor() in the
-     * right direction. The adjustment below makes all values N=-50 to 50 truncate correctly.
+    /**
+     * Calculates an appropriate tick increment in 'binary' mode
+     *
+     * This is used by CalcStep(). It returns the largest power of 2 that divides
+     * the range into at least min_ticks intervals.
+     * Note: This contains an ugly work-around to a round-off problem. Using
+     * floor(log2(2^N)) should produce N for all integer N, but with glibc, it turns
+     * out that log2(8) is slightly < 3, and similar for a few other values (64, 4096,
+     * 8192). So they truncate to N-1. Other tested values, and all negative values,
+     * and all values on Windows, were found to truncate with floor() in the right
+     * direction. The adjustment below makes all values N=-50 to 50 truncate correctly.
+     *
+     * @param float $range  The data range (max - min), already checked as > 0
+     * @param int $min_ticks  Smallest number of intervals allowed, already checked > 0
+     * @return float  Returns the calculated tick increment
+     * @since 6.0.0
      */
     protected function CalcStepBinary($range, $min_ticks)
     {
@@ -4156,12 +4246,15 @@ class PHPlot
         return pow(2, (int)floor($log2));
     }
 
-    /*
-     * Calculate an ideal tick increment for a given range.
-     *   $which : 'x' or 'y' - use the parameters for that axis
-     *   $range : The plot area range (max - min)
-     * Returns: The tick increment, using one of 3 methods depending on 'tick_mode'.
+    /**
+     * Calculates an ideal tick increment for a given range
+     *
      * This is only used when neither Set[XY]TickIncrement nor SetNum[XY]Ticks was used.
+     *
+     * @param string $which  Which axis to calculate for. Must be 'x' or 'y'
+     * @param float $range  The data range (max - min), already checked as > 0
+     * @return float  Returns the tick increment, using one of 3 methods depending on the 'tick_mode'
+     * @since 6.0.0
      */
     protected function CalcStep($which, $range)
     {
@@ -4189,12 +4282,18 @@ class PHPlot
         return $tick_step;
     }
 
-    /*
-     * Helper for CalcPlotRange() - set initial values for plot_min or plot_max.
-     *  $plot_limit : Reference to plot_min_x, plot_max_x, plot_min_y, or plot_max_y (which might be unset)
-     *  $implied : True if this is the implied variable (X for vertical plots).
-     *  $data_limit : Actual data limit at this end: one of min_x, max_x,  etc.
-     * Returns: 2 values in an array: The initial value of the range limit, and the adjustment flag.
+    /**
+     * Initialize range variables for CalcPlotRange()
+     *
+     * This is a helper for CalcPlotRange(), which calls it 4 times, to initialize
+     * each end of the range for each axis. It also sets flags to indicate
+     * whether automatic adjustment of the range end is needed.
+     *
+     * @param float $plot_limit  Reference to (possibly unset) plot_min_[xy] or plot_max_[xy]
+     * @param bool $implied  True if this is the implied variable (X for vertical plots)
+     * @param float $data_limit  Actual data limit at this end: one of min_x, max_x,  etc.
+     * @return array  Returns array with (initial value of the range limit, adjustment flag)
+     * @since 6.0.0
      */
     protected function CalcRangeInit(&$plot_limit, $implied, $data_limit)
     {
@@ -4206,17 +4305,27 @@ class PHPlot
         return array($data_limit, !$implied);
     }
 
-    /*
-     * Make sure the X or Y plot range is positive. The tick increment and other calculations
-     * cannot handle negative or zero range, so we need to do something to prevent it. There
-     * are 2 general cases: 1) automatic range, and data is 'flat' (all same value). 2) One side
-     * of range given in SetPlotAreaWorld(), and all the data is on the wrong side of that.
-     * Note that values specified in SetPlotAreaWorld() are never adjusted, even if it means
-     * an empty plot (because all the data is outside the range).
+    /**
+     * Checks for a positive plot area range, and adjust if necessary
+     *
+     * This makes sure that the X or Y plot range is positive. The tick increment and
+     * other calculations cannot handle negative or zero range, so we need to do
+     * something to prevent it. There are 2 general cases: 1) automatic range, and
+     * data is 'flat' (all same value). 2) One side of range given in
+     * SetPlotAreaWorld(), and all the data is on the wrong side of that.
+     * 
+     * Note that values specified in SetPlotAreaWorld() are never adjusted, even if it
+     * means an empty plot (because all the data is outside the range).
+     * 
      * Called by CalcPlotRange() after CalcRangeInit() applies the defaults.
-     *   $which : 'x' or 'y', used only for reporting.
-     *   $plot_min, $plot_max : References to the range limits. Changed by this function if necessary.
-     *   $adjust_min, $adjust_max : Flags indicating if the value was specified (False) or calculated (True).
+     *
+     * @param string $which  Which axis: 'x' or 'y', used only for reporting
+     * @param float $plot_min  Reference variable for the low end limit, changed if necessary
+     * @param float $plot_max  Reference variable for the high end limit, changed if necessary
+     * @param bool $adjust_min  True means $plot_min was auto-calculated, and may be adjusted
+     * @param bool $adjust_max  True means $plot_max was auto-calculated, and may be adjusted
+     * @return bool  Returns True (False on error if an error handler returns True)
+     * @since 6.0.0
      */
     protected function CheckPlotRange($which, &$plot_min, &$plot_max, $adjust_min, $adjust_max)
     {
@@ -8424,7 +8533,7 @@ class PHPlot_truecolor extends PHPlot
     /**
      * Constructor: Sets up GD truecolor image resource, and initializes plot style controls
      *
-     * @param int $width   Image width in pixels
+     * @param int $width  Image width in pixels
      * @param int $height  Image height in pixels
      * @param string $output_file  Path for output file. Omit, or NULL, or '' to mean no output file
      * @param string $input_file   Path to a file to be used as background. Omit, NULL, or '' for none
