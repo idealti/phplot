@@ -4368,12 +4368,15 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Helper for CalcPlotRange() - Get the range end adjustment factor
-     *  $which : 'x' or 'y' - calculate the X or Y ranges.
-     *  &$adjust : End adjustment factor, NULL or already set.
-     * If $adjust is already set, it is left alone, otherwise a suitable
-     * value is calculated and stored into $adjust.
+    /**
+     * Gets the plot range end adjustment factor
+     *
+     * This is a helper for CalcPlotRange().  If $adjust is already set, it is left
+     * alone, otherwise it uses the current plot type to apply a default setting.
+     *
+     * @param string $which  Which axis to calculate for. Must be 'x' or 'y'
+     * @param float $adjust  Reference variable for the range end adjustment factor, NULL or already set
+     * @since 6.0.0
      */
     protected function GetRangeEndAdjust($which, &$adjust)
     {
@@ -4397,12 +4400,17 @@ class PHPlot
         }
     }
 
-    /*
-     * Helper for CalcPlotAreaWorld() - calculate range of X or Y, and tick increment.
-     *  $which : 'x' or 'y' - calculate the X or Y ranges.
-     * Returns an array of 3 calculated values (or false on caught and returned error):
-     *   $tick_inc : Tick increment
-     *   $plot_min, $plot_max : Min and max of the plot area range
+    /**
+     * Calculates the plot range and tick increment for X or Y
+     *
+     * This is a helper for CalcPlotAreaWorld(). It returns the plot range (plot_min
+     * and plot_max), and the tick increment, for the X or Y axis. Priority is given
+     * to user-set values with SetPlotAreaWorld() and Set[XY]TickIncrement(), but if
+     * these were defaulted then values are automatically calculated.
+     *
+     * @param string $which  Which axis to calculate for. Must be 'x' or 'y'
+     * @return float[]  Returns array of (tick_increment, plot_min, plot_max) or FALSE on handled error
+     * @since 6.0.0
      */
     protected function CalcPlotRange($which)
     {
@@ -4531,14 +4539,24 @@ class PHPlot
         return array($tick_inc, $plot_min, $plot_max);
     }
 
-    /*
-     * Calculate the World Coordinate limits of the plot area, and the tick increments.
-     * (The range and increment are related, so they are calculated together.)
-     * The plot range variables (plot_min_x, plot_max_x, plot_min_y, plot_max_y) are calculated
-     * if necessary, then stored back into the object ('sticky' for multiple plots on an image).
-     * The tick increments (x_tick_inc, y_tick_inc) are calculated. These default to the user-set
-     * values (x_tick_inc_u, y_tick_inc_u) but we keep the effective values separate so that
-     * they can be recalculated for a second plot (which may have a different data range).
+    /**
+     * Calculates the World Coordinate limits of the plot area, and the tick increments
+     *
+     * This is called by DrawGraph(), after FindDataLimits() determines the data
+     * limits, to calculate the plot area scale and tick increments.  The plot range
+     * and increment are related, which is why they are calculated together.
+     * 
+     * The plot range variables (plot_min_x, plot_max_x, plot_min_y, plot_max_y) are
+     * calculated if necessary, then stored back into the object ('sticky' for
+     * multiple plots on an image).
+     * 
+     * The tick increments (x_tick_inc, y_tick_inc) are calculated. These default to
+     * the user-set values (x_tick_inc_u, y_tick_inc_u) but we keep the effective
+     * values separate so that they can be recalculated for a second plot (which may
+     * have a different data range).
+     *
+     * @return bool  Returns True, unless an handled error occurred in a called function
+     * @since 5.0.5
      */
     protected function CalcPlotAreaWorld()
     {
@@ -4580,17 +4598,22 @@ class PHPlot
         return $this->PrintError("SetPlotAreaWorld(): $bad range error - min >= max");
     }
 
-    /*
-     * Calculate the width (or height) of bars for bar plots.
-     *   $stacked : If true, this is a stacked bar plot (1 bar per group).
-     *   $verticals : If false, this is a horizontal bar plot.
-     * This calculates:
-     *    record_bar_width : Allocated width for each bar (including gaps)
-     *    actual_bar_width : Actual drawn width of each bar
-     *    bar_adjust_gap  : Gap on each side of each bar (0 if they touch)
-     * For the case $verticals=False, horizontal bars are being drawn,
-     * but the same variable names are used. Think of "bar_width" as being
-     * the width if you are standing on the Y axis looking towards positive X.
+    /**
+     * Calculates sizes of bars for bars and stackedbars plots
+     *
+     * This calculates the following class variables, which control the size and
+     * spacing of bars in vertical and horizontal 'bars' and 'stackedbars' plots:
+     * record_bar_width (allocated width for each bar, including gaps),
+     * actual_bar_width (actual drawn width of each bar), and
+     * bar_adjust_gap (gap on each side of each bar, 0 if they touch).
+     *
+     * Note that when $verticals is False, the bars are horizontal, but the same
+     * variable names are used.  Think of "bar_width" as being the width if you
+     * are standing on the Y axis looking towards positive X.
+     *
+     * @param bool $stacked  If true, this is a stacked bar plot (1 bar per group)
+     * @param bool $verticals  If false, this is a horizontal bar plot
+     * @return bool  Always returns TRUE
      */
     protected function CalcBarWidths($stacked, $verticals)
     {
@@ -4634,21 +4657,22 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Calculate X and Y Axis Positions, world coordinates.
-     * This needs the min/max x/y range set by CalcPlotAreaWorld.
-     * It adjusts or sets x_axis_position and y_axis_position per the data.
-     * Empty string means the values need to be calculated; otherwise they
-     * are supplied but need to be validated against the World area.
+    /**
+     * Calculates the X and Y axis positions in world coordinates
      *
-     * Note: This used to be in CalcTranslation, but CalcMargins needs it too.
-     * This does not calculate the pixel values of the axes. That happens in
-     * CalcTranslation, after scaling is set up (which has to happen after
-     * margins are set up).
+     * This validates or calculates the class variables x_axis_position and
+     * y_axis_position. Note x_axis_position is the Y value where the X axis
+     * goes; y_axis_position is the X value where the Y axis goes.
+     * If they were set by the user, they are used as-is, unless they are
+     * outside the data range. If they are not set, they are calculated here.
+     * 
+     * For vertical plots, the X axis defaults to Y=0 if that is inside the plot
+     * range, else whichever of the top or bottom that has the smallest absolute
+     * value (that is, the value closest to 0).  The Y axis defaults to the left
+     * edge. For horizontal plots, the axis roles and defaults are switched.
      *
-     * For vertical plots, the X axis defaults to Y=0 if that is inside the plot range, else whichever
-     * of the top or bottom that has the smallest absolute value (that is, the value closest to 0).
-     * The Y axis defaults to the left edge. For horizontal plots, the axis roles and defaults are switched.
+     * @return bool  Always returns TRUE
+     * @since 5.0.5
      */
     protected function CalcAxisPositions()
     {
@@ -4697,8 +4721,13 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Calculates scaling stuff...
+    /**
+     * Calculates parameters for transforming world coordinates to pixel coordinates
+     *
+     * This calculates xscale, yscale, plot_origin_x, and plot_origin_y, which map
+     * world coordinate space into the plot area. These are used by xtr() and ytr()
+     *
+     * @return bool  Always returns TRUE
      */
     protected function CalcTranslation()
     {
@@ -4810,12 +4839,17 @@ class PHPlot
         return array($this->xtr($x_world), $this->ytr($y_world));
     }
 
-    /*
-     * Get the tick parameters: Start, end, and step values. This is used by DrawXTicks()
-     * and DrawYTicks(), and also by CalcMaxTickSize() for CalcMargins().
-     *   $which : 'x' or 'y' : Which tick parameters to calculate.
-     *   Returns an array of 3 elements: tick_start, tick_end, tick_step.
-     * Note: CalcPlotAreaWorld() calculates the tick increments - see comment there.
+    /**
+     * Gets the tick mark parameters
+     *
+     * This is used by DrawXTicks(), DrawYTicks(), and CalcMaxTickLabelSize().
+     * It returns the parameters needed to draw tick marks: start value, end value,
+     * and step.  Note CalcTicks() used to but no longer actually does the
+     * calculations.  That is done in CalcPlotAreaWorld().
+     *
+     * @param string $which  Which axis to calculate tick parameters for. Must be 'x' or 'y'
+     * @return float[]  Returns array of (tick_start, tick_end, tick_step)
+     * @since 5.0.5
      */
     protected function CalcTicks($which)
     {
@@ -4856,14 +4890,17 @@ class PHPlot
         return array($tick_start, $tick_end, $tick_step);
     }
 
-    /*
-     * Calculate the size of the biggest tick label. This is used by CalcMargins().
-     * For 'x' ticks, it returns the height . For 'y' ticks, it returns the width.
-     * This means height along Y, or width along X - not relative to the text angle.
-     * That is what we need to calculate the needed margin space.
-     * (Previous versions of PHPlot estimated this, using the maximum X or Y value,
-     * or maybe the longest string. That doesn't work. -10 is longer than 9, etc.
-     * So this gets the actual size of each label, slow as that may be.)
+    /**
+     * Calculates the size of the biggest tick label
+     *
+     * This is used by CalcMargins() to figure out how much margin space is needed
+     * for the tick labels. 
+     * For 'x' ticks, it returns the height (delta Y) of the tallest label.
+     * For 'y' ticks, it returns the width (delta X) of the widest label.
+     *
+     * @param string $which  Which axis to calculate for. Must be 'x' or 'y'
+     * @return float  Returns the needed tick label width (for Y) or height (for X)
+     * @since 5.0.5
      */
     protected function CalcMaxTickLabelSize($which)
     {
@@ -4895,16 +4932,23 @@ class PHPlot
         return $max_width;
     }
 
-    /*
-     * Calculate the size of the biggest data label. This is used by CalcMargins().
-     * For $which='x', it returns the height of labels along the top or bottom.
-     * For $which='y', it returns the width of labels along the left or right sides.
-     * There is only one set of data labels (the first position in each data record).
-     * They normally go along the top or bottom (or both). If the data type indicates
-     * X/Y swapping (which is used for horizontal bar charts), the data labels go
-     * along the sides instead. So CalcMaxDataLabelSize('x') returns 0 if the
-     * data is X/Y swapped, and CalcMaxDataLabelSize('y') returns 0 if the data is
-     * is not X/Y swapped.
+    /**
+     * Calculates the size of the biggest axis data label
+     *
+     * This is used by CalcMargins() to figure out how much margin space is needed
+     * for the axis data labels. 
+     * For X axis labels, it returns the height (delta Y) of the tallest label.
+     * For Y axis labels, it returns the width (delta X) of the widest label.
+     *
+     * There can be at most one set of axis data labels. For vertical plots, these
+     * are X axis data labels, and go along the top or bottom or both. For horizontal
+     * plots, these are Y axis data labels, and go along the left or right or both.
+     * CalcMaxDataLabelSize(axis) returns 0 if data labels do not apply to that axis.
+     * To do this, it needs to check the plottype flag indicating swapped X/Y.
+     *
+     * @param string $which  Which axis to calculate for. Must be 'x' or 'y'
+     * @return float  Returns the needed axis data label width (for Y) or height (for X)
+     * @since 5.0.5
      */
     protected function CalcMaxDataLabelSize($which = 'x')
     {
@@ -4936,9 +4980,13 @@ class PHPlot
         return $max_height;
     }
 
-    /*
-     * Helper for CheckLabels() - determine if there are any non-empty labels.
-     * Returns True if all data labels are empty, else False.
+    /**
+     * Determines if there are any non-empty data labels in the data array
+     *
+     * This is used by CheckLabels() to determine if data labels are available.
+     *
+     * @return bool  Returns True if all data labels are empty, else False.
+     * @since 5.1.2
      */
     protected function CheckLabelsAllEmpty()
     {
@@ -4947,11 +4995,15 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Check and set label parameters. This handles deferred processing for label
-     * positioning and other label-related parameters.
-     *   Set defaults for label angles.
-     *   Apply defaults to X and Y tick and data label positions.
+    /**
+     * Checks and sets label parameters
+     *
+     * This handles deferred processing for label positioning and other label-related
+     * parameters. It sets defaults for label angles, and applies defaults to X and Y
+     * tick and data label positions.
+     *
+     * @return bool  Always returns TRUE
+     * @since 5.1.0
      */
     protected function CheckLabels()
     {
