@@ -2,12 +2,16 @@
 /**
  * PHPlot - A class for creating scientific and business graphs, charts, plots
  *
+ * This file contains two PHP classes which are used to create graphs,
+ * charts, and plots. The PHPlot class is the basic class which creates
+ * indexed-color images, and the extended PHPlot_truecolor class creates
+ * full-color (24-bit) images.
  * PHPlot currently requires PHP 5.3 or later.
  *
  * $Id$
  *
  * @version 6.1.0
- * @copyright 1998-2013 Afan Ottenheimer
+ * @copyright 1998-2015 Afan Ottenheimer
  * @license GNU Lesser General Public License, version 2.1
  * @link http://sourceforge.net/projects/phplot/ PHPlot Web Site with downloads, tracker, discussion
  * @link http://phplot.sourceforge.net PHPlot Project Web Site with links to documentation
@@ -2343,7 +2347,7 @@ class PHPlot
      * For type 'custom': $args[1] = the callback (required), $args[2] = pass-through argument.
      *
      * @param string $mode  Which label type to configure: x | y | xd | yd | p
-     * @param array $args  Additional, variable arguments controlling the format type
+     * @param array $args  Additional arguments controlling the format type
      * @return bool Returns True (False on error if an error handler returns True)
 
      */
@@ -5088,21 +5092,15 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Formats a tick, data, or pie chart label.
-     *   $which_pos : 'x', 'xd', 'y', 'yd', or 'p' selects formatting controls.
-     *        x, y are for labels; xd, yd are for data labels. p is for pie chart labels.
-     *        If no format type was set for xd or yd, then the corresponding x or y type is used.
-     *   $which_lab : String to format as a label.
-     *   ... : Additional arguments to pass to a custom format function.
-     * Credits: Time formatting suggested by Marlin Viss
-     *          Custom formatting suggested by zer0x333
-     * Notes:
-     *   Type 'title' is obsolete and retained for compatibility.
-     *   Class variable 'data_units_text' is retained as a suffix for 'data' type formatting for
-     *      backward compatibility.
+    /**
+     * Formats a value for use as a tick, data, or pie chart label
+     *
+     * @param string $which_pos  Which format controls to use: x | y | xd | yd | p  (tick, data, pie)
+     * @param mixed $which_lab  The value of the label to be formatted (usually a float)
+     * @param mixed $varargs  Zero or more additional arguments to pass to a custom format function
+     * @return string  Returns the formatted label value (original value if no formatting is enabled)
      */
-    protected function FormatLabel($which_pos, $which_lab) // Variable additional arguments
+    protected function FormatLabel($which_pos, $which_lab, $varargs=NULL) // Variable additional arguments
     {
         // Assign a reference shortcut to the label format controls, default xd,yd to x,y.
         if ($which_pos == 'xd' && empty($this->label_format['xd']))
@@ -5141,11 +5139,18 @@ class PHPlot
         return $which_lab;
     }
 
-    /*
-     * Internal function to implement TuneXAutoRange() and TuneYAutoRange() : Set range tuning parameters
-     *   $which : 'x' or 'y', which axis to adjust parameters for
-     *   $zero_magnet, $adjust_mode, $adjust_amount : Parameters to set (if not NULL).
-     * Note: Does not report errors - just ignores invalid tuning values.
+    /**
+     * Sets range tuning parameters for X or Y
+     *
+     * This implements TuneXAutoRange() and TuneYAutoRange(). Note that
+     * parameter values are checked, but invalid values are silently ignored.
+     *
+     * @param string $which  Which axis to adjust parameters for: 'x' or 'y'
+     * @param float $zero_magnet  Zero magnet value, NULL to ignore
+     * @param string $adjust_mode  Range extension mode, NULL to ignore
+     * @param float $adjust_amount  Range extension amount, NULL to ignore
+     * @return bool  Always returns TRUE
+     * @since 6.0.0
      */
     protected function TuneAutoRange($which, $zero_magnet, $adjust_mode, $adjust_amount)
     {
@@ -5190,10 +5195,17 @@ class PHPlot
         return $this->TuneAutoRange('y', $zero_magnet, $adjust_mode, $adjust_amount);
     }
 
-    /*
-     * Internal function to implement TuneXAutoTicks() and TuneYAutoTicks() : Set tick tuning parameters
-     *   $which : 'x' or 'y', which axis to adjust parameters for
-     *   $min_ticks, $tick_mode, $tick_inc_integer : Parameters to set (if not NULL).
+    /**
+     * Sets tick tuning parameters for X or Y
+     *
+     * This implements TuneXAutoTicks() and TuneYAutoTicks().
+     *
+     * @param string $which  Which axis to adjust parameters for: 'x' or 'y'
+     * @param int $min_ticks  Minimum number of tick intervals
+     * @param string $tick_mode  Tick increment calculation mode
+     * @param bool $tick_inc_integer  True to always use integer tick increments
+     * @return bool  Returns True (False on error if an error handler returns True)
+     * @since 6.0.0
      */
     protected function TuneAutoTicks($which, $min_ticks, $tick_mode, $tick_inc_integer)
     {
@@ -5452,9 +5464,11 @@ class PHPlot
 ////////////////////          GENERIC DRAWING
 /////////////////////////////////////////////
 
-    /*
+    /**
      * Fill the image background, with a tiled image file or solid color.
-     *   $overwrite : Optional flag. If True, allow overwriting the background.
+     *
+     * @param bool $overwrite  True to do it even if already done, False or omit to do once only
+     * @return bool  Always returns TRUE
      */
     protected function DrawBackground($overwrite=FALSE)
     {
@@ -5471,8 +5485,10 @@ class PHPlot
         return TRUE;
     }
 
-    /*
+    /**
      * Fill the plot area background, with a tiled image file or solid color.
+     *
+     * @return bool  Always returns TRUE
      */
     protected function DrawPlotAreaBackground()
     {
@@ -5486,14 +5502,17 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Tiles an image at some given coordinates.
-     *   $file : Filename of the picture to be used as tile.
-     *   $xorig : X device coordinate of where the tile is to begin.
-     *   $yorig : Y device coordinate of where the tile is to begin.
-     *   $width : Width of the area to be tiled.
-     *   $height : Height of the area to be tiled.
-     *   $mode : Tiling mode. One of 'centeredtile', 'tile', 'scale'.
+    /**
+     * Tiles an image from a file onto the plot image (for backgrounds)
+     *
+     * @param string $file Filename of the picture to be used as tile
+     * @param int $xorig  X device coordinate of where the tile is to begin
+     * @param int $yorig  Y device coordinate of where the tile is to begin
+     * @param int $width  Width of the area to be tiled
+     * @param int $height  Height of the area to be tiled
+     * @param string $mode  Tiling mode: centeredtile | tile | scale
+     * @return bool  Returns True (False on error if an error handler returns True)
+     *
      */
     protected function tile_img($file, $xorig, $yorig, $width, $height, $mode)
     {
@@ -5534,9 +5553,11 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Return the image border width.
-     * This is used by CalcMargins() and DrawImageBorder().
+    /**
+     * Returns the width of the image border, for CalcMargins() and DrawImageBorder().
+     *
+     * @return int  Border width in pixels, 0 for no borders
+     * @since 5.1.2
      */
     protected function GetImageBorderWidth()
     {
@@ -5549,13 +5570,18 @@ class PHPlot
         return 1; // Default for other border types is 1 pixel.
     }
 
-    /*
-     * Draws a border around the final image.
-     * Note: 'plain' draws a flat border using the dark shade of the border color.
+    /**
+     * Draws a border around the final image
+     *
+     * This draws a border around the image, if enabled by SetImageBorderType().
+     * Note: type 'plain' draws a flat border using the dark shade of the border color.
      * This probably should have been written to use the actual border color, but
      * it is too late to fix it without changing plot appearances. Therefore a
      * new type 'solid' was added to use the SetImageBorderColor color.
-     *   $overwrite : Optional flag. If True, allow overwriting the border.
+     *
+     * @param bool $overwrite  True to do it even if already done, False or omit to do once only
+     * @return bool  Returns True (False on error if an error handler returns True)
+     *
      */
     protected function DrawImageBorder($overwrite=FALSE)
     {
@@ -5594,10 +5620,10 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draws the main title on the graph.
-     * The title must not be drawn more than once (in the case of multiple plots
-     * on the image), because TTF text antialiasing makes it look bad.
+    /**
+     * Draws the main plot title
+     *
+     * @return bool  Always returns TRUE
      */
     protected function DrawTitle()
     {
@@ -5616,8 +5642,10 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draws the X-Axis Title
+    /**
+     * Draws the X axis title, on the top or bottom (or both) of the plot area
+     *
+     * @return bool  Always returns TRUE
      */
     protected function DrawXTitle()
     {
@@ -5642,8 +5670,10 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draws the Y-Axis Title
+    /**
+     * Draws the Y axis title, on the left or right side (or both) of the plot area
+     *
+     * @return bool  Always returns TRUE
      */
     protected function DrawYTitle()
     {
@@ -5667,8 +5697,10 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw the X axis, including ticks and labels, and X (vertical) grid lines.
+    /**
+     * Draws the X axis, including ticks and labels, and vertical grid lines
+     *
+     * @return bool  Always returns TRUE
      */
     protected function DrawXAxis()
     {
@@ -5683,9 +5715,13 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw the Y axis, including ticks and labels, and Y (horizontal) grid lines.
-     * Horizontal grid lines overwrite horizontal axis with y=0, so call this first, then DrawXAxis()
+    /**
+     * Draws the Y axis, including ticks and labels, and horizontal grid lines
+     *
+     * This draws the Y axis and grid lines. It must be called before DrawXAxis() to avoid
+     * having a horizontal grid line overwrite the X axis.
+     *
+     * @return bool  Always returns TRUE
      */
     protected function DrawYAxis()
     {
@@ -5700,10 +5736,13 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw one X tick mark and its tick label.
-     *   $x : X value for the label. This is the unformatted value (in PHPlot>5.7.0)
-     *   $x_pixels : X device coordinate for this tick mark.
+    /**
+     * Draws one X tick mark and its tick label
+     *
+     * @param float $x  X value for the label
+     * @param int $x_pixels  X device coordinate for this tick mark
+     * @return bool  Always returns TRUE
+     * @since 5.8.0
      */
     protected function DrawXTick($x, $x_pixels)
     {
@@ -5752,10 +5791,13 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw one Y tick mark and its tick label.
-     *   $y : Y value for the label. This is the unformatted value (in PHPlot>5.7.0)
-     *   $y_pixels : Y device coordinate for this tick mark.
+    /**
+     * Draws one Y tick mark and its tick label
+     *
+     * @param float $y  Y value for the label
+     * @param int $y_pixels  Y device coordinate for this tick mark
+     * @return bool  Always returns TRUE
+     * @since 5.8.0
      */
     protected function DrawYTick($y, $y_pixels)
     {
@@ -5804,12 +5846,10 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draws Grid, Ticks and Tick Labels along X-Axis
-     * Ticks and tick labels can be down of plot only, up of plot only,
-     * both on up and down of plot, or crossing a user defined X-axis
+    /**
+     * Draws the vertical grid lines, the X axis tick marks, and X axis tick labels
      *
-     * Original vertical code submitted by Marlin Viss
+     * @return bool  Always returns TRUE
      */
     protected function DrawXTicks()
     {
@@ -5837,10 +5877,10 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw the grid, ticks, and tick labels along the Y axis.
-     * Ticks and tick labels can be left of plot only, right of plot only,
-     * both on the left and right of plot, or crossing a user defined Y-axis
+    /**
+     * Draws the horizontal grid lines, the Y axis tick marks, and Y axis tick labels
+     *
+     * @return bool  Always returns TRUE
      */
     protected function DrawYTicks()
     {
@@ -5869,10 +5909,15 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     *  Draw a border around the plot area. See SetPlotBorderType.
-     *  plot_border_type can be unset/NULL, a scaler, or an array. If unset or null, the
-     *  default is used ('sides' if the plot includes axes, 'none' if not).
+    /**
+     * Draws the border around the plot area
+     *
+     * This draws the plot border, as set by SetPlotBorderType(). The
+     * plot_border_type can be unset/NULL, a scaler, or an array. If unset or null,
+     * the default is used ('sides' if the plot includes axes, 'none' if not).
+     *
+     * @param bool $draw_axes  True or omit to draw the X axis and Y axis, false to not (for pie charts)
+     * @return bool  Always returns TRUE
      */
     protected function DrawPlotBorder($draw_axes = TRUE)
     {
@@ -5906,19 +5951,27 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw the data value label associated with a point in the plot.
-     * These are labels that show the value (dependent variable, usually Y) of the data point,
-     * and are drawn within the plot area (not to be confused with axis data labels).
-     *   $x_or_y : Specify 'x' or 'y' labels. This selects font, angle, and formatting.
-     *   $row, $column : Identifies the row and column of the data point (for custom label formatting).
-     *   $x_world, $y_world : World coordinates of the text (see also [xy]_offset).
-     *   $text : The text to draw, after formatting with FormatLabel().
-     *   $dvl : Associative array with additional label position controls:
-     *          h_align  v_align : Selects from 9-point text alignment (default center, center)
-     *          x_offset y_offset : Text position offsets, in device coordinates (default 0,0)
-     *          min_width min_height : Suppress the text if it will not fit (default null,null = no check)
-     * Returns True, if the text was drawn, or False, if it will not fit.
+    /**
+     * Draws the data value label associated with a point in the plot
+     *
+     * The labels drawn by this function are those that show the value (usually
+     * the Y value) of the data point. They are drawn within the plot area,
+     * not to be confused with axis data labels.
+     *
+     * The $dvl parameter array can contain these keys: 
+     *    h_align v_align : Selects from 9-point text alignment (default center, center);
+     *    x_offset y_offset : Text position offsets, in device coordinates (default 0,0);
+     *    min_width min_height : Suppress the text if it will not fit (default null,null = no check).
+     * See also CheckDataValueLabels() which sets some of these.
+     *
+     * @param string $x_or_y  Which labels: x | y, used to select font, angle, formatting
+     * @param int $row  Identifies the row of the data point (for custom label formatting)
+     * @param int $column  Identifies the column of the data point (for custom label formatting)
+     * @param float $x_world  X world coordinate of the base point
+     * @param float $y_world  Y world coordinate of the base point
+     * @param mixed $text The text to draw after formatting with FormatLabel()
+     * @param mixed[] $dvl  Associative array with additional label position controls (see above)
+     * @return bool  Returns True, if the text was drawn, or False, if it will not fit
      */
     protected function DrawDataValueLabel($x_or_y, $row, $column, $x_world, $y_world, $text, $dvl)
     {
@@ -5949,12 +6002,14 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draws an X axis data label, and optional data label line. This is for vertical plots.
-     *  $xlab : Label text
-     *  $xpos : X position for the label, in device coordinates
-     *  $row : Row index. This is 0 for the first X, 1 for the second, etc.
-     *  $do_lines : True for plot types that support data label lines, False (the default) for others.
+    /**
+     * Draws an X axis data label, and optional data label line (used in vertical plots)
+     *
+     * @param string $xlab  Text of the label to draw
+     * @param int $xpos  X position for the label, in device coordinates
+     * @param int $row  Row index, 0 for the first X, 1 for the second, etc.
+     * @param bool $do_lines  True for plot types that support data label lines, False or omit if not
+     * @return bool  Always returns TRUE
      */
     protected function DrawXDataLabel($xlab, $xpos, $row, $do_lines=FALSE)
     {
@@ -5977,12 +6032,15 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw a Y axis data label. This is for horizontal plots.
-     *  $ylab : Label text
-     *  $ypos : Y position for the label, in device coordinates
-     *  $row : Row index. This is 0 for the first Y, 1 for the second, etc.
-     *  $do_lines : True for plot types that support data label lines, False (the default) for others.
+    /**
+     * Draws a Y axis data label, and optional data label line (used in horizontal plots)
+     *
+     * @param string $ylab  Text of the label to draw
+     * @param int $ypos  Y position for the label, in device coordinates
+     * @param int $row  Row index, 0 for the first Y, 1 for the second, etc.
+     * @param bool $do_lines  True for plot types that support data label lines, False or omit if not
+     * @return bool  Always returns TRUE
+     * @since 5.1.2
      */
     protected function DrawYDataLabel($ylab, $ypos, $row, $do_lines=FALSE)
     {
@@ -6005,13 +6063,16 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draws Vertical lines from data points up and down.
-     * Which lines are drawn depends on the value of x_data_label_pos,
-     * and whether this is at all done or not, on draw_x_data_label_lines
+    /**
+     * Draws vertical data label lines (used in vertical plots)
      *
-     *   $xpos : position in pixels of the line.
-     *   $row : index of the data row being drawn.
+     * This draws vertical lines from a data point up and/or down.
+     * Which lines are drawn depends on the value of x_data_label_pos.
+     * Whether this is done not depends on draw_x_data_label_lines.
+     *
+     * @param int $xpos  X position in pixels of the line
+     * @param int $row  Index of the data row being drawn
+     * @return bool  Always returns TRUE
      */
     protected function DrawXDataLine($xpos, $row)
     {
@@ -6033,11 +6094,17 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draws horizontal lines from data points left and/or right, depending on y_data_label_pos.
-     * This is only for horizontal plots, when SetDrawYDataLabelLines(True) is used.
-     *   $ypos : position in pixels of the line.
-     *   $row : index of the data row being drawn.
+    /**
+     * Draws horizontal data label lines (used in horizontal plots)
+     *
+     * This draws horizontal lines from a data points left and/or right.
+     * Which lines are drawn depends on the value of y_data_label_pos.
+     * Whether this is done not depends on draw_y_data_label_lines.
+     *
+     * @param int $ypos  Y position in pixels of the line
+     * @param int $row  Index of the data row being drawn
+     * @return bool  Always returns TRUE
+     * @since 5.1.2
      */
     protected function DrawYDataLine($ypos, $row)
     {
@@ -6059,14 +6126,15 @@ class PHPlot
         return TRUE;
     }
 
-
-    /*
-     * Format a pie chart label.
-     *   $index : Slice number, starting with 0.
-     *   $pie_label_source : Label mode. See CheckPieLabels() and SetPieLabelType().
-     *   $arc_angle : Delta angle for this slice, in degrees.
-     *   $slice_weight : Numeric value, or relative weight, of this slice.
-     *  Returns the formatted label text for slice $index.
+    /**
+     * Formats a pie chart label
+     *
+     * @param int $index  Pie slice number, starting with 0
+     * @param string[] $pie_label_source  Label formatting mode(s). See CheckPieLabels() and SetPieLabelType()
+     * @param float $arc_angle  Delta angle for this slice, in degrees
+     * @param float $slice_weight Numeric value, or relative weight, of this slice
+     * @return string  Returns the formatted label value
+     * @since 5.6.0
      */
     protected function FormatPieLabel($index, $pie_label_source, $arc_angle, $slice_weight)
     {
@@ -6091,15 +6159,26 @@ class PHPlot
         return $this->FormatLabel('p', count($values) == 1 ? $values[0] : implode(' ', $values));
     }
 
-    /*
-     * Draw a pie chart label.
-     *   $label_txt : Pre-formatted label, from FormatPieLabel()
-     *   $xc, $yc : Center of pie chart
-     *   $start_angle, $arc_angle : Slice starting angle and angular width, in degrees
-     *   $r : Array of ('x', 'y', 'reverse') elements, calculated in DrawPieChart.
-     *        (x, y) are the parameters of the ellipse:  x^2 / r[x]^2 + y^2 / r[y]^2 = 1
-     *           Also:  x = r[x] * cos(angle); y = r[y] * sin(angle); (then offset to center).
-     *        reverse is a flag for text alignment (see GetTextAlignment()).
+    /**
+     * Draws a pie chart label
+     *
+     * This draws a single label for a pie chart.
+     *
+     * The $r parameter array is calculated by DrawPieChart() and contains
+     * values that are constant for the chart, so do not need to be
+     * recalculated for each slice. Array keys are 'x' 'y' and 'reverse'.
+     * r[x], r[y] are the parameters of the ellipse:  x**2 / r[x]**2 + y**2 / r[y]**2 = 1.
+     * Also:  x = r[x] * cos(angle), y = r[y] * sin(angle), (relative to pie center).
+     * 'reverse' is a flag for text alignment (see GetTextAlignment()).
+     *
+     * @param string $label_txt  Pre-formatted label, from FormatPieLabel()
+     * @param int $xc  X device coordinate of the pie center
+     * @param int $yc  Y device coordinate of the pie center
+     * @param float $start_angle  Slice starting angle in degrees
+     * @param float $arc_angle  Slice angular width in degrees
+     * @param mixed[] $r  Additional paramter array (from DrawPieChart, see comment above)
+     * @return bool  Always returns TRUE
+     * @since 5.6.0
      */
     protected function DrawPieLabel($label_txt, $xc, $yc, $start_angle, $arc_angle, $r)
     {
