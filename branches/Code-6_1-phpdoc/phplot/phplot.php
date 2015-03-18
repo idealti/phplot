@@ -44,17 +44,17 @@
  * parameters. This creates a palette (indexed) color image which is limited
  * to 256 total colors. For truecolor images (24 bit R, G, B), see the
  * PHPlot_truecolor class.
- * 
+ *
  * In most cases, methods of PHPlot just change the internal properties, and
  * nothing actually happens until the DrawGraph() method is used. Therefore
  * methods can be used in any order up until DrawGraph(); the order should not
  * affect the results.
- * 
+ *
  * Note: Without a background image, the PHPlot class creates a palette
  * (indexed) color image, and the PHPlot_truecolor class creates a truecolor
  * image. If a background image is used with the constructor of either class,
  * the type of image produced matches the type of the background image.
- * 
+ *
  */
 class PHPlot
 {
@@ -1261,7 +1261,7 @@ class PHPlot
      * If there is no default and it cannot find a working font, it falls back to
      * the original PHPlot default (which will not likely work either).
      *
-     * @return string  Default TrueType font filename or pathname 
+     * @return string  Default TrueType font filename or pathname
      * @since 5.1.3
      */
     protected function GetDefaultTTFont()
@@ -1952,7 +1952,7 @@ class PHPlot
     }
 
     /**
-     * Sets an image file to be used as the plot area background 
+     * Sets an image file to be used as the plot area background
      *
      * @param string $input_file  Path to the file to be used (jpeg, png or gif)
      * @param string $mode   Optional method for the background: centeredtile | tile | scale
@@ -2078,7 +2078,7 @@ class PHPlot
      * Returns the image data as raw data, base64 encoded, or data URL (see RFC2397)
      *
      * @param string $encoding  Optional encoding to use: dataurl (default) | raw | base64
-     * @return string  Encoded image data (False on error if error handler returns True) 
+     * @return string  Encoded image data (False on error if error handler returns True)
      * @since 5.5.0
      */
     function EncodeImage($encoding = 'dataurl')
@@ -2672,12 +2672,12 @@ class PHPlot
      *
      * This function is used by DrawGraph() to make sure the data array is populated
      * and each row is structured correctly, according to the data type.
-     * 
+     *
      * It also calculates data_columns, which is the maximum number of dependent
      * variable values (usually Y) in the data array rows.  (For pie charts, this is
      * the number of slices.) It depends on the data_type, unlike records_per_group
      * (which was previously used to pad style arrays, but is not accurate).
-     * 
+     *
      * Note error messages refer to the caller, the public DrawGraph().
      *
      * @return bool Returns True (False on error if an error handler returns True)
@@ -2917,7 +2917,7 @@ class PHPlot
      *
      * Sets the text to be displayed as the X axis title. Optionally, it
      * also sets the position of the title and the axis itself: below the
-     * graph (the usual place), above the graph, both, or neither. 
+     * graph (the usual place), above the graph, both, or neither.
      *
      * @param string $which_xtitle The text string to use for the X axis title. Can contain multiple lines
      * @param string $which_xpos   Optional position for the X axis and title: plotdown plotup both none
@@ -2939,7 +2939,7 @@ class PHPlot
      *
      * Sets the text to be displayed as the Y axis title. Optionally, it
      * also sets the position of the title and the axis itself: on the left
-     * side of the graph (the usual place), on the right side, both, or neither. 
+     * side of the graph (the usual place), on the right side, both, or neither.
      *
      * @param string $which_ytitle The text string to use for the Y axis title. Can contain multiple lines
      * @param string $which_ypos   Optional position for the X axis and title: plotleft plotright both none
@@ -3659,11 +3659,11 @@ class PHPlot
      * variable.  For vertical plots (most common), IV is X and DV is Y. For
      * horizontal plots (swapped X/Y), IV is Y and DV is X.  At the end of the
      * function, IV and DV ranges get assigned into X or Y variables.
-     * 
+     *
      * The data type mostly determines the data array structure, but some plot types
      * do special things such as sum the values in a row. This information is in the
      * plots[] array.
-     * 
+     *
      * This calculates min_x, max_x, min_y, and max_y. It also calculates two arrays
      * data_min[] and data_max[] with per-row min and max values. These are used for
      * data label lines. For vertical plots, these are the Y range for each X. For
@@ -3784,22 +3784,22 @@ class PHPlot
      * Calculates the title sizes: title_height, x_title_height, and y_title_width.
      * These are local, not class variables, since they are only used here.
      * The X and Y title size variables are 0 if there is no corresponding title.
-     * 
+     *
      * Calculates the tick label and axis data label offsets, relative to the plot
      * area: x_label_top_offset, x_label_bot_offset, x_label_axis_offset,
      * y_label_left_offset, y_label_right_offset, and y_label_axis_offset.
-     * 
+     *
      * Calculates the title position offsets, relative to the plot area:
      * x_title_top_offset, x_title_bot_offset, y_title_left_offset, and
      * y_title_left_offset. Also calculates the main title offset, which is relative
      * to the top of the image.
-     * 
+     *
      * Finally, calculates the plot area margins using the above to figure out how
      * much space outside the plot area is needed. The class variables are:
      * y_top_margin, y_bot_margin, x_left_margin, and x_right_margin.  All 4 margins
      * are calculated, but only those not set with SetPlotAreaPixels() or
      * SetMarginsPixels() are stored into the class variables.
-     * 
+     *
      * A plot with $minimize True, such as a pie chart, does not have an X or Y axis
      * or X/Y titles, and so can use more of the image space.
      *
@@ -4317,10 +4317,10 @@ class PHPlot
      * something to prevent it. There are 2 general cases: 1) automatic range, and
      * data is 'flat' (all same value). 2) One side of range given in
      * SetPlotAreaWorld(), and all the data is on the wrong side of that.
-     * 
+     *
      * Note that values specified in SetPlotAreaWorld() are never adjusted, even if it
      * means an empty plot (because all the data is outside the range).
-     * 
+     *
      * Called by CalcPlotRange() after CalcRangeInit() applies the defaults.
      *
      * @param string $which  Which axis: 'x' or 'y', used only for reporting
@@ -4520,7 +4520,7 @@ class PHPlot
             } elseif ($adjust_mode == 'I') {
                 // Mode 'I': Adjustment to next higher integer.
                 $plot_max = ceil($plot_max);
-            }  
+            }
         }
 
         // Calculate the tick increment for the case where number of ticks was given:
@@ -4549,11 +4549,11 @@ class PHPlot
      * This is called by DrawGraph(), after FindDataLimits() determines the data
      * limits, to calculate the plot area scale and tick increments.  The plot range
      * and increment are related, which is why they are calculated together.
-     * 
+     *
      * The plot range variables (plot_min_x, plot_max_x, plot_min_y, plot_max_y) are
      * calculated if necessary, then stored back into the object ('sticky' for
      * multiple plots on an image).
-     * 
+     *
      * The tick increments (x_tick_inc, y_tick_inc) are calculated. These default to
      * the user-set values (x_tick_inc_u, y_tick_inc_u) but we keep the effective
      * values separate so that they can be recalculated for a second plot (which may
@@ -4669,7 +4669,7 @@ class PHPlot
      * goes; y_axis_position is the X value where the Y axis goes.
      * If they were set by the user, they are used as-is, unless they are
      * outside the data range. If they are not set, they are calculated here.
-     * 
+     *
      * For vertical plots, the X axis defaults to Y=0 if that is inside the plot
      * range, else whichever of the top or bottom that has the smallest absolute
      * value (that is, the value closest to 0).  The Y axis defaults to the left
@@ -4898,7 +4898,7 @@ class PHPlot
      * Calculates the size of the biggest tick label
      *
      * This is used by CalcMargins() to figure out how much margin space is needed
-     * for the tick labels. 
+     * for the tick labels.
      * For 'x' ticks, it returns the height (delta Y) of the tallest label.
      * For 'y' ticks, it returns the width (delta X) of the widest label.
      *
@@ -4940,7 +4940,7 @@ class PHPlot
      * Calculates the size of the biggest axis data label
      *
      * This is used by CalcMargins() to figure out how much margin space is needed
-     * for the axis data labels. 
+     * for the axis data labels.
      * For X axis labels, it returns the height (delta Y) of the tallest label.
      * For Y axis labels, it returns the width (delta X) of the widest label.
      *
@@ -5958,7 +5958,7 @@ class PHPlot
      * the Y value) of the data point. They are drawn within the plot area,
      * not to be confused with axis data labels.
      *
-     * The $dvl parameter array can contain these keys: 
+     * The $dvl parameter array can contain these keys:
      *    h_align v_align : Selects from 9-point text alignment (default center, center);
      *    x_offset y_offset : Text position offsets, in device coordinates (default 0,0);
      *    min_width min_height : Suppress the text if it will not fit (default null,null = no check).
@@ -6484,10 +6484,10 @@ class PHPlot
         }
     }
 
-    /*
-     * Draws the graph legend
-     * This is called by DrawGraph only if $this->legend is not empty.
-     * Base code submitted by Marlin Viss
+    /**
+     * Draws the plot legend - the outline box, text labels, and color boxes or shapes
+     *
+     * @return bool  Always returns TRUE
      */
     protected function DrawLegend()
     {
@@ -6576,7 +6576,7 @@ class PHPlot
                 case 'line':
                     // Draw a short line segment with proper color, width, and style
                     imagesetthickness($this->img, $this->line_widths[$lws_index]);
-                    $style = $this->SetDashedStyle($this->ndx_data_colors[$color_index], 
+                    $style = $this->SetDashedStyle($this->ndx_data_colors[$color_index],
                                                    $this->line_styles[$lws_index] == 'dashed');
                     imageline($this->img, $dot_left_x, $yc, $dot_right_x, $yc, $style);
                     imagesetthickness($this->img, 1);
@@ -6608,12 +6608,21 @@ class PHPlot
 ////////////////////     PLOT DRAWING HELPERS
 /////////////////////////////////////////////
 
-    /*
-     * Get data color to use for plotting.
-     *   $row, $idx : Index arguments for the current data point.
-     *   &$vars : Variable storage. Caller makes an empty array, and this function uses it.
-     *   &$data_color : Returned result - Color index for the data point.
-     *   $extra : Extra info flag passed through to data color callback.
+    /**
+     * Gets the color index to use for plotting a data element (point or line segment, for example)
+     *
+     * This is used to select data colors for plotting. Without a custom data
+     * color callback, color selection is based on $idx, the column index in
+     * the data array. So the first data set (Y) uses the first color, etc.
+     * With a custom data color callback, both row and column index values
+     * are passed to the callback so it can use them to select a color.
+     *
+     * @param int $row  Row index for the current data point (used only for a custom data color callback)
+     * @param int $idx  Column index for the current data point (e.g. 0 for the first Y value for each X)
+     * @param mixed[] $vars  Reference variable, array for local storage (caller makes an empty array)
+     * @param int $data_color  Reference variable: returned color index to use for drawing
+     * @param mixed $extra  Extra variable passed through to a data color callback
+     * @since 5.2.0
      */
     protected function GetDataColor($row, $idx, &$vars, &$data_color, $extra = 0)
     {
@@ -6633,13 +6642,16 @@ class PHPlot
         $data_color = $this->ndx_data_colors[$idx];
     }
 
-    /*
-     * Get data color and error bar color to use for plotting.
-     *   $row, $idx : Index arguments for the current bar.
-     *   &$vars : Variable storage. Caller makes an empty array, and this function uses it.
-     *   &$data_color : Returned result - Color index for the data (bar fill)
-     *   &$error_color : Returned result - Color index for the error bars
-     *   $extra : Extra info flag passed through to data color callback.
+    /**
+     * Gets the color indexes to use for data element and error bar plotting
+     *
+     * @param int $row  Row index for the current data point (used only for a custom data color callback)
+     * @param int $idx  Column index for the current data point (e.g. 0 for the first Y value for each X)
+     * @param mixed[] $vars  Reference variable, array for local storage (caller makes an empty array)
+     * @param int $data_color  Reference variable: returned color index to use for drawing
+     * @param int error_color   Reference variable: returned color index to use for the error bars
+     * @param mixed $extra  Extra variable passed through to a data color callback
+     * @since 5.2.0
      */
     protected function GetDataErrorColors($row, $idx, &$vars, &$data_color, &$error_color, $extra = 0)
     {
@@ -6665,15 +6677,16 @@ class PHPlot
         }
     }
 
-    /*
-     * Get colors to use for a bar chart. There is a data color, a border color, and a shading color.
-     *   $row, $idx : Index arguments for the current bar.
-     *   &$vars : Variable storage. Caller makes an empty array, and this function uses it.
-     *   &$data_color : Returned result - Color index for the data (bar fill).
-     *   &$shade_color : Returned result - Color index for the shading (darker shade of data color).
-     *         This is NULL on return if shading is off.
-     *   &$border_color : Returned result - Color index for the borders (bar outlines).
-     *         This is NULL on return if the data borders are not enabled.
+    /**
+     * Gets the color indexes to use for a bar chart (data color, border color, shading color)
+     *
+     * @param int $row  Row index for the current data point (used only for a custom data color callback)
+     * @param int $idx  Column index for the current data point (e.g. 0 for the first Y value for each X)
+     * @param mixed[] $vars  Reference variable, array for local storage (caller makes an empty array)
+     * @param int $data_color  Returned color index to use for the bar fill
+     * @param int $shade_color Returned color index for the shading, NULL if shading is off
+     * @param int $border_color  Returned color index for the bar borders, NULL if borders are off
+     * @since 5.2.0
      */
     protected function GetBarColors($row, $idx, &$vars, &$data_color, &$shade_color, &$border_color)
     {
@@ -6705,11 +6718,15 @@ class PHPlot
         $border_color = $borders ? $this->ndx_data_border_colors[$i_border] : NULL;
     }
 
-    /*
-     * Get the grid setting. This is a function, because the default depends on the data type.
-     *  $xy : 'x' or 'y', which grid setting to get.
-     *  Returns TRUE if the grid should be drawn, FALSE if it should not.
-     *  Note: The grid defaults ON for the dependent variable, OFF for the independent variable.
+    /**
+     * Gets the grid setting, on or off
+     *
+     * This function determines the dynamic defaults. The grid defaults on for
+     * the dependent variable, off for the independent variable.
+     *
+     * @param string $xy  Which grid to check for: x | y
+     * @return bool  True if the grid should be drawn, False if it should not be drawn
+     * @since 6.0.0
      */
     protected function GetGridSetting($xy)
     {
@@ -6719,14 +6736,19 @@ class PHPlot
         return isset($this->draw_y_grid) ? $this->draw_y_grid : !$this->datatype_swapped_xy;
     }
 
-    /*
-     * Draw a shape (dot, point). This is the bottom half of DrawDot, and is also
-     * used by legend drawing. Unlike DrawDot this takes device coordinates.
-     * The list of supported shapes can also be found in SetPointShapes().
-     *   $x, $y : Device coordinates of the center of the shape
-     *   $record : Index into point_shapes[] and point_sizes[]. This is taken modulo the array sizes.
-     *   $color : Color to use for the point shape
-     *   $allow_none : If FALSE, replace shape 'none' with a line (used by legend).
+    /**
+     * Draws a single marker shape (a dot or shape)
+     *
+     * This is used by points and linepoints plots to draw a point, and by the
+     * legend.  Also see SetPointShapes() for the list of supported shapes.
+     *
+     * @param int $x  X device coordinate of the center of the shape
+     * @param int $y  Y device coordinate of the center of the shape
+     * @param int $record  Index into point_shapes[] and point_sizes[] arrays (taken modulo their sizes)
+     * @param int $color  Color index to use for the point shape
+     * @param bool $allow_none  True or omit allow 'none' as shape, False to substitute (for legend)
+     * @return bool  Always returns TRUE
+     * @since 5.4.0
      */
     protected function DrawShape($x, $y, $record, $color, $allow_none = TRUE)
     {
@@ -6821,12 +6843,15 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draws a styled dot, or shape. Uses world coordinates.
-     *   $row, $column : Which data point is being drawn. $column is also used to pick point shape and size.
-     *   $x_world, $y_world : Data point, in world coordinates
-     *   $color : Color to use for the point shape
-     * Note: DrawShape() does all the work. Plot drawing uses this; legend drawing uses DrawShape directly.
+    /**
+     * Draws a single marker point, using World Coordinates
+     *
+     * @param int $row  Row index of data point (only used for a data_points callback)
+     * @param int $column  Column index of data point, used to select the marker shape and size
+	 * @param int $x_world  X world coordinate of the data point
+     * @param int $y_world  Y world coordinate of the data point
+     * @param int $color  Color to use for the data point
+     * @return bool  Always returns TRUE (from DrawShape)
      */
     protected function DrawDot($row, $column, $x_world, $y_world, $color)
     {
@@ -6837,19 +6862,27 @@ class PHPlot
         return $result;
     }
 
-    /*
-     * Draw a bar (or segment of a bar), with optional shading or border.
-     * This is used by the bar and stackedbar plots, vertical and horizontal.
-     *   $row, $column : Which data point is being drawn, for data_points callback.
-     *   $x1, $y1 : One corner of the bar.
-     *   $x2, $y2 : Other corner of the bar.
-     *   $data_color : Color index to use for the bar fill.
-     *   $shade_color : Color index to use for the shading (if shading is on, else NULL).
-     *   $border_color : Color index to use for the bar outlines (borders), if enabled, else NULL.
-     *      See GetBarColors() for where these arguments come from.
-     *   $shade_top : Shade the top? (Suppressed for downward stack segments except first.)
-     *   $shade_side : Shade the right side? (Suppressed for leftward stack segments except first.)
-     *      Only one of $shade_top or $shade_side can be FALSE. Both default to TRUE.
+    /**
+     * Draws a single bar (or bar segment), with optional shading or border
+     *
+     * This draws a single bar (or bar segment), for bar and stackedbar plots,
+     * both vertical and horizontal. The 3 color values come from GetBarColors.
+     * Two flags (at most 1 of which can be false) are used to suppress shading
+     * for some cases of stackedbar plots.
+     *
+     * @param int $row  Row index of data point (only used for a data_points callback)
+     * @param int $column  Column index of data point (only used for a data_points callback)
+     * @param int $x1  One corner of the bar X (device coordinates)
+     * @param int $y1  One corner of the bar Y (device coordinates)
+     * @param int $x2  Other corner of the bar X (device coordinates)
+     * @param int $y2  Other corner of the bar Y (device coordinates)
+     * @param int $data_color  Color index to use for the bar fill
+     * @param int $shade_color  Color index to use for the shading (if shading is on, else NULL)
+     * @param int $border_color  Color index to use for the bar outlines (borders), if enabled, else NULL
+     * @param bool $shade_top  Shade the top? (Suppressed for downward stack segments except first)
+     * @param bool $shade_side  Shade the right side? (Suppressed for leftward stack segments except first)
+     * @return bool  Always returns TRUE
+     * @since 5.2.0
      */
     protected function DrawBar($row, $column, $x1, $y1, $x2, $y2, $data_color, $shade_color, $border_color,
             $shade_top = TRUE, $shade_side = TRUE)
@@ -6892,11 +6925,16 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     *  Draw an Error Bar set for horizontal plots, showing X +/- errors.
-     *   $x, $y : World coordinates of the data point. Note X is the dependent variable here.
-     *   $error_plus, $error_minus : X error offsets, in world coordinates (both positive).
-     *   $color : Color to use for the error bars.
+    /**
+     * Draws an error bar set for horizontal plots, showing +/- error in X
+     *
+     * @param float $x  X world coordinate of the data point (dependent variable)
+     * @param float $y  Y world coordinate of the data point (independent variable)
+     * @param float $error_plus  X error offset above $x (world coordinates >= 0)
+     * @param float $error_minus  X error offset below $x (world coordinates >= 0)
+     * @param int $color  Color to use for the error bars
+     * @return bool  Always returns TRUE
+     * @since 6.1.0
      */
     protected function DrawXErrorBars($x, $y, $error_plus, $error_minus, $color)
     {
@@ -6916,11 +6954,16 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     *  Draw an Error Bar set for vertical plots. Used by DrawDots and DrawLines for vertical plots.
-     *   $x, $y : World coordinates of the data point.
-     *   $error_plus, $error_minus : Y error offsets, in world coordinates (both positive).
-     *   $color : Color to use for the error bars.
+    /**
+     * Draws an error bar set for vertical plots, showing +/- error in Y
+     *
+     * @param float $x  X world coordinate of the data point (independent variable)
+     * @param float $y  Y world coordinate of the data point (dependent variable)
+     * @param float $error_plus  Y error offset above $y (world coordinates >= 0)
+     * @param float $error_minus  Y error offset below $y (world coordinates >= 0)
+     * @param int $color  Color to use for the error bars
+     * @return bool  Always returns TRUE
+     * @since 6.1.0
      */
     protected function DrawYErrorBars($x, $y, $error_plus, $error_minus, $color)
     {
@@ -6940,11 +6983,17 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Apply defaults for pie chart labels, if not set with SetPieLabelType(). Default type is percent,
-     * data format with 1 digit precision and % suffix. However, if Y label data precision is set, use
-     * that instead, for compatibility with PHPlot <= 5.5.0.
-     * Returns: $pie_label_source : copy of $this->pie_label_source if set, else default.
+    /**
+     * Sets up the default pie chart label type and format
+     *
+     * If SetPieLabelType() was not called, this function set the default.
+     * The default for pie chart labels is to show the slice percentage,
+     * with fixed point precision.  For backward compatibility with
+     * PHPlot <= 5.5.0, the Y label data precision (if set) is the default
+     * precision used.
+     *
+     * @return string[]  A value to use as pie_label_source in FormatPieLabel()
+     * @since 5.6.0
      */
     protected function CheckPieLabels()
     {
@@ -6961,22 +7010,32 @@ class PHPlot
 ////////////////////             PLOT DRAWING
 /////////////////////////////////////////////
 
-    /*
-     * Draws a pie chart. Data type is 'text-data', 'data-data', or 'text-data-single'.
+    /**
+     * Draws a pie plot (Pie chart)
      *
-     *  For text-data-single, the data array contains records with a label and one Y value.
-     *  Each record defines a sector of the pie, as a portion of the sum of all Y values.
-     *  Data labels are ignored by default, but can be selected for display with SetPieLabelType().
+     * This is the main function for drawing a pie chart.  Supported data
+     * types are 'text-data', 'data-data', and 'text-data-single'.
      *
-     *  For text-data and data-data, the data array contains records with an ignored label,
-     *  an ignored X value for data-data only, and N (N>=1) Y values per record.
-     *  The pie chart will be produced with N segments. The relative size of the first
-     *  sector of the pie is the sum of the first Y data value in each record, etc.
-     *  The data labels cannot be used, since they don't map to specific pie sectors.
+     * For text-data-single, the data array contains records with a label and
+     * one Y value.  Each record defines a sector of the pie, as a portion of
+     * the sum of all Y values.  Data labels are ignored by default, but can
+     * be selected for display with SetPieLabelType().
      *
-     *  If there are no valid positive data points at all, just draw nothing. It may seem more correct to
-     *  raise an error, but all of the other plot types handle it this way implicitly. DrawGraph() checks
-     *  for an empty data array, but this handles a non-empty data array with no Y values, or all Y=0.
+     * For text-data and data-data, the data array contains records with an
+     * ignored label, an ignored X value for data-data only, and N (N>=1) Y
+     * values per record.  The pie chart will be produced with N segments. The
+     * relative size of the first sector of the pie is the sum of the first Y
+     * data value in each record, etc.  The data labels cannot be used, since
+     * they don't map to specific pie sectors.
+     *
+     * If there are no valid positive data points at all, just draw nothing.
+     * It may seem more correct to raise an error, but all of the other plot
+     * types handle it this way implicitly. DrawGraph() checks for an empty
+     * data array, but this handles a non-empty data array with no Y values,
+     * or all Y=0.
+     *
+     * @return bool  Returns True (False on error if an error handler returns True)
+     *
      */
     protected function DrawPieChart()
     {
@@ -7199,11 +7258,21 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw a points plot, or the points for a linepoints plot, including error plots.
-     * This supports both vertical and horizontal plots. "iv" is used for the independent variable (X for
-     * vertical plots, Y for horizontal) and "dv" is used for the dependent variable (Y or X respectively).
-     *   $paired is true for linepoints plots, to make sure elements are only drawn once. See DrawLinePoints
+    /**
+     * Draws a points plot, or the points for a linepoints plot
+     *
+     * This is the main function for drawing a points plot, and is also used
+     * for a linepoints plot. Vertical and Horizontal plots, and error plots,
+     * are all supported. "iv" is used for the independent variable (X for
+     * vertical plots, Y for horizontal) and "dv" is used for the dependent
+     * variable (Y or X respectively).
+     *
+     * When $paired is true, a linepoints plot is being drawn, and some
+     * elements are suppressed here because they are done elsewhere. See
+     * DrawLinePoints() for details.
+     *
+     * @param bool $paired  True if doing a linepoints plot, False or omit for points plot
+     * @return bool  Returns True (False on error if an error handler returns True)
      */
     protected function DrawDots($paired = FALSE)
     {
@@ -7288,16 +7357,20 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw a Thin Bar Line plot, also known as an Impulse plot.
-     * A clean, fast routine for when you just want charts like stock volume charts.
-     * Supports data-data and text-data formats for vertical plots,
-     * and data-data-yx and text-data-yx for horizontal plots.
-     * Note that although this plot type supports multiple data sets, it rarely makes
-     * sense to have more than 1, because the lines will overlay.
-     * This one function does both vertical and horizontal plots. "iv" is used for the
-     * independent variable (X for vertical plots, Y for horizontal) and "dv" is used
-     * for the dependent variable (Y for vertical plots, X for horizontal).
+    /**
+     * Draws a thinbarline plot (Thin Bar Line)
+     *
+     * This is the main function for drawing a thinbarline plot, which
+     * is also known as an Impulse plot. Supported data types are
+     * data-data and text-data for vertical plots, and data-data-yx and
+     * text-data-yx for horizontal plots. "iv" is used for the independent
+     * variable (X for vertical plots, Y for horizontal) and "dv" is used
+     * for the dependent variable (Y or X respectively).
+     *
+     * Although this plot type supports multiple data sets, it rarely makes
+     * sense to have more than one, because the lines will overlay.
+     *
+     * @return bool  Returns True (False on error if an error handler returns True)
      */
     protected function DrawThinBarLines()
     {
@@ -7351,17 +7424,24 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw an 'area' or 'stacked area' plot.
-     * Both of these fill the area between lines, but in the stacked area graph the Y values
-     * are accumulated for each X, same as stacked bars. In the regular area graph, the areas
-     * are filled in order from the X axis up to each Y (so the Y values for each X need to be
-     * in decreasing order in this case).
-     * Data format can be text-data (label, y1, y2, ...) or data-data (label, x, y1, y2, ...)
-     * Notes:
-     *   All Y values must be >= 0. (If any Y<0 the absolute value is used.)
-     *   Missing data points are NOT handled. (They are counted as 0.)
-     *   All rows must have the same number of Y points, or an error image will be produced.
+    /**
+     * Draws an area or stackedarea plot
+     *
+     * This is the main function for drawing area and stackedarea plots.  Both
+     * of these fill the area between lines, but in the stacked area plot the
+     * Y values are accumulated for each X, same as stacked bars. In the
+     * regular area graph, the areas are filled in order from the X axis up to
+     * each Y (so the Y values for each X need to be in decreasing order in
+     * this case).
+     *
+     * Supported data types are data-data and text-data.  All Y values must be
+     * >= 0 (with absolute value used if any negative values are found).
+     * Missing data points are not supported (any missing points are set to
+     * 0).  All rows must have the same number of Y points, or an error will
+     * be produced.
+     *
+     * @param bool $do_stacked  True for stackedarea plot, false or omit for area plot
+     * @return bool  Returns True (False on error if an error handler returns True)
      */
     protected function DrawArea($do_stacked = FALSE)
     {
@@ -7443,11 +7523,21 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw a line plot, or the lines part of a linepoints plot, including error plots.
-     * This supports both vertical and horizontal plots. "iv" is used for the independent variable (X for
-     * vertical plots, Y for horizontal) and "dv" is used for the dependent variable (Y or X respectively).
-     *   $paired is true for linepoints plots, to make sure elements are only drawn once. See DrawLinePoints
+    /**
+     * Draws a lines plot, or the lines for a linepoints plot
+     *
+     * This is the main function for drawing a lines plot, and is also used
+     * for a linepoints plot. Vertical and Horizontal plots, and error plots,
+     * are all supported. "iv" is used for the independent variable (X for
+     * vertical plots, Y for horizontal) and "dv" is used for the dependent
+     * variable (Y or X respectively).
+     *
+     * When $paired is true, a linepoints plot is being drawn, and some
+     * elements are suppressed here because they are done elsewhere. See
+     * DrawLinePoints() for details.
+     *
+     * @param bool $paired  True if doing a linepoints plots, False or omit for lines plot
+     * @return bool  Returns True (False on error if an error handler returns True)
      */
     protected function DrawLines($paired = FALSE)
     {
@@ -7564,22 +7654,33 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw a Lines+Points plot (linepoints).
-     * This just uses DrawLines and DrawDots. They handle the error-bar case themselves.
-     * Note: When the argument to DrawLines and DrawDots is TRUE:
-     *    DrawLines draws the lines, not the error bars (even if applicable), and the data labels
-     *    DrawDots draws the points, the error bars (if applicable), and not the data labels
+    /**
+     * Draws a linepoints plot (Lines and Points)
+     *
+     * This is the main function for drawing a linepoints plot. This just uses
+     * DrawLines() to draw the lines, and DrawDots() to draw the points, so it
+     * supports the same data types and variations as they do.
+     *
+     * The argument passed to the two drawing functions tells them not to
+     * duplicate elements, as follows: DrawLines() draws the lines, not the
+     * error bars (even if applicable), and the data labels.  DrawDots() draws
+     * the points, the error bars (if applicable), and not the data labels.
+     *
+     * @return bool  Returns True (False on error if an error handler returns True)
      */
     protected function DrawLinePoints()
     {
         return $this->DrawLines(TRUE) && $this->DrawDots(TRUE);
     }
 
-    /*
-     * Draw a Squared Line plot.
-     * Data format can be text-data (label, y1, y2, ...) or data-data (label, x, y1, y2, ...)
-     * This is based on DrawLines(), with one more line drawn for each point.
+    /**
+     * Draws a squared plot (Squared Line, Stepped Line)
+     *
+     * This is the main function for drawing a squared plot.  Supported data
+     * types are data-data and text-data.  This is based on DrawLines(), with
+     * two line drawn for each point.
+     *
+     * @return bool  Returns True (False on error if an error handler returns True)
      */
     protected function DrawSquared()
     {
@@ -7648,10 +7749,14 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw a Bar chart
-     * Supports text-data format, with each row in the form array(label, y1, y2, y3, ...)
-     * Horizontal bars (text-data-yx format) are sent to DrawHorizBars() instead.
+    /**
+     * Draws a bars plot (Bar chart)
+     *
+     * This is the main function for drawing a bars plot.  Supported data
+     * types are text-data, for vertical plots, and text-data-yx, for
+     * horizontal plots (for which it calls DrawHorizBars()).
+     *
+     * @return bool  Returns True (False on error if an error handler returns True)
      */
     protected function DrawBars()
     {
@@ -7717,11 +7822,14 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw a Horizontal Bar chart
-     * Supports only text-data-yx format, with each row in the form array(label, x1, x2, x3, ...)
-     * Note that the data values are X not Y, and the bars are drawn horizontally.
-     * This is called from DrawBars, which has already checked the data type.
+    /**
+     * Draws a Horizontal Bar chart
+     *
+     * This is called from DrawBars() when the data type indicates a
+     * horizontal plot.
+     *
+     * @return bool  Returns True (False on error if an error handler returns True)
+     * @since 5.1.2
      */
     protected function DrawHorizBars()
     {
@@ -7783,11 +7891,15 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw a Stacked Bar chart
-     * Supports text-data format, with each row in the form array(label, y1, y2, y3, ...)
-     * Horizontal stacked bars (text-data-yx format) are sent to DrawHorizStackedBars() instead.
+    /**
+     * Draws a stackedbars plot (Stacked Bar chart)
+     *
+     * This is the main function for drawing a stackedbars plot.  Supported
+     * data types are text-data, for vertical plots, and text-data-yx, for
+     * horizontal plots (for which it calls DrawHorizStackedBars()).
      * Original stacked bars idea by Laurent Kruk < lolok at users.sourceforge.net >
+     *
+     * @return bool  Returns True (False on error if an error handler returns True)
      */
     protected function DrawStackedBars()
     {
@@ -7894,11 +8006,14 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw a Horizontal Stacked Bar chart
-     * Supports only text-data-yx format, with each row in the form array(label, x1, x2, x3, ...)
-     * Note that the data values are X not Y, and the bars are drawn horizontally.
-     * This is called from DrawStackedBars, which has already checked the data type.
+    /**
+     * Draws a Horizontal Stacked Bar chart
+     *
+     * This is called from DrawStackedBars() when the data type indicates a
+     * horizontal plot.
+     *
+     * @return bool  Returns True (False on error if an error handler returns True)
+     * @since 5.1.3
      */
     protected function DrawHorizStackedBars()
     {
@@ -8002,26 +8117,19 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw a financial "Open/High/Low/Close" (OHLC) plot, including candlestick plots.
-     * Data format can be text-data (label, Yo, Yh, Yl, Yc) or data-data (label, X, Yo, Yh, Yl, Yc).
-     * Yo="Opening price", Yc="Closing price", Yl="Low price", Yh="High price".
-     * Each row must have exactly 4 Y values. Indicate a missing point using empty strings for each Yx.
-     * There are 3 subtypes, selected by $draw_candles and $always_fill.
-     *   $draw_candles  $always_fill  Description:
-     *    FALSE          N/A          A basic OHLC chart with a vertical line for price range, horizontal
-     *                                tick marks on left for opening price and right for closing price.
-     *    TRUE           FALSE        A candlestick plot with filled body indicating close down, outline
-     *                                for closing up, and vertical wicks for low and high prices.
-     *    TRUE           TRUE         A candlestick plot where the candle bodies are always filled.
-     * These map to 3 plot types per the $plots[] array.
+    /**
+     * Draws an ohlc, candlesticks, or candlesticks2 plot ("Open/High/Low/Close" OHLC plot)
      *
-     * Data color usage:                        If closes down:   If closes up or unchanged:
-     *    Candlestick body, ohlc range line:      color 0           color 1
-     *    Candlestick wicks, ohlc tick marks:     color 2           color 3
-     * There are three member variables that control the width (candlestick body or tick marks):
-     *     ohlc_max_width, ohlc_min_width, ohlc_frac_width
-     * (There is no API to change them at this time.)
+     * This is the main function for drawing an ohlc, candlesticks, or
+     * candlesticks2 plot, which are typically used to show price changes in
+     * financial instruments.  Supported data types are text-data and
+     * data-data, each with exactly 4 Y values per row: Open, High, Low, and
+     * Close. The 2 parameters select one of the 3 plot subtypes.
+     *
+     * @param bool $draw_candles  True to draw a candlestick plot, False to draw an ohlc plot
+     * @param bool $always_fill  True to always fill, False or omit to fill only when closing down
+     * @return bool  Returns True (False on error if an error handler returns True)
+     * @since 5.3.0
      */
     protected function DrawOHLC($draw_candles, $always_fill = FALSE)
     {
@@ -8126,11 +8234,16 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw a bubble chart, which is a scatter plot with bubble size showing the Z value.
+    /**
+     * Draws a bubbles plot (Bubble chart)
+     *
+     * This is the main function for drawing a bubbles plot, which is a
+     * scatter plot with bubble size showing the Z value.
      * Supported data type is data-data-xyz with rows of (label, X, Y1, Z1, ...)
      * with multiple data sets (Y, Z pairs) supported.
-     * Bubble sizes are scaled per the min_z and max_z calculated in FindDataLimits.
+     *
+     * @return bool  Returns True (False on error if an error handler returns True)
+     * @since 5.5.0
      */
     protected function DrawBubbles()
     {
@@ -8183,11 +8296,17 @@ class PHPlot
         return TRUE;
     }
 
-    /*
-     * Draw a box plot. Each row has 5 or more Y values: (Ymin, YQ1, Ymid, YQ3, Ymax, [Youtlier1,...])
-     * Typically, YQ1 = lower quartile (25%), Ymid = Median (50%), and YQ3 = upper quartile (75%),
-     * but PHPlot does not assume or enforce anything but Ymin <= YQ1 <= Ymid <= YQ3 <= Ymax.
-     * Outliers should be < Ymin or > Ymax, but PHPlot does not enforce that either.
+    /**
+     * Draws a boxes plot (Box Plot or Box and Whisker plot)
+     *
+     * This is the main function for drawing a boxes plot.  Supported data
+     * types are text-data and data-data, each with 5 or more Y values per
+     * row. The first 5 values are Ymin, YQ1, Ymid, YQ3, Ymax. Any additional
+     * values are outliers. PHPlot requires Ymin <= YQ1 <= Ymin <= YQ3 <= Ymax
+     * but does not assume anything about specific values (quartile, median).
+     *
+     * @return bool  Returns True (False on error if an error handler returns True)
+     * @since 6.1.0
      */
     protected function DrawBoxes()
     {
@@ -8283,7 +8402,6 @@ class PHPlot
         }
         return TRUE;
     }
-
 
     /**
      * Draws the current graph onto the image
@@ -8652,7 +8770,7 @@ class PHPlot
  * images. Unlike PHPlot which usually creates indexed RGB files limited to
  * 256 total colors, PHPlot_truecolor objects use images which do not have a
  * limit on the number of colors.
- * 
+ *
  * Note: Without a background image, the PHPlot class creates a palette
  * (indexed) color image, and the PHPlot_truecolor class creates a truecolor
  * image. If a background image is used with the constructor of either class,
