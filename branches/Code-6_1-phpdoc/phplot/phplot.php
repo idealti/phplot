@@ -426,13 +426,14 @@ class PHPlot
     }
 
     /**
-     * Initialize a PHPlot object (used by PHPlot and PHPlot_truecolor constructors)
+     * Initializes a PHPlot object (used by PHPlot and PHPlot_truecolor constructors)
      *
      * @param string $imagecreate_function  GD function to use: imagecreate or imagecreatetruecolor
      * @param int $width  Image width in pixels
      * @param int $height  Image height in pixels
      * @param string $output_file  Path for output file. Omit, or NULL, or '' to mean no output file
      * @param string $input_file   Path to a file to be used as background. Omit, NULL, or '' for none
+     * @since 5.6.0
      */
     protected function initialize($imagecreate_function, $width, $height, $output_file, $input_file)
     {
@@ -463,6 +464,7 @@ class PHPlot
      * Note: This does not work if an input file was provided to the constructor.
      *
      * @return string[] Array of object property names, as required by PHP spec for __sleep()
+     * @since 5.8.0
      */
     function __sleep()
     {
@@ -475,6 +477,7 @@ class PHPlot
      * Cleans up object after unserialization
      *
      * Recreates the image resource (which is not serializable), after validating the PHPlot version.
+     * @since 5.8.0
      */
     function __wakeup()
     {
@@ -494,6 +497,7 @@ class PHPlot
      * @param int $width  Reference variable for width of the image in pixels
      * @param int $height  Reference variable for height of the image in pixels
      * @return resource  Image resource (False on error if an error handler returns True)
+     * @since 5.0.4
      */
     protected function GetImage($image_filename, &$width, &$height)
     {
@@ -569,6 +573,7 @@ class PHPlot
      * @param int[] $color  Color specification as (R, G, B, A), or unset variable
      * @param int $default_color_index  An already-allocated GD color index to use if $color is unset
      * @return int  A GD color index that can be used when drawing
+     * @since 5.2.0
      */
     protected function GetColorIndex(&$color, $default_color_index = 0)
     {
@@ -586,6 +591,7 @@ class PHPlot
      * @param array $color_array  Array of color specifications, each an array (R,G,B,A)
      * @param int $max_colors  Limit color allocation to no more than this number of colors
      * @return int[]  Array of GD color indexes that can be used when drawing
+     * @since 5.3.1
      */
     protected function GetColorIndexArray($color_array, $max_colors)
     {
@@ -604,6 +610,7 @@ class PHPlot
      * @param array $color_array  Array of color specifications, each an array (R,G,B,A)
      * @param int $max_colors  Limit color allocation to no more than this number of colors
      * @return int[]  Array of GD color indexes that can be used when drawing shadow colors
+     * @since 5.3.1
      */
     protected function GetDarkColorIndexArray($color_array, $max_colors)
     {
@@ -621,6 +628,7 @@ class PHPlot
      *
      * @param int[] $color  Color specification as (R, G, B, A)
      * @return int  A GD color index that can be used when drawing a shadow color
+     * @since 5.2.0
      */
     protected function GetDarkColorIndex($color)
     {
@@ -1408,7 +1416,7 @@ class PHPlot
     }
 
     /**
-     * Select which font to use for a plot element
+     * Selects which font to use for a plot element
      *
      * This uses either GD (fixed) or TrueType fonts, depending on the default text
      * font type as set with SetUseTTF().
@@ -1433,6 +1441,7 @@ class PHPlot
      *
      * @param array $font  The font, specified as a PHPlot font array
      * @return int  Spacing between text lines in pixels for text using this font
+     * @since 5.0.6
      */
     protected function GetLineSpacing($font)
     {
@@ -2038,6 +2047,7 @@ class PHPlot
      * Originally submitted by Thiemo Nagel. Modified to add more options based on mjpg-streamer.
      *
      * @return bool  True always
+     * @since 5.8.0
      */
     protected function DisableCaching()
     {
@@ -2098,7 +2108,7 @@ class PHPlot
     }
 
     /**
-     * Draw a text message on the image, replacing the plot
+     * Draws a text message on the image, replacing the plot
      *
      * This is used for PHPlot error handling, and is available for
      * application-level error handling or other special purposes.
@@ -2253,7 +2263,7 @@ class PHPlot
 /////////////////////////////////////////////
 
     /**
-     * Position and control X data labels
+     * Positions and controls X data labels
      *
      * For vertical plots, these are X axis data labels, showing label strings from the data array.
      * Accepted positions are: plotdown, plotup, both, none.
@@ -2274,7 +2284,7 @@ class PHPlot
     }
 
     /**
-     * Position and control Y data labels
+     * Positions and controls Y data labels
      *
      * For vertical plots, these are Y data value labels, showing the data values.
      * Accepted positions are: plotin, plotstack, none.
@@ -2295,7 +2305,7 @@ class PHPlot
     }
 
     /**
-     * Position the X tick labels
+     * Positions the X tick labels
      *
      * @param string $which_xtlp  Desired label position: plotdown | plotup | both | none | xaxis
      * @return bool  True (False on error if an error handler returns True)
@@ -2311,7 +2321,7 @@ class PHPlot
     }
 
     /**
-     * Position the Y tick labels
+     * Positions the Y tick labels
      *
      * @param string $which_ytlp  Desired label position: plotleft | plotright | both | none | yaxis
      * @return bool  True (False on error if an error handler returns True)
@@ -2349,7 +2359,6 @@ class PHPlot
      * @param string $mode  Which label type to configure: x | y | xd | yd | p
      * @param array $args  Additional arguments controlling the format type
      * @return bool  True (False on error if an error handler returns True)
-
      */
     protected function SetLabelType($mode, $args)
     {
@@ -2617,6 +2626,7 @@ class PHPlot
      * @param string $acc  String of accepted choices, lower-case, choices separated by comma space
      * @param string $func  Name of the calling function, for error messages, usually __FUNCTION__
      * @return string[]|null  Downcased/trimmed option values if valid; NULL on error if error handler returns
+     * @since 5.1.2
      */
     protected function CheckOptionArray($opt, $acc, $func)
     {
@@ -2639,6 +2649,7 @@ class PHPlot
      *
      * @param string $valid_types  Valid data types, separated by comma space
      * @return bool  True if data type is valid; False on error if an error handler returns True
+     * @since 5.1.2
      */
     protected function CheckDataType($valid_types)
     {
@@ -2656,6 +2667,7 @@ class PHPlot
      * This sets the 'datetype_*' class variables, which are used by other functions
      * that need to access the data array. This keeps the information about the meaning
      * of each data type in a single place (the datatypes static array).
+     * @since 5.1.2
      */
     protected function DecodeDataType()
     {
@@ -2838,7 +2850,7 @@ class PHPlot
     }
 
     /**
-     * Select dashed or solid grid lines
+     * Selects dashed or solid grid lines
      *
      * @param bool $ddg  True to draw the grid with dashed lines, false to use solid lines
      * @return bool  True always
@@ -3142,6 +3154,7 @@ class PHPlot
      *
      * This pads the smaller of $point_shapes[] and $point_sizes[], making them the same size.
      * It is called just before drawing any plot that needs 'points'.
+     * @since 5.1.0
      */
     protected function CheckPointParams()
     {
@@ -4287,7 +4300,7 @@ class PHPlot
     }
 
     /**
-     * Initialize range variables for CalcPlotRange()
+     * Initializes range variables for CalcPlotRange()
      *
      * This is a helper for CalcPlotRange(), which calls it 4 times, to initialize
      * each end of the range for each axis. It also sets flags to indicate
@@ -4819,7 +4832,7 @@ class PHPlot
     }
 
     /**
-     * Translate world coordinates into device coordinates
+     * Translates world coordinates into device coordinates
      *
      * This is a public interface to xtr() and ytr(), which are left as public
      * for historical reasons but deprecated for public use. It maps (x,y) in
@@ -5465,7 +5478,7 @@ class PHPlot
 /////////////////////////////////////////////
 
     /**
-     * Fill the image background, with a tiled image file or solid color.
+     * Fills the image background, with a tiled image file or solid color
      *
      * @param bool $overwrite  True to do it even if already done, False or omit to do once only
      * @return bool  True always
@@ -5486,7 +5499,7 @@ class PHPlot
     }
 
     /**
-     * Fill the plot area background, with a tiled image file or solid color.
+     * Fills the plot area background, with a tiled image file or solid color
      *
      * @return bool  True always
      */
@@ -5742,7 +5755,7 @@ class PHPlot
      * @param float $x  X value for the label
      * @param int $x_pixels  X device coordinate for this tick mark
      * @return bool  True always
-     * @since 5.8.0
+     * @since 5.0.5
      */
     protected function DrawXTick($x, $x_pixels)
     {
@@ -5972,6 +5985,7 @@ class PHPlot
      * @param mixed $text The text to draw after formatting with FormatLabel()
      * @param mixed[] $dvl  Associative array with additional label position controls (see above)
      * @return bool  True, if the text was drawn, or False, if it will not fit
+     * @since 5.1.3
      */
     protected function DrawDataValueLabel($x_or_y, $row, $column, $x_world, $y_world, $text, $dvl)
     {
@@ -6104,7 +6118,7 @@ class PHPlot
      * @param int $ypos  Y position in pixels of the line
      * @param int $row  Index of the data row being drawn
      * @return bool  True always
-     * @since 5.1.2
+     * @since 6.0.0
      */
     protected function DrawYDataLine($ypos, $row)
     {
@@ -6372,6 +6386,7 @@ class PHPlot
      *    'colorbox_mode', 'colorbox_width' : Colorbox/shape mode and width factor.
      *
      * @return array  Legend sizing parameter associative array
+     * @since 5.4.0
      */
     protected function GetLegendSizeParams()
     {
@@ -6445,6 +6460,7 @@ class PHPlot
      * @param int $width  Width of the legend box
      * @param int $height  Height of the legend box
      * @return int[]  Coordinates of the upper left corner of the legend box as an array ($x, $y)
+     * @since 5.4.0
      */
     protected function GetLegendPosition($width, $height)
     {
@@ -7667,6 +7683,7 @@ class PHPlot
      * the points, the error bars (if applicable), and not the data labels.
      *
      * @return bool  True (False on error if an error handler returns True)
+     * @since 5.1.3
      */
     protected function DrawLinePoints()
     {
