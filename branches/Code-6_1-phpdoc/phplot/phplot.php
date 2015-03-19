@@ -535,7 +535,7 @@ class PHPlot
      *
      * @param string $which_input_file  Pathname to the image file to use as a background
      * @deprecated  Public use discouraged; intended for use by class constructor
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetInputFile($which_input_file)
     {
@@ -634,7 +634,7 @@ class PHPlot
     /**
      * Sets or reverts all colors and styles to their defaults
      *
-     *  @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function SetDefaultStyles()
     {
@@ -658,7 +658,7 @@ class PHPlot
      * Sets the overall image background color
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetBackgroundColor($which_color)
     {
@@ -669,7 +669,7 @@ class PHPlot
      * Sets the plot area background color, which is only drawn if SetDrawPlotAreaBackground is used.
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetPlotBgColor($which_color)
     {
@@ -680,7 +680,7 @@ class PHPlot
      * Sets the color of the plot title, and the default color of the X and Y titles.
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetTitleColor($which_color)
     {
@@ -691,7 +691,7 @@ class PHPlot
      * Sets the color of the X title, overriding the color set with SetTitleColor()
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.2.0
      */
     function SetXTitleColor($which_color)
@@ -703,7 +703,7 @@ class PHPlot
      * Sets the color of the Y title, overriding the color set with SetTitleColor()
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.2.0
      */
     function SetYTitleColor($which_color)
@@ -715,7 +715,7 @@ class PHPlot
      * Sets the color of the axis tick marks
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetTickColor($which_color)
     {
@@ -734,7 +734,7 @@ class PHPlot
      * Sets the general text color, which is the default color for legend text, tick and data labels
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetTextColor($which_color)
     {
@@ -745,7 +745,7 @@ class PHPlot
      * Sets the color for data labels, overriding the default set with SetTextColor()
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.7.0
      */
     function SetDataLabelColor($which_color)
@@ -759,7 +759,7 @@ class PHPlot
      * Note: Data Value Labels are the labels within the plot area (not the axis labels).
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.7.0
      */
     function SetDataValueLabelColor($which_color)
@@ -771,7 +771,7 @@ class PHPlot
      * Sets the color for pie chart data labels, overriding the default set with SetGridColor()
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.7.0
      */
     function SetPieLabelColor($which_color)
@@ -783,7 +783,7 @@ class PHPlot
      * Sets the color for pie chart segment borders
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 6.0.0
      */
     function SetPieBorderColor($which_color)
@@ -795,7 +795,7 @@ class PHPlot
      * Sets the color for tick labels, overriding the default set with SetTextColor()
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.7.0
      */
     function SetTickLabelColor($which_color)
@@ -807,7 +807,7 @@ class PHPlot
      * Sets the X and Y grid colors, and the data label line color
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetLightGridColor($which_color)
     {
@@ -822,7 +822,7 @@ class PHPlot
      * Note: This has nothing to do with the grid, and we don't know where this name came from.
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetGridColor($which_color)
     {
@@ -833,7 +833,7 @@ class PHPlot
      * Sets the color used for the image border, drawn if SetImageBorderType() enables it
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetImageBorderColor($which_color)
     {
@@ -844,7 +844,7 @@ class PHPlot
      * Designates a color to be transparent, if transparency is supported by the image format
      *
      * @param string|int[]|null $which_color  Color to make transparent; empty|omit|NULL to reset to none
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetTransparentColor($which_color = NULL)
     {
@@ -856,7 +856,7 @@ class PHPlot
      * Sets the color used for the legend background, which defaults to the image background color
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 6.0.0
      */
     function SetLegendBgColor($which_color)
@@ -868,7 +868,7 @@ class PHPlot
      * Sets the color used for the legend text, which defaults to the general text color
      *
      * @param string|int[] $which_color  Color name or spec (#rrggbb, (r,g,b) array, etc)
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 6.0.0
      */
     function SetLegendTextColor($which_color)
@@ -884,7 +884,7 @@ class PHPlot
      * or a large one included from the file 'rgb.inc.php'.
      *
      * @param array|string $which_color_array  Color map array (name=>(R,G,B[,A]), or keyword small | large
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetRGBArray($which_color_array)
     {
@@ -953,7 +953,7 @@ class PHPlot
      *
      * @param string|int[] $color_asked  Color spec to parse (color name, #rrggbb, (r,g,b) array, etc)
      * @param int $alpha  Optional default alpha value (0-127, default 0 for opaque)
-     * @return int[]  color component values as array (red, green, blue, alpha)
+     * @return int[]  Color component values as array (red, green, blue, alpha)
      * @deprecated  Public use discouraged; intended for class internal use
      */
     function SetRGBColor($color_asked, $alpha = 0)
@@ -1006,7 +1006,7 @@ class PHPlot
      * @param array|string $which_data  Array of color specifications, or one color, or empty
      * @param array|string $which_border  Data border colors, deprecated - use SetDataBorderColors() instead
      * @param int $alpha  Default alpha to apply to all data colors that do not have an alpha value
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetDataColors($which_data = NULL, $which_border = NULL, $alpha = NULL)
     {
@@ -1055,7 +1055,7 @@ class PHPlot
      * set the default of all black regardless.
      *
      * @param array|string $which_br  Array of color specifications, or one color, or empty
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetDataBorderColors($which_br = NULL)
     {
@@ -1087,7 +1087,7 @@ class PHPlot
      * string or False loads the default colors even if colors were already set.
      *
      * @param array|string $which_err  Array of color specifications, or one color, or empty
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetErrorBarColors($which_err = NULL)
     {
@@ -1122,7 +1122,7 @@ class PHPlot
      * this with $which_ndxcol set, the result is a GD line style array.
      *
      * @param string $which_style  Dashed line specification, in the form <pixels_on>-<pixels_off>...
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetDefaultDashedStyle($which_style)
     {
@@ -1170,7 +1170,7 @@ class PHPlot
      * Sets line widths (thickness) for each data set
      *
      * @param int[]|int $which_lw  Array of line widths in pixels, or a single value to use for all data sets
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetLineWidths($which_lw=NULL)
     {
@@ -1186,7 +1186,7 @@ class PHPlot
      * Sets the line style (solid or dashed) for each data set
      *
      * @param string[]|string $which_ls  Array or single keyword: solid | dashed | none
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetLineStyles($which_ls=NULL)
     {
@@ -1206,7 +1206,7 @@ class PHPlot
      * Sets spacing between lines of multi-line labels
      *
      * @param int $which_spc Text line spacing factor (pixels for GD text, scale control for TTF text)
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetLineSpacing($which_spc)
     {
@@ -1218,7 +1218,7 @@ class PHPlot
      * Sets the default font type
      *
      * @param bool $which_ttf  True to default to TrueType fonts, False to default to GD (fixed) fonts
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetUseTTF($which_ttf)
     {
@@ -1230,7 +1230,7 @@ class PHPlot
      * Sets the default TrueType font directory
      *
      * @param string $which_path  Full path to a directory containing TrueType fonts
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetTTFPath($which_path)
     {
@@ -1245,7 +1245,7 @@ class PHPlot
      * Sets the default TrueType font, and resets all elements to use that TrueType font and default sizes
      *
      * @param string $which_font  Font filename or path; omit or NULL to use a default font
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetDefaultTTFont($which_font = NULL)
     {
@@ -1294,7 +1294,7 @@ class PHPlot
     /**
      * Selects all the default font values and sizes
      *
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     protected function SetDefaultFonts()
     {
@@ -1326,7 +1326,7 @@ class PHPlot
      * @param string $which_elem  Name of the element to change the font for
      * @param int|string $which_font  GD font number: 1 2 3 4 or 5
      * @param int $which_spacing  Optional spacing in pixels between text lines
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.0.6
      */
     function SetFontGD($which_elem, $which_font, $which_spacing = NULL)
@@ -1358,7 +1358,7 @@ class PHPlot
      * @param string $which_font  TrueType font file or pathname; empty or NULL for the default font
      * @param int $which_size  Optional font size in points (default 12)
      * @param int $which_spacing  Optional line spacing adjustment factor
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.0.6
      */
     function SetFontTTF($which_elem, $which_font, $which_size = 12, $which_spacing = NULL)
@@ -1419,7 +1419,7 @@ class PHPlot
      * @param int|string $which_font  For GD fonts, a font number; for TrueType, a font filename or pathname
      * @param int $which_size  Optional font size in points for TrueType fonts, ignored for GD fonts
      * @param int $line_spacing  Optional line spacing adjustment factor
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetFont($which_elem, $which_font, $which_size = 12, $line_spacing = NULL)
     {
@@ -1529,7 +1529,7 @@ class PHPlot
      * @param string $text  The text to draw or size (can have newlines \n within)
      * @param float $h_factor  Horizontal alignment factor: 0=left|0.5=center|1=right (ignored if !$draw_it)
      * @param float $v_factor  Vertical alignment factor: 0=top|0.5=center|1=bottom (ignored if !$draw_it)
-     * @return bool|int[]  Returns True, if drawing text; an array of ($width, $height) if not.
+     * @return bool|int[]  True, if drawing text; an array of ($width, $height) if not.
      * @since 5.0.5
      */
     protected function ProcessTextGD($draw_it, $font, $angle, $x, $y, $color, $text, $h_factor, $v_factor)
@@ -1638,7 +1638,7 @@ class PHPlot
      * @param string $text  The text to draw or size (can have newlines \n within)
      * @param float $h_factor  Horizontal alignment factor: 0=left|0.5=center|1=right (ignored if !$draw_it)
      * @param float $v_factor  Vertical alignment factor: 0=top|0.5=center|1=bottom (ignored if !$draw_it)
-     * @return bool|int[]  Returns True, if drawing text; an array of ($width, $height) if not.
+     * @return bool|int[]  True, if drawing text; an array of ($width, $height) if not.
      * @since 5.0.5
      */
     protected function ProcessTextTTF($draw_it, $font, $angle, $x, $y, $color, $text, $h_factor, $v_factor)
@@ -1825,7 +1825,7 @@ class PHPlot
      * @param string $text  The text to draw or size (can have newlines \n within)
      * @param string $halign  Horizontal alignment: left |  center | right (ignored if $draw_it is False)
      * @param string $valign  Vertical alignment: top | center | bottom (ignored if $draw_it is False)
-     * @return bool|int[]  Returns True, if drawing text; an array of ($width, $height) if not.
+     * @return bool|int[]  True, if drawing text; an array of ($width, $height) if not.
      */
     protected function ProcessText($draw_it, $font_id, $angle, $x, $y, $color, $text, $halign, $valign)
     {
@@ -1870,7 +1870,7 @@ class PHPlot
      * @param string $which_text  The text to draw, with newlines (\n) between lines
      * @param string $which_halign  Horizontal alignment (relative to the image): left | center | right
      * @param string $which_valign  Vertical alignment (relative to the image): top | center | bottom
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function DrawText($which_font, $which_angle, $which_xpos, $which_ypos, $which_color, $which_text,
                       $which_halign = 'left', $which_valign = 'bottom')
@@ -1893,7 +1893,7 @@ class PHPlot
      * @param string|array|null $which_font  Text element name, empty or NULL for 'generic', or font array
      * @param float $which_angle  Text angle in degrees
      * @param string $which_text  The text to calculate size of
-     * @return int[]  Returns a two element array ($width, $height) of the text
+     * @return int[]  A two element array ($width, $height) of the text
      */
     function SizeText($which_font, $which_angle, $which_text)
     {
@@ -1910,7 +1910,7 @@ class PHPlot
      * Selects the graphic image format generated by DrawGraph()
      *
      * @param string $format  The format to use: jpg | png | gif | wbmp
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetFileFormat($format)
     {
@@ -1942,7 +1942,7 @@ class PHPlot
      *
      * @param string $input_file  Path to the file to be used (jpeg, png or gif)
      * @param string $mode   Optional method for the background: centeredtile | tile | scale
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetBgImage($input_file, $mode='centeredtile')
     {
@@ -1956,7 +1956,7 @@ class PHPlot
      *
      * @param string $input_file  Path to the file to be used (jpeg, png or gif)
      * @param string $mode   Optional method for the background: centeredtile | tile | scale
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetPlotAreaBgImage($input_file, $mode='tile')
     {
@@ -1971,7 +1971,7 @@ class PHPlot
      * Note: Output file has no effect unless SetIsInline(TRUE) is called.
      *
      * @param string $which_output_file  Pathname of the file to write the image data into
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetOutputFile($which_output_file)
     {
@@ -1988,7 +1988,7 @@ class PHPlot
      * This will suppress the Content-Type headers that would otherwise be sent.
      *
      * @param bool $which_ii  True to suppress HTTP headers, False to include the headers
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetIsInline($which_ii)
     {
@@ -2001,7 +2001,7 @@ class PHPlot
      *
      * @param string $mime_type  Reference variable where the MIME type is returned
      * @param string $output_f  Reference variable where the GD output function name is returned
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.5.0
      */
     protected function GetImageType(&$mime_type, &$output_f)
@@ -2037,7 +2037,7 @@ class PHPlot
      * HTTP headers that discourage browser-side caching.
      * Originally submitted by Thiemo Nagel. Modified to add more options based on mjpg-streamer.
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function DisableCaching()
     {
@@ -2053,7 +2053,7 @@ class PHPlot
      *
      * This is automatically called by DrawGraph(), unless SetPrintImage(False) was used.
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function PrintImage()
     {
@@ -2108,7 +2108,7 @@ class PHPlot
      *
      * @param string $text  Text of the message to display in the image
      * @param string[] $options  Optional associative array of control options
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.7.0
      */
     function DrawMessage($text, $options = NULL)
@@ -2191,7 +2191,7 @@ class PHPlot
      * Enables or disables error image production on failure
      *
      * @param bool $error_image  True to enable the error image, False to disable it.
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.5.0
      */
     function SetFailureImage($error_image)
@@ -2203,7 +2203,7 @@ class PHPlot
     /**
      * Begins a Motion-JPEG (or other type) plot stream
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.8.0
      */
     function StartStream()
@@ -2219,7 +2219,7 @@ class PHPlot
     /**
      * Ends a Motion-JPEG (or other type) plot stream
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.8.0
      */
     function EndStream()
@@ -2232,7 +2232,7 @@ class PHPlot
     /**
      * Outputs the generated plot as one frame in a plot stream
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.8.0
      */
     function PrintImageFrame()
@@ -2261,7 +2261,7 @@ class PHPlot
      * Accepted positions are: plotin, plotstack, none.
      *
      * @param string $which_xdlp  Desired label position: plotdown | plotup | both | none | plotin | plotstack
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetXDataLabelPos($which_xdlp)
     {
@@ -2282,7 +2282,7 @@ class PHPlot
      * Accepted positions are: plotleft, plotright, both, none.
      *
      * @param string $which_ydlp  Desired label position: plotleft | plotright | both | none | ...
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetYDataLabelPos($which_ydlp)
     {
@@ -2298,7 +2298,7 @@ class PHPlot
      * Position the X tick labels
      *
      * @param string $which_xtlp  Desired label position: plotdown | plotup | both | none | xaxis
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetXTickLabelPos($which_xtlp)
     {
@@ -2314,7 +2314,7 @@ class PHPlot
      * Position the Y tick labels
      *
      * @param string $which_ytlp  Desired label position: plotleft | plotright | both | none | yaxis
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetYTickLabelPos($which_ytlp)
     {
@@ -2348,7 +2348,7 @@ class PHPlot
      *
      * @param string $mode  Which label type to configure: x | y | xd | yd | p
      * @param array $args  Additional arguments controlling the format type
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
 
      */
     protected function SetLabelType($mode, $args)
@@ -2408,7 +2408,7 @@ class PHPlot
      *
      * @param string $type  Formatting mode: data | time | printf | custom, or '' to reset to default
      * @param mixed $varargs  One or more additional arguments that depend on $type
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetXLabelType($type=NULL, $varargs=NULL)  // Variable arguments
     {
@@ -2421,7 +2421,7 @@ class PHPlot
      *
      * @param string $type  Formatting mode: data | time | printf | custom, or '' to reset to default
      * @param mixed $varargs  One or more additional arguments that depend on $type
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.1.0
      */
     function SetXDataLabelType($type=NULL, $varargs=NULL)  // Variable arguments, named params are unused
@@ -2435,7 +2435,7 @@ class PHPlot
      *
      * @param string $type  Formatting mode: data | time | printf | custom, or '' to reset to default
      * @param mixed $varargs  One or more additional arguments that depend on $type
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetYLabelType($type=NULL, $varargs=NULL)  // Variable arguments, named params are unused
     {
@@ -2448,7 +2448,7 @@ class PHPlot
      *
      * @param string $type  Formatting mode: data | time | printf | custom, or '' to reset to default
      * @param mixed $varargs  One or more additional arguments that depend on $type
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.1.0
      */
     function SetYDataLabelType($type=NULL, $varargs=NULL)  // Variable arguments, named params are unused
@@ -2463,7 +2463,7 @@ class PHPlot
      * @param string|string[] $source_  Label source keyword or array: percent | value | label | index | ''
      * @param string $type  Optional formatting mode: data | printf | custom
      * @param mixed $varargs  Zero or more additional arguments telling how to format the label
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.6.0
      */
     function SetPieLabelType($source_, $type=NULL, $varargs=NULL)  // Variable arguments, named params unused
@@ -2489,7 +2489,7 @@ class PHPlot
      * to SetXLabelType() also, there is no need to use SetXTimeFormat().
      *
      * @param string $which_xtf  Formatting string to use (see PHP function strftime())
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetXTimeFormat($which_xtf)
     {
@@ -2505,7 +2505,7 @@ class PHPlot
      * to SetYLabelType() also, there is no need to use SetYTimeFormat().
      *
      * @param string $which_ytf  Formatting string (see PHP function strftime())
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetYTimeFormat($which_ytf)
     {
@@ -2521,7 +2521,7 @@ class PHPlot
      *
      * @param string $decimal_point  The character to use as a decimal point
      * @param string $thousands_sep  The character to use as a thousands grouping separator
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.0.4
      */
     function SetNumberFormat($decimal_point, $thousands_sep)
@@ -2535,7 +2535,7 @@ class PHPlot
      * Sets the text angle for X tick labels, and the default angle for X data labels
      *
      * @param float $which_xla  Desired angle for label text, in degrees
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetXLabelAngle($which_xla)
     {
@@ -2549,7 +2549,7 @@ class PHPlot
      * Note: Unlike SetXLabelAngle(), this does not also apply to data labels.
      *
      * @param float $which_yla  Desired angle for label text, in degrees
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetYLabelAngle($which_yla)
     {
@@ -2561,7 +2561,7 @@ class PHPlot
      * Sets the text angle for X data labels (overriding an angle set with SetXLabelAngle)
      *
      * @param float $which_xdla  Desired angle for label text, in degrees
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.1.0
      */
     function SetXDataLabelAngle($which_xdla)
@@ -2574,7 +2574,7 @@ class PHPlot
      * Sets the angle for Y data labels
      *
      * @param float $which_ydla  Desired angle for label text, in degrees
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.1.0
      */
     function SetYDataLabelAngle($which_ydla)
@@ -2638,7 +2638,7 @@ class PHPlot
      * drawing function.
      *
      * @param string $valid_types  Valid data types, separated by comma space
-     * @return bool Returns True if data type is valid; False on error if an error handler returns True
+     * @return bool  True if data type is valid; False on error if an error handler returns True
      */
     protected function CheckDataType($valid_types)
     {
@@ -2680,7 +2680,7 @@ class PHPlot
      *
      * Note error messages refer to the caller, the public DrawGraph().
      *
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.1.3
      */
     protected function CheckDataArray()
@@ -2740,7 +2740,7 @@ class PHPlot
      * Controls browser-side image caching
      *
      * @param bool $which_browser_cache  True to allow the browser to cache the image, false to not allow
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetBrowserCache($which_browser_cache)
     {
@@ -2752,7 +2752,7 @@ class PHPlot
      * Determines whether or not DrawGraph() automatically outputs the image when the plot is drawn
      *
      * @param bool $which_pi  True to have DrawGraph() call PrintImage() when done, false to not output
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetPrintImage($which_pi)
     {
@@ -2767,7 +2767,7 @@ class PHPlot
      * which sides should get a border. 'full' means all 4 sides.
      *
      * @param string|string[] $pdt  Border control keyword(s):  left|right|top|bottom|sides|none|full
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetPlotBorderType($pbt)
     {
@@ -2780,7 +2780,7 @@ class PHPlot
      * Sets the type of border drawn around the image
      *
      * @param string $sibt  Border type: raised | solid | plain | none
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetImageBorderType($sibt)
     {
@@ -2792,7 +2792,7 @@ class PHPlot
      * Sets the width of the image border, if enabled
      *
      * @param int $width  Image border width in pixels
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.1.2
      */
     function SetImageBorderWidth($width)
@@ -2805,7 +2805,7 @@ class PHPlot
      * Enables or disables drawing of the plot area background color
      *
      * @param bool $dpab  True to draw the plot area background color, false to not draw it
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetDrawPlotAreaBackground($dpab)
     {
@@ -2817,7 +2817,7 @@ class PHPlot
      * Enables or disables drawing of the X (vertical) grid lines
      *
      * @param bool $dxg  True to draw the X grid lines, false to not draw them; or NULL to restore default
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetDrawXGrid($dxg = NULL)
     {
@@ -2829,7 +2829,7 @@ class PHPlot
      * Enables or disables drawing of the Y grid lines
      *
      * @param bool $dyg  True to draw the Y grid lines, false to not draw them; or NULL to restore default
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetDrawYGrid($dyg = NULL)
     {
@@ -2841,7 +2841,7 @@ class PHPlot
      * Select dashed or solid grid lines
      *
      * @param bool $ddg  True to draw the grid with dashed lines, false to use solid lines
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetDrawDashedGrid($ddg)
     {
@@ -2853,7 +2853,7 @@ class PHPlot
      * Enables or disables drawing of X data label lines
      *
      * @param bool $dxdl  True to draw the X data label lines, false to not draw them
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetDrawXDataLabelLines($dxdl)
     {
@@ -2865,7 +2865,7 @@ class PHPlot
      * Enables or disables drawing of Y data label Lines (horizontal plots only)
      *
      * @param bool $dydl  True to draw the Y data label lines, false to not draw them
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 6.0.0
      */
     function SetDrawYDataLabelLines($dydl)
@@ -2878,7 +2878,7 @@ class PHPlot
      * Enables or disables drawing of borders around pie chart segments
      *
      * @param bool $dpb  True to draw the pie chart segment borders, false to not draw them
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 6.0.0
      */
     function SetDrawPieBorders($dpb)
@@ -2891,7 +2891,7 @@ class PHPlot
      * Enables or disables drawing of data borders, for bars and stackedbars plots
      *
      * @param bool $ddb  True to draw the data borders, false to not draw them
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 6.0.0
      */
     function SetDrawDataBorders($ddb)
@@ -2904,7 +2904,7 @@ class PHPlot
      * Sets the main title text for the plot
      *
      * @param string $which_title  The text to use for the main plot title. Can contain multiple lines
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetTitle($which_title)
     {
@@ -2921,7 +2921,7 @@ class PHPlot
      *
      * @param string $which_xtitle The text string to use for the X axis title. Can contain multiple lines
      * @param string $which_xpos   Optional position for the X axis and title: plotdown plotup both none
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetXTitle($which_xtitle, $which_xpos = 'plotdown')
     {
@@ -2943,7 +2943,7 @@ class PHPlot
      *
      * @param string $which_ytitle The text string to use for the Y axis title. Can contain multiple lines
      * @param string $which_ypos   Optional position for the X axis and title: plotleft plotright both none
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetYTitle($which_ytitle, $which_ypos = 'plotleft')
     {
@@ -2964,7 +2964,7 @@ class PHPlot
      * to zero.
      *
      * @param int $which_s Size of the drop shadow in pixels
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetShading($which_s)
     {
@@ -2976,7 +2976,7 @@ class PHPlot
      * Selects the type of plot - how the data will be graphed
      *
      * @param string $which_pt  The plot type, such as bars, lines, pie, ...
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetPlotType($which_pt)
     {
@@ -2989,7 +2989,7 @@ class PHPlot
      * Sets the position of the X axis
      *
      * @param float $pos  Axis position as an integer Y world coordinate; '' or omit for default
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetXAxisPosition($pos='')
     {
@@ -3001,7 +3001,7 @@ class PHPlot
      * Sets the position of the Y axis
      *
      * @param float $pos  Axis position as an integer X world coordinate; '' or omit for default
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetYAxisPosition($pos='')
     {
@@ -3015,7 +3015,7 @@ class PHPlot
      * Note: This controls drawing of the axis line only, and not the ticks, labels, or grid.
      *
      * @param bool $draw  True to draw the axis line, False to not draw it
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.3.0
      */
     function SetDrawXAxis($draw)
@@ -3030,7 +3030,7 @@ class PHPlot
      * Note: This controls drawing of the axis line only, and not the ticks, labels, or grid.
      *
      * @param bool $draw  True to draw the axis line, False to not draw it
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.3.0
      */
     function SetDrawYAxis($draw)
@@ -3043,7 +3043,7 @@ class PHPlot
      * Selects linear or logarithmic scale for the X axis
      *
      * @param string $which_xst  The scale type: linear | log
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetXScaleType($which_xst)
     {
@@ -3055,7 +3055,7 @@ class PHPlot
      * Selects linear or logarithmic scale for the Y axis
      *
      * @param string $which_yst  The scale type: linear | log
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetYScaleType($which_yst)
     {
@@ -3069,7 +3069,7 @@ class PHPlot
      * Note: Use of the equivalent SetXLabelType('data', $which_prec) is preferred.
      *
      * @param int $which_prec  Number of digits to display
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetPrecisionX($which_prec)
     {
@@ -3082,7 +3082,7 @@ class PHPlot
      * Note: Use of the equivalent SetYLabelType('data', $which_prec) is preferred.
      *
      * @param int $which_prec  Number of digits to display
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetPrecisionY($which_prec)
     {
@@ -3093,7 +3093,7 @@ class PHPlot
      * Sets the line width used for error bars
      *
      * @param int $which_seblw  Desired width in pixels of the lines used to draw error bars
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetErrorBarLineWidth($which_seblw)
     {
@@ -3105,7 +3105,7 @@ class PHPlot
      * Sets the position for pie chart labels
      *
      * @param float $which_blp  Label position factor (0 <= blp <= 1); 0 or False for no labels
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetLabelScalePosition($which_blp)
     {
@@ -3117,7 +3117,7 @@ class PHPlot
      * Sets the size of the error bar tee
      *
      * @param int $which_ebs  Length in pixels of the error bar "T"
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetErrorBarSize($which_ebs)
     {
@@ -3129,7 +3129,7 @@ class PHPlot
      * Selects the shape of the error bars
      *
      * @param string $which_ebs  Error bar shape: tee | line
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetErrorBarShape($which_ebs)
     {
@@ -3167,7 +3167,7 @@ class PHPlot
      * that uses points. See CheckPointParams()
      *
      * @param string|string[] $which_pt  Array (or single value) of valid point shapes
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetPointShapes($which_pt)
     {
@@ -3184,7 +3184,7 @@ class PHPlot
      * that uses points. See CheckPointParams()
      *
      * @param string[]|string $which_ps  Array (or single value) of point sizes in pixels
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetPointSizes($which_ps)
     {
@@ -3202,7 +3202,7 @@ class PHPlot
      * Sets whether lines should be broken at missing data, for 'lines' and 'squared' plots.
      *
      * @param bool $bl  True to break the lines, false to connect around missing data
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetDrawBrokenLines($bl)
     {
@@ -3216,7 +3216,7 @@ class PHPlot
      * For a list of available data types, see the static arrays $datatypes and $datatypes_map.
      *
      * @param string $which_dt  The data array format type: text-data | data-data | ...
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetDataType($which_dt)
     {
@@ -3238,7 +3238,7 @@ class PHPlot
      * deferred to CheckDataArray().
      *
      * @param array $which_dv  The data array, an array of row arrays, interpreted per SetDataType()
-     * @return bool Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetDataValues($which_dv)
     {
@@ -3269,7 +3269,7 @@ class PHPlot
      * simplifies the plot drawing functions.
      * Other data color arrays are handled in the Need*Colors() functions instead (if needed).
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function PadArrays()
     {
@@ -3312,7 +3312,7 @@ class PHPlot
      *
      * @param float $number  A floating point number to format
      * @param int $decimals  Number of decimal places in the result
-     * @return string  Returns the formatted result
+     * @return string  The formatted result
      */
     protected function number_format($number, $decimals=0)
     {
@@ -3347,7 +3347,7 @@ class PHPlot
      * @param string $reason  A pre-defined name where a callback can be defined
      * @param callback $function  Function or method to register for callback
      * @param mixed $arg  Optional opaque argument to supply to the callback function when called
-     * @return bool  Returns True if the callback reason is valid, else False
+     * @return bool  True if the callback reason is valid, else False
      * @since 5.0.4
      */
     function SetCallback($reason, $function, $arg = NULL)
@@ -3367,7 +3367,7 @@ class PHPlot
      * to avoid preparing arguments to an unused callback.
      *
      * @param string $reason  A pre-defined name where a callback can be defined
-     * @return callback|false  Returns the current callback for the reason; False if none or invalid
+     * @return callback|false  The current callback for the reason; False if none or invalid
      * @since 5.0.4
      */
     function GetCallback($reason)
@@ -3384,7 +3384,7 @@ class PHPlot
      * was actually registered for that reason.
      *
      * @param string $reason  A pre-defined name where a callback can be defined
-     * @return bool  Returns True if it was a valid callback reason, else False
+     * @return bool  True if it was a valid callback reason, else False
      * @since 5.0.4
      */
     function RemoveCallback($reason)
@@ -3405,7 +3405,7 @@ class PHPlot
      *
      * @param string $reason  A string naming one of the pre-defined callback reasons
      * @param mixed $varargs  Zero or more additional arguments to be passed to the callback
-     * @return mixed  Returns whatever value is returned by the callback function (if any)
+     * @return mixed  Whatever value is returned by the callback function (if any)
      */
     protected function DoCallback($reason, $varargs = NULL)
     {
@@ -3585,7 +3585,7 @@ class PHPlot
      *
      * @param string $label_control  Label position control; either $x_data_label_pos or $y_data_label_pos
      * @param array $dvl  Reference argument for result parameters for DrawDataValueLabel()
-     * @return bool  Returns False if data value labels are off; True if on and $dvl is set
+     * @return bool  False if data value labels are off; True if on and $dvl is set
      * @since 5.3.0
      */
     protected function CheckDataValueLabels($label_control, &$dvl)
@@ -3611,7 +3611,7 @@ class PHPlot
      * and stores the complement of $enable.
      *
      * @param bool $enable  True to enable automatic size calculation, False to use the maximum area
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.6.0
      */
     function SetPieAutoSize($enable)
@@ -3624,7 +3624,7 @@ class PHPlot
      * Sets the starting angle for pie chart segments
      *
      * @param float $angle  Starting angle in degrees
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 6.0.0
      */
     function SetPieStartAngle($angle)
@@ -3637,7 +3637,7 @@ class PHPlot
      * Sets the direction for pie chart segments
      *
      * @param string $which  Direction for pie segments: clockwise | cw | counterclockwise | ccw
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 6.0.0
      */
     function SetPieDirection($which)
@@ -3670,7 +3670,7 @@ class PHPlot
      * vertical (swapped X/Y) plots, they are the X range for each Y.  For X/Y/Z
      * plots, it also calculates min_z and max_z.
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function FindDataLimits()
     {
@@ -3807,7 +3807,7 @@ class PHPlot
      * PHPlot Reference Manual.
      *
      * @param bool $maximize  If True, use full image area (less margins and title space)
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function CalcMargins($maximize)
     {
@@ -4104,7 +4104,7 @@ class PHPlot
      * plot_area_width, and plot_area_height. The margins might come
      * from SetMarginsPixels(), SetPlotAreaPixels(), or CalcMargins().
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.0.5
      */
     protected function CalcPlotAreaPixels()
@@ -4129,7 +4129,7 @@ class PHPlot
      * @param int $which_rm  Right margin in pixels; omit or NULL to auto-calculate
      * @param int $which_tm  Top margin in pixels; omit or NULL to auto-calculate
      * @param int $which_bm  Bottom margin in pixels; omit or NULL to auto-calculate
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetMarginsPixels($which_lm = NULL, $which_rm = NULL, $which_tm = NULL, $which_bm = NULL)
     {
@@ -4155,7 +4155,7 @@ class PHPlot
      * @param int $y1  Top left corner Y coordinate in pixels; omit or NULL to auto-calculate
      * @param int $x2  Bottom right corner X coordinate in pixels; omit or NULL to auto-calculate
      * @param int $y2  Bottom right corner Y coordinate in pixels; omit or NULL to auto-calculate
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetPlotAreaPixels($x1 = NULL, $y1 = NULL, $x2 = NULL, $y2 = NULL)
     {
@@ -4175,7 +4175,7 @@ class PHPlot
      *
      * @param float $range  The data range (max - min), already checked as > 0
      * @param int $min_ticks  Smallest number of intervals allowed, already checked > 0
-     * @return float  Returns the calculated tick increment
+     * @return float  The calculated tick increment
      * @since 6.0.0
      */
     protected function CalcStep125($range, $min_ticks)
@@ -4201,7 +4201,7 @@ class PHPlot
      *
      * @param float $range  The data range (max - min), already checked as > 0
      * @param int $min_ticks  Smallest number of intervals allowed, already checked > 0
-     * @return int  Returns the calculated tick increment. This will always be >= 1 second
+     * @return int  The calculated tick increment. This will always be >= 1 second
      * @since 6.0.0
      */
     protected function CalcStepDatetime($range, $min_ticks)
@@ -4240,7 +4240,7 @@ class PHPlot
      *
      * @param float $range  The data range (max - min), already checked as > 0
      * @param int $min_ticks  Smallest number of intervals allowed, already checked > 0
-     * @return float  Returns the calculated tick increment
+     * @return float  The calculated tick increment
      * @since 6.0.0
      */
     protected function CalcStepBinary($range, $min_ticks)
@@ -4257,7 +4257,7 @@ class PHPlot
      *
      * @param string $which  Which axis to calculate for. Must be 'x' or 'y'
      * @param float $range  The data range (max - min), already checked as > 0
-     * @return float  Returns the tick increment, using one of 3 methods depending on the 'tick_mode'
+     * @return float  The tick increment, using one of 3 methods depending on the 'tick_mode'
      * @since 6.0.0
      */
     protected function CalcStep($which, $range)
@@ -4296,7 +4296,7 @@ class PHPlot
      * @param float $plot_limit  Reference to (possibly unset) plot_min_[xy] or plot_max_[xy]
      * @param bool $implied  True if this is the implied variable (X for vertical plots)
      * @param float $data_limit  Actual data limit at this end: one of min_x, max_x,  etc.
-     * @return array  Returns array with (initial value of the range limit, adjustment flag)
+     * @return array  Array with (initial value of the range limit, adjustment flag)
      * @since 6.0.0
      */
     protected function CalcRangeInit(&$plot_limit, $implied, $data_limit)
@@ -4328,7 +4328,7 @@ class PHPlot
      * @param float $plot_max  Reference variable for the high end limit, changed if necessary
      * @param bool $adjust_min  True means $plot_min was auto-calculated, and may be adjusted
      * @param bool $adjust_max  True means $plot_max was auto-calculated, and may be adjusted
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 6.0.0
      */
     protected function CheckPlotRange($which, &$plot_min, &$plot_max, $adjust_min, $adjust_max)
@@ -4413,7 +4413,7 @@ class PHPlot
      * these were defaulted then values are automatically calculated.
      *
      * @param string $which  Which axis to calculate for. Must be 'x' or 'y'
-     * @return float[]  Returns array of (tick_increment, plot_min, plot_max) or FALSE on handled error
+     * @return float[]  Array of (tick_increment, plot_min, plot_max) or FALSE on handled error
      * @since 6.0.0
      */
     protected function CalcPlotRange($which)
@@ -4559,7 +4559,7 @@ class PHPlot
      * values separate so that they can be recalculated for a second plot (which may
      * have a different data range).
      *
-     * @return bool  Returns True, unless an handled error occurred in a called function
+     * @return bool  True, unless an handled error occurred in a called function
      * @since 5.0.5
      */
     protected function CalcPlotAreaWorld()
@@ -4588,7 +4588,7 @@ class PHPlot
      * @param float $ymin  Y data range minimum; omit or NULL to auto-calculate
      * @param float $xmax  X data range maximum; omit or NULL to auto-calculate
      * @param float $ymax  Y data range maximum; omit or NULL to auto-calculate
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetPlotAreaWorld($xmin=NULL, $ymin=NULL, $xmax=NULL, $ymax=NULL)
     {
@@ -4617,7 +4617,7 @@ class PHPlot
      *
      * @param bool $stacked  If true, this is a stacked bar plot (1 bar per group)
      * @param bool $verticals  If false, this is a horizontal bar plot
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function CalcBarWidths($stacked, $verticals)
     {
@@ -4675,7 +4675,7 @@ class PHPlot
      * value (that is, the value closest to 0).  The Y axis defaults to the left
      * edge. For horizontal plots, the axis roles and defaults are switched.
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.0.5
      */
     protected function CalcAxisPositions()
@@ -4731,7 +4731,7 @@ class PHPlot
      * This calculates xscale, yscale, plot_origin_x, and plot_origin_y, which map
      * world coordinate space into the plot area. These are used by xtr() and ytr()
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function CalcTranslation()
     {
@@ -4852,7 +4852,7 @@ class PHPlot
      * calculations.  That is done in CalcPlotAreaWorld().
      *
      * @param string $which  Which axis to calculate tick parameters for. Must be 'x' or 'y'
-     * @return float[]  Returns array of (tick_start, tick_end, tick_step)
+     * @return float[]  Array of (tick_start, tick_end, tick_step)
      * @since 5.0.5
      */
     protected function CalcTicks($which)
@@ -4903,7 +4903,7 @@ class PHPlot
      * For 'y' ticks, it returns the width (delta X) of the widest label.
      *
      * @param string $which  Which axis to calculate for. Must be 'x' or 'y'
-     * @return float  Returns the needed tick label width (for Y) or height (for X)
+     * @return float  The needed tick label width (for Y) or height (for X)
      * @since 5.0.5
      */
     protected function CalcMaxTickLabelSize($which)
@@ -4951,7 +4951,7 @@ class PHPlot
      * To do this, it needs to check the plottype flag indicating swapped X/Y.
      *
      * @param string $which  Which axis to calculate for. Must be 'x' or 'y'
-     * @return float  Returns the needed axis data label width (for Y) or height (for X)
+     * @return float  The needed axis data label width (for Y) or height (for X)
      * @since 5.0.5
      */
     protected function CalcMaxDataLabelSize($which = 'x')
@@ -4989,7 +4989,7 @@ class PHPlot
      *
      * This is used by CheckLabels() to determine if data labels are available.
      *
-     * @return bool  Returns True if all data labels are empty, else False.
+     * @return bool  True if all data labels are empty, else False.
      * @since 5.1.2
      */
     protected function CheckLabelsAllEmpty()
@@ -5006,7 +5006,7 @@ class PHPlot
      * parameters. It sets defaults for label angles, and applies defaults to X and Y
      * tick and data label positions.
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.1.0
      */
     protected function CheckLabels()
@@ -5098,7 +5098,7 @@ class PHPlot
      * @param string $which_pos  Which format controls to use: x | y | xd | yd | p  (tick, data, pie)
      * @param mixed $which_lab  The value of the label to be formatted (usually a float)
      * @param mixed $varargs  Zero or more additional arguments to pass to a custom format function
-     * @return string  Returns the formatted label value (original value if no formatting is enabled)
+     * @return string  The formatted label value (original value if no formatting is enabled)
      */
     protected function FormatLabel($which_pos, $which_lab, $varargs=NULL) // Variable additional arguments
     {
@@ -5149,7 +5149,7 @@ class PHPlot
      * @param float $zero_magnet  Zero magnet value, NULL to ignore
      * @param string $adjust_mode  Range extension mode, NULL to ignore
      * @param float $adjust_amount  Range extension amount, NULL to ignore
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 6.0.0
      */
     protected function TuneAutoRange($which, $zero_magnet, $adjust_mode, $adjust_amount)
@@ -5171,7 +5171,7 @@ class PHPlot
      * @param float $zero_magnet  Optional X axis zero magnet value, controlling range extension to include 0
      * @param string $adjust_mode  Optional X axis range extension mode: T | R | I (Tick, Range, Integer)
      * @param float $adjust_amount  Optional X axis range extension amount
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 6.0.0
      */
     function TuneXAutoRange($zero_magnet = NULL, $adjust_mode = NULL, $adjust_amount = NULL)
@@ -5187,7 +5187,7 @@ class PHPlot
      * @param float $zero_magnet  Optional Y axis zero magnet value, controlling range extension to include 0
      * @param string $adjust_mode  Optional Y axis range extension mode: T | R | I (Tick, Range, Integer)
      * @param float $adjust_amount  Optional Y axis range extension amount
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 6.0.0
      */
     function TuneYAutoRange($zero_magnet = NULL, $adjust_mode = NULL, $adjust_amount = NULL)
@@ -5204,7 +5204,7 @@ class PHPlot
      * @param int $min_ticks  Minimum number of tick intervals
      * @param string $tick_mode  Tick increment calculation mode
      * @param bool $tick_inc_integer  True to always use integer tick increments
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 6.0.0
      */
     protected function TuneAutoTicks($which, $min_ticks, $tick_mode, $tick_inc_integer)
@@ -5231,7 +5231,7 @@ class PHPlot
      * @param int $min_ticks  Minimum number of tick intervals along the axis
      * @param string $tick_mode  Tick increment calculation mode: decimal | binary | date
      * @param bool $tick_inc_integer  True to always use integer tick increments, false to allow fractions
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 6.0.0
      */
     function TuneXAutoTicks($min_ticks = NULL, $tick_mode = NULL, $tick_inc_integer = NULL)
@@ -5247,7 +5247,7 @@ class PHPlot
      * @param int $min_ticks  Minimum number of tick intervals along the axis
      * @param string $tick_mode  Tick increment calculation mode: decimal | binary | date
      * @param bool $tick_inc_integer  True to always use integer tick increments, false to allow fractions
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 6.0.0
      */
     function TuneYAutoTicks($min_ticks = NULL, $tick_mode = NULL, $tick_inc_integer = NULL)
@@ -5264,7 +5264,7 @@ class PHPlot
      * Sets the length of the interval between X ticks
      *
      * @param float $which_ti  X tick increment in world coordinates; omit or '' for default auto-calculate
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetXTickIncrement($which_ti='')
     {
@@ -5276,7 +5276,7 @@ class PHPlot
      * Sets the length of the interval between Y ticks
      *
      * @param float $which_ti  Y tick increment in world coordinates; omit or '' for default auto-calculate
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetYTickIncrement($which_ti='')
     {
@@ -5288,7 +5288,7 @@ class PHPlot
      * Sets the number of X tick intervals
      *
      * @param int $which_nt  Number of X tick intervals; omit or '' for default auto-calculate
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetNumXTicks($which_nt='')
     {
@@ -5300,7 +5300,7 @@ class PHPlot
      * Sets the number of Y tick intervals
      *
      * @param int $which_nt  Number of Y tick intervals; omit or '' for default auto-calculate
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetNumYTicks($which_nt='')
     {
@@ -5312,7 +5312,7 @@ class PHPlot
      * Positions the X tick marks (above the plot, below, both above and below; at the X axis, or suppressed)
      *
      * @param string $which_tp  Tick mark position: plotdown | plotup | both | xaxis | none
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetXTickPos($which_tp)
     {
@@ -5325,7 +5325,7 @@ class PHPlot
      * Positions the Y tick marks (left, right, or both sides; at the Y axis, or suppressed)
      *
      * @param string $which_tp  Tick mark position: plotleft | plotright | both | yaxis | none
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetYTickPos($which_tp)
     {
@@ -5338,7 +5338,7 @@ class PHPlot
      * Suppress the top Y axis tick mark and label
      *
      * @param bool $skip  True to skip the tick mark and label; false to draw them
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetSkipTopTick($skip)
     {
@@ -5350,7 +5350,7 @@ class PHPlot
      * Suppress the bottom Y axis tick mark and label
      *
      * @param bool $skip  True to skip the tick mark and label; false to draw them
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetSkipBottomTick($skip)
     {
@@ -5362,7 +5362,7 @@ class PHPlot
      * Suppress the left-most (first) X axis tick mark and label
      *
      * @param bool $skip  True to skip the tick mark and label; false to draw them
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetSkipLeftTick($skip)
     {
@@ -5374,7 +5374,7 @@ class PHPlot
      * Suppress the right-most (last) X axis tick mark and label
      *
      * @param bool $skip  True to skip the tick mark and label; false to draw them
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetSkipRightTick($skip)
     {
@@ -5386,7 +5386,7 @@ class PHPlot
      * Sets the outer length of X tick marks (the part that sticks out from the plot area)
      *
      * @param int $which_xln  Outer length of the tick marks, in pixels
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetXTickLength($which_xln)
     {
@@ -5398,7 +5398,7 @@ class PHPlot
      * Sets the outer length of Y tick marks (the part that sticks out from the plot area)
      *
      * @param int $which_yln  Outer length of the tick marks, in pixels
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetYTickLength($which_yln)
     {
@@ -5410,7 +5410,7 @@ class PHPlot
      * Sets the crossing length of X tick marks (the part that sticks into the plot area)
      *
      * @param int $which_xc  Crossing length of the tick marks, in pixels
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetXTickCrossing($which_xc)
     {
@@ -5422,7 +5422,7 @@ class PHPlot
      * Sets the crossing length of Y tick marks (the part that sticks into the plot area)
      *
      * @param int $which_yc  Crossing length of the tick marks, in pixels
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetYTickCrossing($which_yc)
     {
@@ -5436,7 +5436,7 @@ class PHPlot
      * A tick anchor forces a tick mark at that exact value (if the data range were extended to include it).
      *
      * @param float $xta  Tick anchor position in World Coordinates; omit or NULL for no anchor
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.4.0
      */
     function SetXTickAnchor($xta = NULL)
@@ -5451,7 +5451,7 @@ class PHPlot
      * A tick anchor forces a tick mark at that exact value (if the data range were extended to include it).
      *
      * @param float $yta  Tick anchor position in World Coordinates; omit or NULL for no anchor
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.4.0
      */
     function SetYTickAnchor($yta = NULL)
@@ -5468,7 +5468,7 @@ class PHPlot
      * Fill the image background, with a tiled image file or solid color.
      *
      * @param bool $overwrite  True to do it even if already done, False or omit to do once only
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function DrawBackground($overwrite=FALSE)
     {
@@ -5488,7 +5488,7 @@ class PHPlot
     /**
      * Fill the plot area background, with a tiled image file or solid color.
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function DrawPlotAreaBackground()
     {
@@ -5511,7 +5511,7 @@ class PHPlot
      * @param int $width  Width of the area to be tiled
      * @param int $height  Height of the area to be tiled
      * @param string $mode  Tiling mode: centeredtile | tile | scale
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      *
      */
     protected function tile_img($file, $xorig, $yorig, $width, $height, $mode)
@@ -5580,7 +5580,7 @@ class PHPlot
      * new type 'solid' was added to use the SetImageBorderColor color.
      *
      * @param bool $overwrite  True to do it even if already done, False or omit to do once only
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      *
      */
     protected function DrawImageBorder($overwrite=FALSE)
@@ -5623,7 +5623,7 @@ class PHPlot
     /**
      * Draws the main plot title
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function DrawTitle()
     {
@@ -5645,7 +5645,7 @@ class PHPlot
     /**
      * Draws the X axis title, on the top or bottom (or both) of the plot area
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function DrawXTitle()
     {
@@ -5673,7 +5673,7 @@ class PHPlot
     /**
      * Draws the Y axis title, on the left or right side (or both) of the plot area
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function DrawYTitle()
     {
@@ -5700,7 +5700,7 @@ class PHPlot
     /**
      * Draws the X axis, including ticks and labels, and vertical grid lines
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function DrawXAxis()
     {
@@ -5721,7 +5721,7 @@ class PHPlot
      * This draws the Y axis and grid lines. It must be called before DrawXAxis() to avoid
      * having a horizontal grid line overwrite the X axis.
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function DrawYAxis()
     {
@@ -5741,7 +5741,7 @@ class PHPlot
      *
      * @param float $x  X value for the label
      * @param int $x_pixels  X device coordinate for this tick mark
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.8.0
      */
     protected function DrawXTick($x, $x_pixels)
@@ -5796,7 +5796,7 @@ class PHPlot
      *
      * @param float $y  Y value for the label
      * @param int $y_pixels  Y device coordinate for this tick mark
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.8.0
      */
     protected function DrawYTick($y, $y_pixels)
@@ -5849,7 +5849,7 @@ class PHPlot
     /**
      * Draws the vertical grid lines, the X axis tick marks, and X axis tick labels
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function DrawXTicks()
     {
@@ -5880,7 +5880,7 @@ class PHPlot
     /**
      * Draws the horizontal grid lines, the Y axis tick marks, and Y axis tick labels
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function DrawYTicks()
     {
@@ -5917,7 +5917,7 @@ class PHPlot
      * the default is used ('sides' if the plot includes axes, 'none' if not).
      *
      * @param bool $draw_axes  True or omit to draw the X axis and Y axis, false to not (for pie charts)
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function DrawPlotBorder($draw_axes = TRUE)
     {
@@ -5971,7 +5971,7 @@ class PHPlot
      * @param float $y_world  Y world coordinate of the base point
      * @param mixed $text The text to draw after formatting with FormatLabel()
      * @param mixed[] $dvl  Associative array with additional label position controls (see above)
-     * @return bool  Returns True, if the text was drawn, or False, if it will not fit
+     * @return bool  True, if the text was drawn, or False, if it will not fit
      */
     protected function DrawDataValueLabel($x_or_y, $row, $column, $x_world, $y_world, $text, $dvl)
     {
@@ -6009,7 +6009,7 @@ class PHPlot
      * @param int $xpos  X position for the label, in device coordinates
      * @param int $row  Row index, 0 for the first X, 1 for the second, etc.
      * @param bool $do_lines  True for plot types that support data label lines, False or omit if not
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function DrawXDataLabel($xlab, $xpos, $row, $do_lines=FALSE)
     {
@@ -6039,7 +6039,7 @@ class PHPlot
      * @param int $ypos  Y position for the label, in device coordinates
      * @param int $row  Row index, 0 for the first Y, 1 for the second, etc.
      * @param bool $do_lines  True for plot types that support data label lines, False or omit if not
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.1.2
      */
     protected function DrawYDataLabel($ylab, $ypos, $row, $do_lines=FALSE)
@@ -6072,7 +6072,7 @@ class PHPlot
      *
      * @param int $xpos  X position in pixels of the line
      * @param int $row  Index of the data row being drawn
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function DrawXDataLine($xpos, $row)
     {
@@ -6103,7 +6103,7 @@ class PHPlot
      *
      * @param int $ypos  Y position in pixels of the line
      * @param int $row  Index of the data row being drawn
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.1.2
      */
     protected function DrawYDataLine($ypos, $row)
@@ -6133,7 +6133,7 @@ class PHPlot
      * @param string[] $pie_label_source  Label formatting mode(s). See CheckPieLabels() and SetPieLabelType()
      * @param float $arc_angle  Delta angle for this slice, in degrees
      * @param float $slice_weight Numeric value, or relative weight, of this slice
-     * @return string  Returns the formatted label value
+     * @return string  The formatted label value
      * @since 5.6.0
      */
     protected function FormatPieLabel($index, $pie_label_source, $arc_angle, $slice_weight)
@@ -6177,7 +6177,7 @@ class PHPlot
      * @param float $start_angle  Slice starting angle in degrees
      * @param float $arc_angle  Slice angular width in degrees
      * @param mixed[] $r  Additional paramter array (from DrawPieChart, see comment above)
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.6.0
      */
     protected function DrawPieLabel($label_txt, $xc, $yc, $start_angle, $arc_angle, $r)
@@ -6217,7 +6217,7 @@ class PHPlot
      * NULL (or an empty array) can be passed to cancel the legend.
      *
      * @param string|string[] $which_leg  Array of strings for the legend, or a single string to append
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     function SetLegend($which_leg)
     {
@@ -6237,7 +6237,7 @@ class PHPlot
      *
      * @param int $which_x  X coordinate in pixels of the upper left corner of the legend box
      * @param int $which_y  Y coordinate in pixels of the upper left corner of the legend box
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetLegendPixels($which_x=NULL, $which_y=NULL)
     {
@@ -6249,7 +6249,7 @@ class PHPlot
      *
      * @param int $which_x  World coordinate X of the upper left corner of the legend box
      * @param int $which_y  World coordinate Y of the upper left corner of the legend box
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function SetLegendWorld($which_x, $which_y)
     {
@@ -6279,7 +6279,7 @@ class PHPlot
      * @param float $y_base  Base point Y for positioning to the anchor point
      * @param int $x_offset  Additional legend box offset X value in pixels
      * @param int $y_offset  Additional legend box offset Y value in pixels
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.4.0
      */
     function SetLegendPosition($x, $y, $relative_to, $x_base, $y_base, $x_offset = 0, $y_offset = 0)
@@ -6302,7 +6302,7 @@ class PHPlot
      *
      * @param string $text_align  How to align the text in the legend: left | right
      * @param string $colorbox_align  How to align the color boxes or shape markers: left | right | none | ''
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.0.4
      */
     function SetLegendStyle($text_align, $colorbox_align = '')
@@ -6320,7 +6320,7 @@ class PHPlot
      * Selects use of color boxes or alternative shapes (point shapes or line segments) in the legend
      *
      * @param bool $use_shapes  True to use shapes or lines, false to use color boxes
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.4.0
      */
     function SetLegendUseShapes($use_shapes)
@@ -6333,7 +6333,7 @@ class PHPlot
      * Controls the order of text lines in the legend (e.g. for Stackedbar plots)
      *
      * @param bool $reversal  True to reverse the order - bottom up; False for default top down
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.5.0
      */
     function SetLegendReverse($reversal = False)
@@ -6346,7 +6346,7 @@ class PHPlot
      * Controls the borders around the color boxes in the legend
      *
      * @param string $cbbmode  Color box mode: none | textcolor | databordercolor
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 6.0.0
      */
     function SetLegendColorboxBorders($cbbmode = 'textcolor')
@@ -6487,7 +6487,7 @@ class PHPlot
     /**
      * Draws the plot legend - the outline box, text labels, and color boxes or shapes
      *
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      */
     protected function DrawLegend()
     {
@@ -6747,7 +6747,7 @@ class PHPlot
      * @param int $record  Index into point_shapes[] and point_sizes[] arrays (taken modulo their sizes)
      * @param int $color  Color index to use for the point shape
      * @param bool $allow_none  True or omit allow 'none' as shape, False to substitute (for legend)
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.4.0
      */
     protected function DrawShape($x, $y, $record, $color, $allow_none = TRUE)
@@ -6851,7 +6851,7 @@ class PHPlot
 	 * @param int $x_world  X world coordinate of the data point
      * @param int $y_world  Y world coordinate of the data point
      * @param int $color  Color to use for the data point
-     * @return bool  Always returns TRUE (from DrawShape)
+     * @return bool  True always (from DrawShape)
      */
     protected function DrawDot($row, $column, $x_world, $y_world, $color)
     {
@@ -6881,7 +6881,7 @@ class PHPlot
      * @param int $border_color  Color index to use for the bar outlines (borders), if enabled, else NULL
      * @param bool $shade_top  Shade the top? (Suppressed for downward stack segments except first)
      * @param bool $shade_side  Shade the right side? (Suppressed for leftward stack segments except first)
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 5.2.0
      */
     protected function DrawBar($row, $column, $x1, $y1, $x2, $y2, $data_color, $shade_color, $border_color,
@@ -6933,7 +6933,7 @@ class PHPlot
      * @param float $error_plus  X error offset above $x (world coordinates >= 0)
      * @param float $error_minus  X error offset below $x (world coordinates >= 0)
      * @param int $color  Color to use for the error bars
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 6.1.0
      */
     protected function DrawXErrorBars($x, $y, $error_plus, $error_minus, $color)
@@ -6962,7 +6962,7 @@ class PHPlot
      * @param float $error_plus  Y error offset above $y (world coordinates >= 0)
      * @param float $error_minus  Y error offset below $y (world coordinates >= 0)
      * @param int $color  Color to use for the error bars
-     * @return bool  Always returns TRUE
+     * @return bool  True always
      * @since 6.1.0
      */
     protected function DrawYErrorBars($x, $y, $error_plus, $error_minus, $color)
@@ -7034,7 +7034,7 @@ class PHPlot
      * data array, but this handles a non-empty data array with no Y values,
      * or all Y=0.
      *
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      *
      */
     protected function DrawPieChart()
@@ -7272,7 +7272,7 @@ class PHPlot
      * DrawLinePoints() for details.
      *
      * @param bool $paired  True if doing a linepoints plot, False or omit for points plot
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     protected function DrawDots($paired = FALSE)
     {
@@ -7370,7 +7370,7 @@ class PHPlot
      * Although this plot type supports multiple data sets, it rarely makes
      * sense to have more than one, because the lines will overlay.
      *
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     protected function DrawThinBarLines()
     {
@@ -7441,7 +7441,7 @@ class PHPlot
      * be produced.
      *
      * @param bool $do_stacked  True for stackedarea plot, false or omit for area plot
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     protected function DrawArea($do_stacked = FALSE)
     {
@@ -7537,7 +7537,7 @@ class PHPlot
      * DrawLinePoints() for details.
      *
      * @param bool $paired  True if doing a linepoints plots, False or omit for lines plot
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     protected function DrawLines($paired = FALSE)
     {
@@ -7666,7 +7666,7 @@ class PHPlot
      * error bars (even if applicable), and the data labels.  DrawDots() draws
      * the points, the error bars (if applicable), and not the data labels.
      *
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     protected function DrawLinePoints()
     {
@@ -7680,7 +7680,7 @@ class PHPlot
      * types are data-data and text-data.  This is based on DrawLines(), with
      * two line drawn for each point.
      *
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     protected function DrawSquared()
     {
@@ -7756,7 +7756,7 @@ class PHPlot
      * types are text-data, for vertical plots, and text-data-yx, for
      * horizontal plots (for which it calls DrawHorizBars()).
      *
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     protected function DrawBars()
     {
@@ -7828,7 +7828,7 @@ class PHPlot
      * This is called from DrawBars() when the data type indicates a
      * horizontal plot.
      *
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.1.2
      */
     protected function DrawHorizBars()
@@ -7899,7 +7899,7 @@ class PHPlot
      * horizontal plots (for which it calls DrawHorizStackedBars()).
      * Original stacked bars idea by Laurent Kruk < lolok at users.sourceforge.net >
      *
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     protected function DrawStackedBars()
     {
@@ -8012,7 +8012,7 @@ class PHPlot
      * This is called from DrawStackedBars() when the data type indicates a
      * horizontal plot.
      *
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.1.3
      */
     protected function DrawHorizStackedBars()
@@ -8128,7 +8128,7 @@ class PHPlot
      *
      * @param bool $draw_candles  True to draw a candlestick plot, False to draw an ohlc plot
      * @param bool $always_fill  True to always fill, False or omit to fill only when closing down
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.3.0
      */
     protected function DrawOHLC($draw_candles, $always_fill = FALSE)
@@ -8242,7 +8242,7 @@ class PHPlot
      * Supported data type is data-data-xyz with rows of (label, X, Y1, Z1, ...)
      * with multiple data sets (Y, Z pairs) supported.
      *
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 5.5.0
      */
     protected function DrawBubbles()
@@ -8305,7 +8305,7 @@ class PHPlot
      * values are outliers. PHPlot requires Ymin <= YQ1 <= Ymin <= YQ3 <= Ymax
      * but does not assume anything about specific values (quartile, median).
      *
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      * @since 6.1.0
      */
     protected function DrawBoxes()
@@ -8411,7 +8411,7 @@ class PHPlot
      * unless told not to with SetPrintImage(False).
      * Note: It is possible for this to be called multiple times (multi-plot).
      *
-     * @return bool  Returns True (False on error if an error handler returns True)
+     * @return bool  True (False on error if an error handler returns True)
      */
     function DrawGraph()
     {
