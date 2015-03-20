@@ -65,23 +65,38 @@ class PHPlot
 
     // All class variables are declared here, and initialized (if applicable).
     // Starting with PHPlot-6.0, most variables have 'protected' visibility
-    // For description of all of these variables, see the Reference Manual, Developer's Guide, List
+    // For more information on these variables, see the Reference Manual, Developer's Guide, List
     // of Member Variables. The list below is in alphabetical order, matching the manual.
 
+    /** Calculated width of bars for bar charts */
     protected $actual_bar_width;
+    /** Calculated bar gap */
     protected $bar_adjust_gap;
+    /** Extra space between groups of bars */
     public $bar_extra_space = 0.5;
+    /** Width of bar relative to space for one bar */
     public $bar_width_adjust = 1;
+    /** Color (R,G,B,A) for image background */
     protected $bg_color;
+    /** Background image filename */
     protected $bgimg;
+    /** Background image tiling mode */
     protected $bgmode;
+    /** Scale factor for box widths in box plots */
     public $boxes_frac_width = 0.3;
-    public $boxes_t_width = 0.6;
+    /** Maximum half-width for boxes in box plots */
     public $boxes_max_width = 8;
+    /** Minimum half-width for boxes in box plots */
     public $boxes_min_width = 2;
+    /** Ratio of the width of the 'T' ends of box plot whiskers to the width of the boxes */
+    public $boxes_t_width = 0.6;
+    /** Flag: Don't send cache suppression headers */
     protected $browser_cache = FALSE;
-    public $bubbles_max_size; // Calculated default
+    /** Max bubble size for bubbles plots */
+    public $bubbles_max_size;
+    /** Min bubbles size for bubble plots */
     public $bubbles_min_size = 6;
+    /** Callback (hook) function information, indexed by callback reason */
     protected $callbacks = array(
         'data_points' => NULL,
         'draw_setup' => NULL,
@@ -97,24 +112,43 @@ class PHPlot
         'debug_textbox' => NULL,
         'debug_scale' => NULL,
     );
+    /** Flag: Draw dashed or solid grid lines? */
     protected $dashed_grid = TRUE;
+    /** Initial dashed pattern code */
     protected $dashed_style = '2-4';
+    /** The (converted) data array */
     protected $data;
+    /** Array of colors (R,G,B,A) for bar chart data borders */
     protected $data_border_colors;
+    /** Array of colors (R,G,B,A) for data lines/marks/bars/etc. */
     protected $data_colors;
+    /** Maximum number of dependent variable values */
     protected $data_columns;
+    /** Array: Per row maximum Y value */
     protected $data_max;
+    /** Array: Per row minimum Y value */
     protected $data_min;
+    /** Format of the data array */
     protected $data_type = 'text-data';
-    public $data_units_text = '';    // Deprecated - Use the 'suffix' argument to Set[XY]LabelType instead.
+    /** Obsolete - suffix for 'data'-formatted labels */
+    public $data_units_text = '';
+    /** Angle (in degrees) for data value labels */
     public $data_value_label_angle = 90;
+    /** Distance (in pixels) for data value labels */
     public $data_value_label_distance = 5;
+    /** Color (R,G,B,A) to use for axis data labels */
     protected $datalabel_color;
+    /** Flag: data type has error bars */
     protected $datatype_error_bars;
+    /** Flag: data type has implied X or Y */
     protected $datatype_implied;
+    /** Flag: data type is one-column data for pie chart */
     protected $datatype_pie_single;
+    /** Flag: data type has swapped X and Y values (horizontal plot) */
     protected $datatype_swapped_xy;
+    /** Flag: data type includes Y and Z value pairs */
     protected $datatype_yz;
+    /** Static array of data type information */
     static protected $datatypes = array(   // See DecodeDataType() and $datatype_* flags
         'text-data'          => array('implied' => TRUE),
         'text-data-single'   => array('implied' => TRUE, 'pie_single' => TRUE),
@@ -125,123 +159,230 @@ class PHPlot
         'data-data-xyz'      => array('yz' => TRUE),
         'data-data-yx-error' => array('swapped_xy' => TRUE, 'error_bars' => TRUE),
     );
-    static protected $datatypes_map = array(  // For backward compatiblity or aliases, see SetDataType()
+    /** Static array of data type aliases => primary name */
+    static protected $datatypes_map = array(
         'text-linear' => 'text-data',
         'linear-linear' => 'data-data',
         'linear-linear-error' => 'data-data-error',
         'text-data-pie' => 'text-data-single',
         'data-data-error-yx' => 'data-data-yx-error',
     );
+    /** Character to use for decimal point in formatted numbers */
     protected $decimal_point;
+    /** The default color array, used to initialize data_colors and error_bar_colors */
     protected $default_colors = array(
         'SkyBlue', 'green', 'orange', 'blue', 'red', 'DarkGreen', 'purple', 'peru',
         'cyan', 'salmon', 'SlateBlue', 'YellowGreen', 'magenta', 'aquamarine1', 'gold', 'violet'
     );
+    /** Formatted PHP code to build a dashed line pattern */
     protected $default_dashed_style;
+    /** Default TrueType font file */
     protected $default_ttfont;
+    /** Array of flags for elements that must be drawn at most once */
     protected $done = array();
+    /** Flag: How to handle missing Y values */
     protected $draw_broken_lines = FALSE;
+    /** Flag: Draw data borders on bars, stackedbars */
     protected $draw_data_borders;
+    /** Flag: Draw borders on pie chart segments */
     protected $draw_pie_borders;
+    /** Flag: Draw the background of the plot area */
     protected $draw_plot_area_background = FALSE;
+    /** Flag: Draw X data label lines */
     protected $draw_x_data_label_lines = FALSE;
+    /** Flag: Draw X grid lines? */
     protected $draw_x_grid;
+    /** Flag: Draw Y data label lines */
     protected $draw_y_data_label_lines = FALSE;
+    /** Flag: Draw Y grid lines? */
     protected $draw_y_grid;
+    /** Color (R,G,B,A) to use for data value labels */
     protected $dvlabel_color;
+    /** Array of colors (R,G,B,A) for error bars */
     protected $error_bar_colors;
+    /** Thickness of error bar lines */
     protected $error_bar_line_width = 1;
+    /** Shape (style) of error bars: line or tee */
     protected $error_bar_shape = 'tee';
+    /** Size of error bars */
     protected $error_bar_size = 5;
+    /** Image format: png, gif, jpg, wbmp */
     protected $file_format = 'png';
-    public $fonts;        // Should be protected, but public for possible callback use
+    /** Array of font information (should be protected, but public for possible callback use) */
+    public $fonts;
+    /** Flag: Draw grid on top of or behind the plot */
     public $grid_at_foreground = FALSE;
+    /** Color (R,G,B,A) to use for axes, plot area border, legend border, pie chart lines and text */
     protected $grid_color;
+    /** Controls fraction of bar group space used for bar */
     public $group_frac_width = 0.7;
+    /** Color (R,G,B,A) for image border, if drawn */
     protected $i_border;
+    /** Image border type */
     protected $image_border_type = 'none';
+    /** Width of image border in pixels */
     protected $image_border_width;
+    /** Image height */
     protected $image_height;
+    /** Image width */
     protected $image_width;
-    public $img;           // Should be protected, but public to reduce breakage
+    /** Image resource (should be protected, but public to reduce breakage) */
+    public $img;
+    /** Prevent recursion in error message image production */
     protected $in_error;
+    /** Flag: don't send headers */
     protected $is_inline = FALSE;
+    /** Label format info */
     protected $label_format = array('x' => array(), 'xd' => array(), 'y' => array(), 'yd' => array());
+    /** Pie chart label position factor */
     protected $label_scale_position = 0.5;
+    /** Legend text array */
     protected $legend;
+    /** Color (R,G,B,A) for the legend background */
     protected $legend_bg_color;
+    /** Alignment of color boxes or shape markers in the legend: left, right, or none */
     protected $legend_colorbox_align = 'right';
-    public $legend_colorbox_width = 1;
+    /** Color control for colorbox borders in legend  */
     protected $legend_colorbox_borders = 'textcolor';
+    /** Adjusts width of color boxes in the legend */
+    public $legend_colorbox_width = 1;
+    /** Array holding legend position information */
     protected $legend_pos;
+    /** Flag: reverse the order of lines in the legend box, bottom to top  */
     protected $legend_reverse_order = FALSE;
+    /** Legend style setting, left or right */
     protected $legend_text_align = 'right';
+    /** Color (R,G,B,A) for the legend text  */
     protected $legend_text_color;
+    /** Draw color boxes (if false or unset) or shape markers (if true) in the legend  */
     protected $legend_use_shapes = FALSE;
+    /** Color (R,G,B,A) for grid lines and X data lines */
     protected $light_grid_color;
+    /** Controls inter-line spacing of text */
     protected $line_spacing = 4;
+    /** Plot line style(s) */
     protected $line_styles = array('solid', 'solid', 'dashed');
+    /** Plot line width(s) */
     protected $line_widths = 1;
+    /** Flag to avoid importing locale info */
     public $locale_override = FALSE;
+    /** Overall max X value in the data array */
     protected $max_x;
+    /** Overall max Y value in the data array */
     protected $max_y;
+    /** Overall max Z value in the data array (for X/Y/Z data type only)  */
     protected $max_z;
+    /** Overall min X value in the data array */
     protected $min_x;
+    /** Overall min Y value in the data array */
     protected $min_y;
+    /** Overall min Z value in the data array (for X/Y/Z data type only)  */
     protected $min_z;
+    /** Color index of image background */
     protected $ndx_bg_color;
+    /** Color index array for bar chart data borders */
     protected $ndx_data_border_colors;
+    /** Color index array for plot data lines/marks/bars/etc. */
     protected $ndx_data_colors;
+    /** Color index array for plot data, darker shade */
     protected $ndx_data_dark_colors;
+    /** Color index for axis data labels  */
     protected $ndx_datalabel_color;
+    /** Color index for data value labels  */
     protected $ndx_dvlabel_color;
+    /** Color index array for error bars */
     protected $ndx_error_bar_colors;
+    /** Color index for axes, plot area border, legend border, pie chart lines and text */
     protected $ndx_grid_color;
+    /** Color index for image border lines */
     protected $ndx_i_border;
+    /** Color index for image border lines, darker shade */
     protected $ndx_i_border_dark;
+    /** Color index for the legend background  */
     protected $ndx_legend_bg_color;
+    /** Color index for the legend text  */
     protected $ndx_legend_text_color;
+    /** Color index for grid lines and X data lines */
     protected $ndx_light_grid_color;
+    /** Color index for unshaded pie chart segment borders  */
     protected $ndx_pieborder_color;
+    /** Color index for pie chart data labels  */
     protected $ndx_pielabel_color;
+    /** Color index of plot area background */
     protected $ndx_plot_bg_color;
+    /** Color index for labels and legend text */
     protected $ndx_text_color;
+    /** Color index for tick marks */
     protected $ndx_tick_color;
+    /** Color index for tick labels  */
     protected $ndx_ticklabel_color;
+    /** Color index for main title */
     protected $ndx_title_color;
+    /** Color index for X title  */
     protected $ndx_x_title_color;
+    /** Color index for Y title  */
     protected $ndx_y_title_color;
+    /** Number of rows in the data array (number of points along X, or number of bar groups, for example) */
     protected $num_data_rows;
+    /** Array with number of entries in each data row (including label and X if present) */
     protected $num_recs;
+    /** Forced number of X tick marks */
     protected $num_x_ticks = '';
+    /** Forced number of Y tick marks */
     protected $num_y_ticks = '';
+    /** Scale factor for element widths in OHLC plots. */
     public $ohlc_frac_width = 0.3;
+    /** Maximum half-width for elements in OHLC plots */
     public $ohlc_max_width = 8;
+    /** Minimum half-width for elements in OHLC plots */
     public $ohlc_min_width = 2;
+    /** Redirect to output file */
     protected $output_file;
+    /** Aspect ratio for shaded pie charts */
     public $pie_diam_factor = 0.5;
+    /** Flag: True to draw pie chart segments clockwise, false or unset for counter-clockwise.  */
     protected $pie_direction_cw = FALSE;
+    /** Flag: If true, do not include label sizes when calculating pie size.  */
     protected $pie_full_size = FALSE;
+    /** Source of label text for pie charts (percent, value, label, or index)  */
     protected $pie_label_source;
+    /** Minimum amount of the plot area that will be reserved for the pie */
     public $pie_min_size_factor = 0.5;
+    /** Starting angle in degrees for the first segment in a pie chart */
     protected $pie_start_angle = 0;
+    /** Color (R,G,B,A) to use for unshaded pie chart segment borders */
     protected $pieborder_color;
+    /** Color (R,G,B,A) to use for pie chart data labels */
     protected $pielabel_color;
+    /** Calculated plot area array: ([0],[1]) is top left, ([2],[3]) is bottom right */
     protected $plot_area;
+    /** Height of the plot area */
     protected $plot_area_height;
+    /** Width of the plot area */
     protected $plot_area_width;
+    /** Color (R,G,B,A) for plot area background */
     protected $plot_bg_color;
+    /** Where to draw plot borders. Can be scalar or array of choices. */
     protected $plot_border_type;
+    /** Max X of the plot area in world coordinates */
     protected $plot_max_x;
+    /** Max Y of the plot area in world coordinates */
     protected $plot_max_y;
+    /** Min X of the plot area in world coordinates */
     protected $plot_min_x;
+    /** Min Y of the plot area in world coordinates */
     protected $plot_min_y;
+    /** X device coordinate of the plot area origin */
     protected $plot_origin_x;
+    /** Y device coordinate of the plot area origin */
     protected $plot_origin_y;
+    /** Selected plot type */
     protected $plot_type = 'linepoints';
+    /** Plot area background image filename */
     protected $plotbgimg;
+    /** Plot area background image tiling mode */
     protected $plotbgmode;
-    /** Table of known plot types, indexed by plot type. Values tell PHPlot how to scale and draw it. */
+    /** Array of plot type information, indexed by plot type */
     static protected $plots = array(
         'area' => array(
             'draw_method' => 'DrawArea',
@@ -308,12 +449,17 @@ class PHPlot
             'draw_method' => 'DrawThinBarLines',
         ),
     );
+    /** Size of point_shapes and point_sizes arrays  */
     protected $point_counts;
+    /** Marker shapes for point plots */
     protected $point_shapes = array(
             'diamond', 'dot', 'delta', 'home', 'yield', 'box', 'circle', 'up', 'down', 'cross'
     );
+    /** Marker sizes for point plots */
     protected $point_sizes = array(6);
+    /** Flag: Automatic PrintImage after DrawGraph? */
     protected $print_image = TRUE;
+    /** Tuning parameters for plot range calculation */
     protected $rangectl = array( 'x' => array(
                                    'adjust_mode' => 'T',      // T=adjust to next tick
                                    'adjust_amount' => NULL,   // See GetRangeEndAdjust()
@@ -324,25 +470,45 @@ class PHPlot
                                    'adjust_amount' => NULL,   // See GetRangeEndAdjust()
                                    'zero_magnet' => 0.857142, // Value is 6/7
                                 ));
+    /** Area for each bar in a bar chart */
     protected $record_bar_width;
+    /** Maximum of num_recs[], max number of entries (including label and X if present) for all data rows */
     protected $records_per_group;
+    /** Array mapping color names to array of R, G, B values */
     protected $rgb_array;
+    /** Fixed extra margin used in multiple places */
     public $safe_margin = 5;
+    /** Stores PHPlot version when object was serialized */
     protected $saved_version;
+    /** Drop shadow size for pie and bar charts */
     protected $shading = 5;
+    /** Skip bottom tick mark */
     protected $skip_bottom_tick = FALSE;
+    /** Skip left tick mark */
     protected $skip_left_tick = FALSE;
+    /** Skip right tick mark */
     protected $skip_right_tick = FALSE;
+    /** Skip top tick mark */
     protected $skip_top_tick = FALSE;
+    /** MIME boundary sequence used with streaming plots  */
     protected $stream_boundary;
+    /** Boundary and MIME header, output before each frame in a plot stream  */
     protected $stream_frame_header;
+    /** Name of the GD output function for this image type, used with streaming plots  */
     protected $stream_output_f;
+    /** Flag: Don't produce an error image on fatal error */
     protected $suppress_error_image = FALSE;
+    /** Flag: Don't draw the X axis line */
     protected $suppress_x_axis = FALSE;
+    /** Flag: Don't draw the Y axis line */
     protected $suppress_y_axis = FALSE;
+    /** Color (R,G,B,A) for labels and legend text */
     protected $text_color;
+    /** Character to use to group 1000s in formatted numbers */
     protected $thousands_sep;
+    /** Color (R,G,B,A) for tick marks */
     protected $tick_color;
+    /** Tuning parameters for tick increment calculation  */
     protected $tickctl = array( 'x' => array(
                                   'tick_mode' => NULL,
                                   'min_ticks' => 8,
@@ -353,63 +519,121 @@ class PHPlot
                                   'min_ticks' => 8,
                                   'tick_inc_integer' => FALSE,
                                ));
+    /** Color (R,G,B,A) to use for tick labels  */
     protected $ticklabel_color;
+    /** Color (R,G,B,A) for main title (and default for X and Y titles) */
     protected $title_color;
+    /** Y offset of main title position  */
     protected $title_offset;
+    /** Main title text */
     protected $title_txt = '';
+    /** Total number of entries (rows times columns in each row) in the data array. */
     protected $total_records;
+    /** Color (R,G,B,A) designated as transparent  */
     protected $transparent_color;
+    /** Flag: True if serialized object had a truecolor image */
     protected $truecolor;
+    /** TrueType font directory */
     protected $ttf_path = '.';
+    /** Default font type, True for TrueType, False for GD */
     protected $use_ttf = FALSE;
+    /** Position of X axis (in world coordinates) */
     protected $x_axis_position;
+    /** Device coordinate for the X axis */
     protected $x_axis_y_pixels;
-    protected $x_data_label_angle;    // Effective value; calculated or x_data_label_angle_u
+    /** Effective X data label text angle   */
+    protected $x_data_label_angle;
+    /** X data label text angle (see also x_data_label_angle)  */
     protected $x_data_label_angle_u = '';
+    /** Position of X data labels */
     protected $x_data_label_pos;
+    /** X tick label text angle (and default for x_data_label_angle) */
     protected $x_label_angle = 0;
+    /** Label offset relative to plot area */
     protected $x_label_axis_offset;
+    /** Label offset relative to plot area */
     protected $x_label_bot_offset;
+    /** Label offset relative to plot area */
     protected $x_label_top_offset;
+    /** Calculated plot area margin - left side */
     protected $x_left_margin;
+    /** Calculated plot area margin - right side */
     protected $x_right_margin;
+    /** X tick anchor point  */
     protected $x_tick_anchor;
+    /** Length of X tick marks (inside plot area) */
     protected $x_tick_cross = 3;
-    protected $x_tick_inc;    // Effective value; calculated or x_tick_inc_u
+    /** Effective step between X tick marks */
+    protected $x_tick_inc;
+    /** Step between X tick marks (see also x_tick_inc)  */
     protected $x_tick_inc_u = '';
+    /** Position of X tick labels */
     protected $x_tick_label_pos;
+    /** Length of X tick marks (outside plot area) */
     protected $x_tick_length = 5;
+    /** Position of X tick marks */
     protected $x_tick_pos = 'plotdown';
+    /** Title offset relative to plot area */
     protected $x_title_bot_offset;
+    /** Color (R,G,B,A) for X title  */
     protected $x_title_color;
+    /** X Axis title position */
     protected $x_title_pos = 'none';
+    /** Title offset relative to plot area */
     protected $x_title_top_offset;
+    /** X Axis title text */
     protected $x_title_txt = '';
+    /** X scale factor for converting World to Device coordinates */
     protected $xscale;
+    /** Linear or log scale on X */
     protected $xscale_type = 'linear';
+    /** Position of Y axis (in world coordinates) */
     protected $y_axis_position;
+    /** Device coordinate for the Y axis */
     protected $y_axis_x_pixels;
+    /** Calculated plot area margin - bottom */
     protected $y_bot_margin;
+    /** Y data label text angle  */
     protected $y_data_label_angle = 0;
+    /** Position of Y data labels */
     protected $y_data_label_pos;
+    /** Y tick label text angle */
     protected $y_label_angle = 0;
+    /** Label offset relative to plot area */
     protected $y_label_axis_offset;
+    /** Label offset relative to plot area */
     protected $y_label_left_offset;
+    /** Label offset relative to plot area */
     protected $y_label_right_offset;
+    /** Y tick anchor point  */
     protected $y_tick_anchor;
+    /** Length of Y tick marks (inside plot area) */
     protected $y_tick_cross = 3;
-    protected $y_tick_inc;    // Effective value; calculated or y_tick_inc_u
+    /** Effective step between Y tick marks */
+    protected $y_tick_inc;
+    /** Step between Y tick marks (see also y_tick_inc)  */
     protected $y_tick_inc_u = '';
+    /** Position of Y tick labels */
     protected $y_tick_label_pos;
+    /** Length of Y tick marks (outside plot area) */
     protected $y_tick_length = 5;
+    /** Position of Y tick marks */
     protected $y_tick_pos = 'plotleft';
+    /** Color (R,G,B,A) for Y title  */
     protected $y_title_color;
+    /** Title offset relative to plot area */
     protected $y_title_left_offset;
+    /** Y Axis title position */
     protected $y_title_pos = 'none';
+    /** Title offset relative to plot area */
     protected $y_title_right_offset;
+    /** Y Axis title text */
     protected $y_title_txt = '';
+    /** Calculated plot area margin - top */
     protected $y_top_margin;
+    /** Y scale factor for converting World to Device coordinates */
     protected $yscale;
+    /** Linear or log scale on Y */
     protected $yscale_type = 'linear';
 
     /**
@@ -6181,8 +6405,8 @@ class PHPlot
      * The $r parameter array is calculated by DrawPieChart() and contains
      * values that are constant for the chart, so do not need to be
      * recalculated for each slice. Array keys are 'x' 'y' and 'reverse'.
-     * r[x], r[y] are the parameters of the ellipse:  x**2 / r[x]**2 + y**2 / r[y]**2 = 1.
-     * Also:  x = r[x] * cos(angle), y = r[y] * sin(angle), (relative to pie center).
+     * r[x], r[y] are the parameters of the ellipse:  ` x**2 / r[x]**2 + y**2 / r[y]**2 = 1 `
+     * Also:  ` x = r[x] * cos(angle) ` and ` y = r[y] * sin(angle) ` (relative to pie center).
      * 'reverse' is a flag for text alignment (see GetTextAlignment()).
      *
      * @param string $label_txt  Pre-formatted label, from FormatPieLabel()
@@ -6864,7 +7088,7 @@ class PHPlot
      *
      * @param int $row  Row index of data point (only used for a data_points callback)
      * @param int $column  Column index of data point, used to select the marker shape and size
-	 * @param int $x_world  X world coordinate of the data point
+     * @param int $x_world  X world coordinate of the data point
      * @param int $y_world  Y world coordinate of the data point
      * @param int $color  Color to use for the data point
      * @return bool  True always (from DrawShape)
