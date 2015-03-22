@@ -10,7 +10,7 @@
  *
  * $Id$
  *
- * @version 6.1.0
+ * @version 6.1.1-unreleased
  * @copyright 1998-2015 Afan Ottenheimer
  * @license GNU Lesser General Public License, version 2.1
  * @link http://sourceforge.net/projects/phplot/ PHPlot Web Site with downloads, tracker, discussion
@@ -59,9 +59,9 @@
 class PHPlot
 {
     /** PHPlot version constant as a string */
-    const version = '6.1.0';
+    const version = '6.1.1-Unreleased $Revision$';
     /** PHPlot version constant as a number = major * 10000 + minor * 100 + patch */
-    const version_id = 60100;
+    const version_id = 60101;
 
     // All class variables are declared here, and initialized (if applicable).
     // Starting with PHPlot-6.0, most variables have 'protected' visibility
